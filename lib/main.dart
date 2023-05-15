@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Event Hub',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
