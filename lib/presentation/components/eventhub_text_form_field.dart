@@ -8,6 +8,11 @@ class EventHubTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.obscureText,
+    this.textInputType,
+    this.maxLength,
+    this.textAlign,
+    this.focusNode,
+    this.onchange,
   });
 
   final TextEditingController? controller;
@@ -15,19 +20,32 @@ class EventHubTextFormField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool? obscureText;
+  final TextInputType? textInputType;
+  final int? maxLength;
+  final TextAlign? textAlign;
+  final FocusNode? focusNode;
+  final Function(String)? onchange;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText ?? false,
+      keyboardType: textInputType,
+      maxLength: maxLength,
+      focusNode: focusNode,
+      textAlign: textAlign ?? TextAlign.left,
+      onChanged: onchange,
       decoration: InputDecoration(
         filled: true,
+        counterText: "",
         hintText: label,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(

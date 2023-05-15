@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const double default_padding = 25.0;
+const double defaultPadding = 25.0;
 const MaterialColor colorBlue = MaterialColor(0xFF544BC3, {
   50: Color.fromRGBO(84, 75, 195, 0.05),
   100: Color.fromRGBO(84, 75, 195, 0.1),

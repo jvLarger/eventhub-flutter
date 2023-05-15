@@ -1,6 +1,8 @@
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
+import 'package:eventhub/presentation/views/recuperar-senha/recuperar_senha_email_page.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
@@ -30,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     return EventHubBody(
       child: Container(
         padding: const EdgeInsets.all(
-          default_padding,
+          defaultPadding,
         ),
         height: MediaQuery.of(context).size.height,
         alignment: Alignment.center,
@@ -57,11 +59,11 @@ class _LoginPageState extends State<LoginPage> {
               controller: _emailController,
             ),
             const SizedBox(
-              height: default_padding,
+              height: defaultPadding,
             ),
             EventHubTextFormField(
               label: "Senha",
-              obscureText: _isSenhaVisivel,
+              obscureText: !_isSenhaVisivel,
               prefixIcon: const Icon(
                 Ionicons.lock_closed_outline,
                 size: 15,
@@ -82,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
               controller: _senhaController,
             ),
             const SizedBox(
-              height: default_padding / 2,
+              height: defaultPadding / 2,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             const SizedBox(
-              height: default_padding / 2,
+              height: defaultPadding / 2,
             ),
             ElevatedButton(
               onPressed: () {},
@@ -126,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(
-              height: default_padding / 2,
+              height: defaultPadding / 2,
             ),
             TextButton(
               child: const Text(
@@ -137,7 +139,12 @@ class _LoginPageState extends State<LoginPage> {
                   letterSpacing: 0.5,
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Util.goTo(
+                  context,
+                  const RecuperarSenhaEmailPage(),
+                );
+              },
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
