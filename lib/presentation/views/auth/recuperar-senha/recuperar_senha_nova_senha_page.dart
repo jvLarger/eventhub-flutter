@@ -1,7 +1,7 @@
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
-import 'package:eventhub/presentation/views/login/login_page.dart';
+import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';

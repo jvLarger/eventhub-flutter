@@ -1,6 +1,7 @@
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
-import 'package:eventhub/presentation/views/recuperar-senha/recuperar_senha_email_page.dart';
+import 'package:eventhub/presentation/views/auth/novousuario/novo_usuario_page.dart';
+import 'package:eventhub/presentation/views/auth/recuperar-senha/recuperar_senha_email_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -162,7 +163,12 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 13,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Util.goTo(
+                      context,
+                      const NovoUsuarioPage(),
+                    );
+                  },
                 ),
               ],
             ),
