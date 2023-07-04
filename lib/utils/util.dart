@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Util {
@@ -6,5 +7,11 @@ class Util {
       context,
       MaterialPageRoute(builder: (context) => page),
     );
+  }
+
+  static printInfo(String texto) {
+    if (kDebugMode) {
+      print(texto);
+    }
   }
 }

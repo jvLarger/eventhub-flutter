@@ -1,5 +1,7 @@
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/utils/constants.dart';
@@ -139,7 +141,9 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                     height: defaultPadding,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      UsuarioService().criarUsuario(Usuario());
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
