@@ -13,6 +13,7 @@ class EventHubTextFormField extends StatelessWidget {
     this.textAlign,
     this.focusNode,
     this.onchange,
+    this.validator,
   });
 
   final TextEditingController? controller;
@@ -25,6 +26,7 @@ class EventHubTextFormField extends StatelessWidget {
   final TextAlign? textAlign;
   final FocusNode? focusNode;
   final Function(String)? onchange;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class EventHubTextFormField extends StatelessWidget {
       focusNode: focusNode,
       textAlign: textAlign ?? TextAlign.left,
       onChanged: onchange,
+      validator: validator,
       decoration: InputDecoration(
         filled: true,
         counterText: "",

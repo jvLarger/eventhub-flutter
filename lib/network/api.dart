@@ -5,7 +5,7 @@ import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  static const baseURL = "https://201.139.94.197/8080/api";
+  static const baseURL = "http://192.168.1.8:8080/api";
   static const String apiKey = "";
 
   static var header = {
@@ -20,12 +20,12 @@ class Api {
   }
 
   static Future<http.Response> criarUsuario(Usuario usuario) async {
-    return await http.get(
-      getURI('$baseURL/publico/token-valido'),
+    return await http.post(
+      getURI('$baseURL/publico/nova-conta'),
       headers: header,
-      /*  body: jsonEncode(
+      body: jsonEncode(
         usuario.toJson(),
-      ),*/
+      ),
     );
   }
 }

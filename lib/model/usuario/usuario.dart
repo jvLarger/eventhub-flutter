@@ -1,3 +1,5 @@
+import 'package:eventhub/utils/util.dart';
+
 class Usuario {
   int? id;
   String? nomeUsuario;
@@ -20,6 +22,7 @@ class Usuario {
   });
 
   factory Usuario.fromJson(Map<String, dynamic> jsons) {
+    jsons = Util.getJsonWithValues(jsons);
     return Usuario(
       id: jsons['id'],
       nomeUsuario: jsons['nomeUsuario'],

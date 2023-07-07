@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/utils/constants.dart';
@@ -25,6 +30,26 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
       TextEditingController();
   bool _isSenhaVisivel = false;
   bool _isRepitaSenhaVisivel = false;
+
+  criarUsuario() async {
+    try {
+      if (_senhaController.text != _senhaRepetidaController.text) {
+        throw EventHubException("As senhas não coincidem!");
+      }
+
+      Usuario usuario = Usuario(
+        nomeCompleto: _nomeCompletoController.text,
+        nomeUsuario: _nomeUsuarioController.text,
+        email: _emailController.text,
+        senha: _senhaController.text,
+      );
+
+      UsuarioAutenticado usuarioAutenticado =
+          await UsuarioService().criarUsuario(usuario);
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +81,12 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                       size: 15,
                     ),
                     controller: _nomeCompletoController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nome Completo não informado!';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -67,6 +98,12 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                       size: 15,
                     ),
                     controller: _nomeUsuarioController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nome de Usuário não informado!';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -78,6 +115,12 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                       size: 15,
                     ),
                     controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'E-mail não informado!';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -107,6 +150,12 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                         }
                       },
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Senha não informada!';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -136,13 +185,21 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                         }
                       },
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirmação de Senha não informada!';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      UsuarioService().criarUsuario(Usuario());
+                      if (_formKey.currentState!.validate()) {
+                        criarUsuario();
+                      }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
