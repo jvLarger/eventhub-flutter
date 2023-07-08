@@ -5,6 +5,7 @@ import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,14 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
 
       UsuarioAutenticado usuarioAutenticado =
           await UsuarioService().criarUsuario(usuario);
+
+      // ignore: use_build_context_synchronously
+      Util.goTo(
+        context,
+        EventosDestaquePage(
+          usuarioAutenticado: usuarioAutenticado,
+        ),
+      );
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
     }
@@ -201,9 +210,9 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                         criarUsuario();
                       }
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text("Continuar"),
                       ],
                     ),

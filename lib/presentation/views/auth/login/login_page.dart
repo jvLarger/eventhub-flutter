@@ -1,7 +1,12 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/auth/novousuario/novo_usuario_page.dart';
 import 'package:eventhub/presentation/views/auth/recuperar-senha/recuperar_senha_email_page.dart';
+import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
+import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +21,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   bool _isManterConectado = true;
@@ -28,6 +34,28 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  login() async {
+    try {
+      Usuario usuario = Usuario(
+        email: _emailController.text,
+        senha: _senhaController.text,
+      );
+
+      UsuarioAutenticado usuarioAutenticado =
+          await UsuarioService().login(usuario, _isManterConectado);
+
+      // ignore: use_build_context_synchronously
+      Util.goTo(
+        context,
+        EventosDestaquePage(
+          usuarioAutenticado: usuarioAutenticado,
+        ),
+      );
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
@@ -35,12 +63,17 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(
           defaultPadding,
         ),
-        height: MediaQuery.of(context).size.height,
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset("assets/images/logo_eventhub.svg"),
+            const SizedBox(
+              height: 30,
+            ),
+            SvgPicture.asset(
+              "assets/images/logo_eventhub.svg",
+              width: 100,
+            ),
             const SizedBox(
               height: 50,
             ),
@@ -51,38 +84,57 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(
               height: 50,
             ),
-            EventHubTextFormField(
-              label: "E-mail",
-              prefixIcon: const Icon(
-                Ionicons.mail_outline,
-                size: 15,
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  EventHubTextFormField(
+                    label: "E-mail",
+                    prefixIcon: const Icon(
+                      Ionicons.mail_outline,
+                      size: 15,
+                    ),
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'E-mail não informado!';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  EventHubTextFormField(
+                    label: "Senha",
+                    obscureText: !_isSenhaVisivel,
+                    prefixIcon: const Icon(
+                      Ionicons.lock_closed_outline,
+                      size: 15,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        !_isSenhaVisivel
+                            ? Ionicons.eye_outline
+                            : Ionicons.eye_off_outline,
+                        size: 15,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isSenhaVisivel = !_isSenhaVisivel;
+                        });
+                      },
+                    ),
+                    controller: _senhaController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Senha não informada!';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              controller: _emailController,
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            EventHubTextFormField(
-              label: "Senha",
-              obscureText: !_isSenhaVisivel,
-              prefixIcon: const Icon(
-                Ionicons.lock_closed_outline,
-                size: 15,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  !_isSenhaVisivel
-                      ? Ionicons.eye_outline
-                      : Ionicons.eye_off_outline,
-                  size: 15,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isSenhaVisivel = !_isSenhaVisivel;
-                  });
-                },
-              ),
-              controller: _senhaController,
             ),
             const SizedBox(
               height: defaultPadding / 2,
@@ -120,10 +172,14 @@ class _LoginPageState extends State<LoginPage> {
               height: defaultPadding / 2,
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Row(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  login();
+                }
+              },
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text("Acessar"),
                 ],
               ),

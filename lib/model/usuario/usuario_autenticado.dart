@@ -33,4 +33,15 @@ class UsuarioAutenticado {
         'nomeCompleto': nomeCompleto,
         'token': token
       };
+
+  factory UsuarioAutenticado.fromJsonDb(Map<String, dynamic> jsons) {
+    jsons = Util.getJsonWithValues(jsons);
+    return UsuarioAutenticado(
+      id: jsons['id'],
+      nomeCompleto: jsons['nome_completo'],
+      nomeUsuario: jsons['nome_usuario'],
+      email: jsons['email'],
+      token: jsons['token'],
+    );
+  }
 }
