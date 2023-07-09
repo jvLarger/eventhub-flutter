@@ -2,6 +2,7 @@ import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/config/themes/app_theme.dart';
 import 'package:eventhub/db/usuario_db.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
+import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
@@ -33,6 +34,8 @@ class _EventHubAppState extends State<EventHubApp> {
         if (!isTokenValido) {
           await UsuarioDB().removerUsuario();
           usuarioAutenticado = null;
+        } else {
+          Api.apiKey = usuarioAutenticado.token!;
         }
       }
 

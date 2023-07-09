@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class Api {
   static const baseURL = "http://192.168.1.5:8080/api";
-  static const String apiKey = "";
+  static String apiKey = "";
 
   static var header = {
     'Content-Type': 'application/json',

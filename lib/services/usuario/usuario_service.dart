@@ -20,6 +20,8 @@ class UsuarioService {
 
       await UsuarioDB().inserirUsuario(usuarioAutenticado);
 
+      Api.apiKey = usuarioAutenticado.token!;
+
       return usuarioAutenticado;
     } else {
       throw EventHubException(Util.getMensagemErro(response));
@@ -45,6 +47,8 @@ class UsuarioService {
           utf8.decode(response.bodyBytes),
         ),
       );
+
+      Api.apiKey = usuarioAutenticado.token!;
 
       if (isManterConectado) {
         await UsuarioDB().inserirUsuario(usuarioAutenticado);
