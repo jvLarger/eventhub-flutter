@@ -16,6 +16,13 @@ class Util {
     );
   }
 
+  static goToAndOverride(BuildContext context, Widget page) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
   static printInfo(String texto) {
     if (kDebugMode) {
       print(texto);

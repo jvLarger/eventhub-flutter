@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class EventHubBody extends StatefulWidget {
   final Widget child;
   final Widget? topWidget;
+  final Widget? bottomNavigationBar;
   const EventHubBody({
     super.key,
     required this.child,
     this.topWidget,
+    this.bottomNavigationBar,
   });
 
   @override
@@ -17,27 +19,7 @@ class _EventHubBodyState extends State<EventHubBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*  bottomNavigationBar: Padding(
-          padding:
-              EdgeInsets.symmetric(vertical: 10, horizontal: defaultPadding),
-          child: InkWell(
-            onTap: () {
-              print('called on tap');
-            },
-            child: SizedBox(
-              height: kToolbarHeight,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("Continuar"),
-                  ],
-                ),
-              ),
-            ),
-          )),*/
+      bottomNavigationBar: widget.bottomNavigationBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
