@@ -16,7 +16,7 @@ class EventosDestaquePage extends StatefulWidget {
 class _EventosDestaquePageState extends State<EventosDestaquePage> {
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
+    return const EventHubBody(
       child: Column(),
     );
   }

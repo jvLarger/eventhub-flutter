@@ -32,7 +32,7 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
         title: "Recuperar Senha",
       ),
       child: Padding(
-        padding: EdgeInsets.all(defaultPadding),
+        padding: const EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
             const SizedBox(
@@ -65,11 +65,11 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                Util.goTo(context, RecuperarSenhaCodigoPage());
+                Util.goTo(context, const RecuperarSenhaCodigoPage());
               },
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text("Continuar"),
                 ],
               ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';

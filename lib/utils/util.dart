@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports
+
 import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
@@ -55,7 +57,7 @@ class Util {
 
   static void showSnackbarError(BuildContext context, String cause) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Color.fromRGBO(247, 85, 85, 1),
+      backgroundColor: const Color.fromRGBO(247, 85, 85, 1),
       duration: const Duration(seconds: 3),
       content: Text(
         cause,

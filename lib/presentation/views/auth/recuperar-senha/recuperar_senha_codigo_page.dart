@@ -113,11 +113,11 @@ class _RecuperarSenhaCodigoPageState extends State<RecuperarSenhaCodigoPage> {
             ElevatedButton(
               focusNode: _verificarFocus,
               onPressed: () {
-                Util.goTo(context, RecuperarSenhaNovaSenhaPage());
+                Util.goTo(context, const RecuperarSenhaNovaSenhaPage());
               },
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text("Verificar"),
                 ],
               ),

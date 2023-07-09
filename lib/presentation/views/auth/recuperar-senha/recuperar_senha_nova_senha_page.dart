@@ -31,7 +31,7 @@ class _RecuperarSenhaNovaSenhaPageState
         title: "Criar nova Senha",
       ),
       child: Padding(
-        padding: EdgeInsets.all(defaultPadding),
+        padding: const EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
             const SizedBox(
@@ -108,9 +108,9 @@ class _RecuperarSenhaNovaSenhaPageState
                   const LoginPage(),
                 );
               },
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text("Continuar"),
                 ],
               ),
