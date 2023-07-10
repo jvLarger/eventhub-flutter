@@ -56,7 +56,12 @@ class _EventHubAppState extends State<EventHubApp> {
         future: validarUsuarioLogado(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           } else {
             if (snapshot.data == null) {
               return const LoginPage();

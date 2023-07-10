@@ -49,11 +49,11 @@ class InformacoesUsuario extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: Color.fromRGBO(238, 238, 238, 1),
+                  color: const Color.fromRGBO(238, 238, 238, 1),
                   width: 1,
                 ),
               ),
-              child: Icon(Icons.notifications_outlined),
+              child: const Icon(Icons.notifications_outlined),
             ),
           )
         ],
