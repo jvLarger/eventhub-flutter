@@ -14,13 +14,16 @@ class UsuarioDB {
     try {
       Database db = await _getDatabase();
       await db.rawInsert(
-        "INSERT INTO usuario (id, nome_completo, nome_usuario, email, token) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO usuario (id, nome_completo, nome_usuario, email, token, nome_absoluto_foto) VALUES (?, ?, ?, ?, ?, ?)",
         [
           usuarioAutenticado.id,
           usuarioAutenticado.nomeCompleto,
           usuarioAutenticado.nomeUsuario,
           usuarioAutenticado.email,
           usuarioAutenticado.token,
+          usuarioAutenticado.foto != null
+              ? usuarioAutenticado.foto!.nomeAbsoluto!
+              : null,
         ],
       );
     } catch (error) {

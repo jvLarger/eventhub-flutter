@@ -57,9 +57,11 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundImage:
-                      NetworkImage("${Api.baseURL}/publico/imagens/imagem.png"),
                   radius: 60,
+                  backgroundImage: widget.usuarioAutenticado.foto != null
+                      ? NetworkImage(
+                          "${Api.baseURL}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}")
+                      : const NetworkImage(""),
                 ),
               ],
             ),

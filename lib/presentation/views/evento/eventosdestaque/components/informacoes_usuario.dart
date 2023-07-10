@@ -1,4 +1,5 @@
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
+import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -19,8 +20,12 @@ class InformacoesUsuario extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 backgroundColor: colorBlue,
+                backgroundImage: usuarioAutenticado.foto != null
+                    ? NetworkImage(
+                        "${Api.baseURL}/publico/imagens/${usuarioAutenticado.foto!.nomeAbsoluto!}")
+                    : const NetworkImage(""),
               ),
               const SizedBox(
                 width: 10,

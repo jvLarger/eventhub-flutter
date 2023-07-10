@@ -43,7 +43,8 @@ class EventHubDatabase {
             nome_completo VARCHAR(255) NOT NULL,
             nome_usuario VARCHAR(60) NOT NULL,
             email VARCHAR(60) NOT NULL,
-            token TEXT NOT NULL
+            token TEXT NOT NULL,
+            nome_absoluto_foto TEXT
           )
     ''');
   }

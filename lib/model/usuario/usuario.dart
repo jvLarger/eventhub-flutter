@@ -1,3 +1,4 @@
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/utils/util.dart';
 
 class Usuario {
@@ -9,6 +10,7 @@ class Usuario {
   String? documentoPrincipal;
   String? telefone;
   String? dataComemorativa;
+  Arquivo? foto;
 
   Usuario({
     this.id,
@@ -19,6 +21,7 @@ class Usuario {
     this.documentoPrincipal,
     this.telefone,
     this.dataComemorativa,
+    this.foto,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> jsons) {
@@ -32,6 +35,7 @@ class Usuario {
       documentoPrincipal: jsons['documentoPrincipal'],
       telefone: jsons['telefone'],
       dataComemorativa: jsons['dataComemorativa'],
+      foto: jsons['foto'] != null ? Arquivo.fromJson(jsons['foto']) : null,
     );
   }
 
@@ -44,5 +48,6 @@ class Usuario {
         'documentoPrincipal': documentoPrincipal,
         'telefone': telefone,
         'dataComemorativa': dataComemorativa,
+        'foto': foto,
       };
 }
