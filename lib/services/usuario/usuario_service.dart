@@ -61,4 +61,9 @@ class UsuarioService {
           "E-mail ou senha inválidos. Por favor, verifique!");
     }
   }
+
+  void logout() {
+    UsuarioDB().removerUsuario();
+    Api.apiKey = "";
+  }
 }
