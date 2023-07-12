@@ -66,4 +66,20 @@ class UsuarioService {
     UsuarioDB().removerUsuario();
     Api.apiKey = "";
   }
+
+  Future<Usuario> buscarUsuarioLogado() async {
+    final response = await Api.buscarUsuarioLogado();
+
+    if (response.statusCode == 200) {
+      Usuario usuario = Usuario.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return usuario;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

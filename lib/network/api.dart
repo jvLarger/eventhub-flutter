@@ -8,21 +8,24 @@ class Api {
   static const baseURL = "http://192.168.1.5:8080/api";
   static String apiKey = "";
 
-  static var header = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': 'Bearer $apiKey',
-  };
+  static getHeader() {
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $apiKey',
+    };
+  }
 
   static Uri getURI(String nmUrl) {
     Util.printInfo("URL:'$nmUrl'");
+    print("token: " + apiKey);
     return Uri.parse(nmUrl);
   }
 
   static Future<http.Response> criarUsuario(Usuario usuario) async {
     return await http.post(
       getURI('$baseURL/publico/nova-conta'),
-      headers: header,
+      headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
       ),
@@ -32,7 +35,7 @@ class Api {
   static tokenValido(String token) async {
     return await http.post(
       getURI('$baseURL/publico/token-valido'),
-      headers: header,
+      headers: getHeader(),
       body: jsonEncode(
         {
           "token": token,
@@ -44,10 +47,17 @@ class Api {
   static login(Usuario usuario) async {
     return await http.post(
       getURI('$baseURL/publico/login'),
-      headers: header,
+      headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
       ),
+    );
+  }
+
+  static buscarUsuarioLogado() async {
+    return await http.get(
+      getURI('$baseURL/usuarios'),
+      headers: getHeader(),
     );
   }
 }
