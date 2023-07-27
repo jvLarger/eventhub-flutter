@@ -5,7 +5,7 @@ import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  static const baseURL = "http://192.168.1.5:8080/api";
+  static const baseURL = "http://192.168.1.10:8080/api";
   static String apiKey = "";
 
   static getHeader() {
@@ -18,7 +18,7 @@ class Api {
 
   static Uri getURI(String nmUrl) {
     Util.printInfo("URL:'$nmUrl'");
-    print("token: " + apiKey);
+    Util.printInfo("token: $apiKey");
     return Uri.parse(nmUrl);
   }
 

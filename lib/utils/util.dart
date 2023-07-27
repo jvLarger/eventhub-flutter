@@ -74,4 +74,10 @@ class Util {
       ),
     ));
   }
+
+  static String getSomenteNumeros(String input) {
+    RegExp regex = RegExp(r'[^\d]');
+    String apenasNumeros = input.replaceAll(regex, '');
+    return apenasNumeros;
+  }
 }
