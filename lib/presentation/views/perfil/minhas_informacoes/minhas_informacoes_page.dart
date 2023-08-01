@@ -3,6 +3,7 @@ import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
+import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
@@ -25,10 +26,13 @@ class MinhasInformacoesPage extends StatefulWidget {
 }
 
 class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nomeCompletoController = TextEditingController();
   final TextEditingController _dataComemorativaController = TextEditingController();
   final MaskedTextController _documentoPrincipalController = MaskedTextController(mask: '000.000.000-00');
   final MaskedTextController _telefoneController = MaskedTextController(mask: '00 0 0000-0000');
+
+  alterarInformacoesUsuario() {}
 
   buscarUsuarioLogado() async {
     try {
@@ -55,6 +59,14 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
       topWidget: const EventHubTopAppbar(
         title: "Minhas Informações",
       ),
+      bottomNavigationBar: EventHubBottomButton(
+        label: "Alterar Informações",
+        onTap: () {
+          if (_formKey.currentState!.validate()) {
+            alterarInformacoesUsuario();
+          }
+        },
+      ),
       child: Padding(
         padding: const EdgeInsets.all(defaultPadding),
         child: Column(
@@ -72,6 +84,7 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
               height: defaultPadding * 1.5,
             ),
             Form(
+              key: _formKey,
               child: Column(
                 children: [
                   EventHubTextFormField(
@@ -101,7 +114,13 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
+                        initialDate: _dataComemorativaController.text.isEmpty
+                            ? DateTime.now()
+                            : DateTime.now().copyWith(
+                                day: int.parse(_dataComemorativaController.text.split("/")[0]),
+                                month: int.parse(_dataComemorativaController.text.split("/")[1]),
+                                year: int.parse(_dataComemorativaController.text.split("/")[2]),
+                              ),
                         firstDate: DateTime(1950),
                         lastDate: DateTime.now(),
                       );
@@ -110,6 +129,15 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
                         _dataComemorativaController.text = dataFormatada;
                       }
                     },
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _dataComemorativaController.text = "";
+                      },
+                      icon: const Icon(
+                        Ionicons.trash,
+                        size: 15,
+                      ),
+                    ),
                     controller: _dataComemorativaController,
                   ),
                   const SizedBox(
