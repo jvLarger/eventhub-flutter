@@ -3,6 +3,7 @@ import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
+import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
@@ -158,7 +159,9 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
             getItemMenu(
               Ionicons.calendar_outline,
               "Gerenciar meus Eventos",
-              () {},
+              () {
+                Util.goTo(context, MeusEventosPage());
+              },
               false,
             ),
             const SizedBox(

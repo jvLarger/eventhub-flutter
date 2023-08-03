@@ -208,7 +208,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                         criarUsuario();
                       }
                     },
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Continuar"),
