@@ -2,7 +2,9 @@ import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/evento/eventoindicadores/evento_indicadores_page.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -64,8 +66,8 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
               indicatorSize: TabBarIndicatorSize.tab,
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 28,
+              padding: const EdgeInsets.only(
+                top: 28,
               ),
               child: _indexTabAtiva == 0 ? montarListaPendentes() : montarListaConcluidos(),
             )
@@ -227,7 +229,9 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Util.goTo(context, EventoIndicadoresPage());
+                    },
                     child: Text("Ver indicadores"),
                   ),
                 ),
@@ -371,7 +375,9 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Util.goTo(context, EventoIndicadoresPage());
+                    },
                     child: Text("Ver indicadores"),
                   ),
                 ),

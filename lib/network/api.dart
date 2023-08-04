@@ -5,7 +5,7 @@ import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  static const baseURL = "http://192.168.1.8:8080/api";
+  static const baseURL = "http://10.0.0.102:8080/api";
   static String apiKey = "";
 
   static getHeader() {
