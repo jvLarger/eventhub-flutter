@@ -2,6 +2,7 @@ import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/evento/eventocadastro/evento_cadastro_page.dart';
 import 'package:eventhub/presentation/views/evento/eventoindicadores/evento_indicadores_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -37,7 +38,12 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
       ),
       bottomNavigationBar: EventHubBottomButton(
         label: "Novo Evento",
-        onTap: () {},
+        onTap: () {
+          Util.goTo(
+            context,
+            EventoCadastroPage(),
+          );
+        },
       ),
       child: Padding(
         padding: const EdgeInsets.all(defaultPadding),
@@ -243,7 +249,12 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Util.goTo(
+                        context,
+                        EventoCadastroPage(),
+                      );
+                    },
                     child: Text("Alterar"),
                   ),
                 ),

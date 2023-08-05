@@ -16,6 +16,8 @@ class EventHubTextFormField extends StatelessWidget {
     this.validator,
     this.readOnly,
     this.onTap,
+    this.maxLines,
+    this.minLines,
   });
 
   final TextEditingController? controller;
@@ -31,7 +33,8 @@ class EventHubTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool? readOnly;
   final Function()? onTap;
-
+  final int? minLines;
+  final int? maxLines;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -45,6 +48,8 @@ class EventHubTextFormField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly ?? false,
       onTap: onTap,
+      minLines: minLines,
+      maxLines: maxLines,
       decoration: InputDecoration(
         filled: true,
         counterText: "",
