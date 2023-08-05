@@ -6,6 +6,7 @@ import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
 import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
+import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -201,7 +202,9 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
             getItemMenu(
               Ionicons.person_circle_outline,
               "Meu Perfil Público",
-              () {},
+              () {
+                Util.goTo(context, PerfilPublicoPage());
+              },
               false,
             ),
             const SizedBox(

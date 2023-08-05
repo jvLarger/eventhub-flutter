@@ -32,6 +32,7 @@ class UsuarioService {
     final response = await Api.tokenValido(token);
 
     if (response.statusCode == 200) {
+      // ignore: sdk_version_since
       return bool.parse(utf8.decode(response.bodyBytes));
     } else {
       throw EventHubException(Util.getMensagemErro(response));
@@ -56,8 +57,7 @@ class UsuarioService {
 
       return usuarioAutenticado;
     } else {
-      throw EventHubException(
-          "E-mail ou senha inválidos. Por favor, verifique!");
+      throw EventHubException("E-mail ou senha inválidos. Por favor, verifique!");
     }
   }
 
