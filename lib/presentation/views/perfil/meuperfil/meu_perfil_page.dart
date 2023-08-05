@@ -3,6 +3,7 @@ import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
+import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
 import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
@@ -64,10 +65,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               children: [
                 CircleAvatar(
                   radius: 60,
-                  backgroundImage: widget.usuarioAutenticado.foto != null
-                      ? NetworkImage(
-                          "${Api.baseURL}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}")
-                      : const NetworkImage(""),
+                  backgroundImage: widget.usuarioAutenticado.foto != null ? NetworkImage("${Api.baseURL}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}") : const NetworkImage(""),
                 ),
               ],
             ),
@@ -92,8 +90,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               children: [
                 Expanded(
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
+                    padding: const EdgeInsets.symmetric(vertical: defaultPadding),
                     child: const Column(
                       children: [
                         Text(
@@ -170,7 +167,9 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
             getItemMenu(
               Ionicons.chatbox_outline,
               "Chat",
-              () {},
+              () {
+                Util.goTo(context, SalasBatePapoPage());
+              },
               false,
             ),
             const SizedBox(
@@ -251,8 +250,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
     );
   }
 
-  Widget getItemMenu(
-      IconData icone, String label, Function action, bool isDestaque) {
+  Widget getItemMenu(IconData icone, String label, Function action, bool isDestaque) {
     return GestureDetector(
       onTap: () {
         action();
@@ -266,8 +264,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               children: [
                 Icon(
                   icone,
-                  color:
-                      isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
+                  color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
                 ),
               ],
             ),
@@ -276,11 +273,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
             flex: 7,
             child: Text(
               label,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                  color:
-                      isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null),
             ),
           ),
           Visibility(
@@ -292,9 +285,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                 children: [
                   Icon(
                     Icons.chevron_right,
-                    color: isDestaque
-                        ? const Color.fromRGBO(247, 85, 85, 1)
-                        : null,
+                    color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
                   ),
                 ],
               ),

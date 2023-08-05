@@ -1,7 +1,7 @@
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
-import 'package:eventhub/presentation/views/evento/eventoindicadores/evento_indicadores_participantes_page.dart';
+import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_participantes_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
