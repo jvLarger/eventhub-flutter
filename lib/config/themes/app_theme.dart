@@ -12,7 +12,7 @@ abstract class AppTheme {
         titleTextStyle: TextStyle(
           color: Color.fromRGBO(33, 33, 33, 1),
           fontWeight: FontWeight.bold,
-          fontSize: 18,
+          fontSize: 20,
           fontFamily: "Urbanist",
         ),
         backgroundColor: Colors.white,

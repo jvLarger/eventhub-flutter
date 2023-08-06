@@ -5,6 +5,7 @@ import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
 import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page.dart';
+import 'package:eventhub/presentation/views/faturamento/sacar_saldo_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
@@ -207,7 +208,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               },
               false,
             ),
-            const SizedBox(
+            /*    const SizedBox(
               height: defaultPadding,
             ),
             getItemMenu(
@@ -215,14 +216,16 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
               "Adicionar Amigos",
               () {},
               false,
-            ),
+            ),*/
             const SizedBox(
               height: defaultPadding,
             ),
             getItemMenu(
               Ionicons.bar_chart_outline,
               "Sacar Saldo",
-              () {},
+              () {
+                Util.goTo(context, SacarSaldoPage());
+              },
               false,
             ),
             const SizedBox(

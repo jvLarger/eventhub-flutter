@@ -48,8 +48,8 @@ class EventHubTextFormField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly ?? false,
       onTap: onTap,
-      minLines: minLines,
-      maxLines: maxLines,
+      minLines: obscureText != null && obscureText! ? 1 : minLines,
+      maxLines: obscureText != null && obscureText! ? 1 : maxLines,
       decoration: InputDecoration(
         filled: true,
         counterText: "",
