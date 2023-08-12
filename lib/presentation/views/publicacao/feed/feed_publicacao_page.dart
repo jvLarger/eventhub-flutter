@@ -3,6 +3,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/components/informacoes_usuario.dart';
+import 'package:eventhub/presentation/views/publicacao/cadastro/publicacao_cadastro_page.dart';
 import 'package:eventhub/presentation/views/publicacao/visualizacao/publicacao_visualizacao_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -39,7 +40,9 @@ class _FeedPublicacaoState extends State<FeedPublicacao> {
               height: defaultPadding,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Util.goTo(context, PublicacaoCadastroPage());
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
