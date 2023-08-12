@@ -116,7 +116,7 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
               height: defaultPadding,
             ),
             Text(
-              "5 encontrados",
+              "5 Encontrados",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
