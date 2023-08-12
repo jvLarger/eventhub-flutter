@@ -5,10 +5,14 @@ class EventHubBadge extends StatelessWidget {
     super.key,
     required this.color,
     required this.label,
+    this.fontSize,
+    this.filled,
   });
 
   final Color color;
   final String label;
+  final double? fontSize;
+  final bool? filled;
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +23,15 @@ class EventHubBadge extends StatelessWidget {
           width: 1,
           color: color,
         ),
+        color: filled != null && filled! ? color : Colors.transparent,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Center(
         child: Text(
           label,
           style: TextStyle(
-            color: color,
-            fontSize: 10,
+            color: filled != null && filled! ? Colors.white : color,
+            fontSize: fontSize ?? 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.2,
             fontFamily: 'Urbanist',
