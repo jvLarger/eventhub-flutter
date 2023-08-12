@@ -4,7 +4,9 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/components/informacoes_usuario.dart';
+import 'package:eventhub/presentation/views/evento/pesquisa/eventos_pesquisa_page.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -39,6 +41,10 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
               height: defaultPadding,
             ),
             EventHubTextFormField(
+              readOnly: true,
+              onTap: () {
+                Util.goTo(context, EventosPesquisaPage());
+              },
               label: "Qual tipo de evento você está procurando?",
               prefixIcon: Icon(
                 Ionicons.search,
