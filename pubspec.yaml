@@ -69,6 +69,7 @@ flutter:
     - assets/images/recuperar_senha.svg
     - assets/images/nova_senha.svg
     - assets/images/login.svg
+    - assets/images/credit.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

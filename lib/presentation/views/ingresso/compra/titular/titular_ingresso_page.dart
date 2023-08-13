@@ -2,6 +2,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/ingresso/compra/formapagamento/formas_pagamento_ingresso_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
@@ -31,7 +32,9 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
       ),
       bottomNavigationBar: EventHubBottomButton(
         label: "Continuar",
-        onTap: () {},
+        onTap: () {
+          Util.goTo(context, FormasPagamentoIngressoPage());
+        },
       ),
       child: Padding(
         padding: const EdgeInsets.all(defaultPadding),
