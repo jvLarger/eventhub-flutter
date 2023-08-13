@@ -1,7 +1,9 @@
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
+import 'package:eventhub/presentation/views/ingresso/compra/titular/titular_ingresso_page.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -18,7 +20,9 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
     return EventHubBody(
       bottomNavigationBar: EventHubBottomButton(
         label: "Comprar Ingresso",
-        onTap: () {},
+        onTap: () {
+          Util.goTo(context, TitularIngressoPage());
+        },
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
