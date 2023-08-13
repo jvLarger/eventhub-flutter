@@ -1,6 +1,7 @@
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
+import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -138,6 +139,9 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
 
   Widget getCardEvento() {
     return GestureDetector(
+      onTap: () {
+        Util.goTo(context, EventoVisualizacaoPage());
+      },
       child: Container(
         padding: const EdgeInsets.all(10),
         margin: EdgeInsets.only(bottom: defaultPadding),
