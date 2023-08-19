@@ -1,5 +1,6 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/db/db.dart';
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:sqflite/sqflite.dart';
@@ -73,6 +74,22 @@ class UsuarioDB {
       }
     } catch (error) {
       throw EventHubException("Ocorreu um erro ao buscar o usuário do banco de dados local.");
+    }
+  }
+
+  void alterarFoto(Arquivo? arquivo) async {
+    try {
+      Database db = await _getDatabase();
+      await db.rawInsert(
+        "UPDATE usuario SET nome_absoluto_foto = ?",
+        [
+          arquivo != null ? arquivo.nomeAbsoluto! : null,
+        ],
+      );
+    } catch (error) {
+      throw EventHubException(
+        "Ocorreu um erro ao alterar o usuário no banco de dados local.",
+      );
     }
   }
 }

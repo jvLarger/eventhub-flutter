@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/db/usuario_db.dart';
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
@@ -94,6 +95,19 @@ class UsuarioService {
 
       await UsuarioDB().alterarNomeCompleto(usuarioAutenticado);
       return usuarioAutenticado;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<void> alterarImagemPerfilUsuario(int? idArquivo) async {
+    final response = await Api.alterarImagemPerfilUsuario(
+      Arquivo(
+        id: idArquivo,
+      ),
+    );
+
+    if (response.statusCode == 200) {
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }

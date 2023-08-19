@@ -47,5 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Para realizar uploads de fotos dentro da aplicação EventHub quando necessário</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Para realizar uploads de fotos dentro da aplicação EventHub quando necessário</string>
 </dict>
 </plist>

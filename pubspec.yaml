@@ -41,6 +41,8 @@ dependencies:
   intl: ^0.18.0
   flutter_localization: ^0.1.12
   extended_masked_text: ^2.3.1
+  phosphor_flutter: ^2.0.0
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:

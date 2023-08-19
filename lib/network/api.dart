@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/utils/util.dart';
@@ -95,6 +96,28 @@ class Api {
       headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
+      ),
+    );
+  }
+
+  static uploadFile(String base64) async {
+    return await http.post(
+      getURI('$baseURL/arquivos'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {
+          "base64": base64,
+        },
+      ),
+    );
+  }
+
+  static alterarImagemPerfilUsuario(Arquivo arquivo) async {
+    return await http.put(
+      getURI('$baseURL/usuarios/foto'),
+      headers: getHeader(),
+      body: jsonEncode(
+        arquivo.toJson(),
       ),
     );
   }
