@@ -38,6 +38,7 @@ class _RecuperarSenhaNovaSenhaPageState extends State<RecuperarSenhaNovaSenhaPag
       if (_novaSenhaController.text != _repitaNovaSenhaController.text) {
         throw EventHubException("As senhas não coincidem!");
       }
+      Util.showLoading(context);
 
       await TokenService().alterarSenhaUsuario(
         Token(
@@ -47,13 +48,17 @@ class _RecuperarSenhaNovaSenhaPageState extends State<RecuperarSenhaNovaSenhaPag
             senha: _novaSenhaController.text,
           ),
         ),
+        // ignore: use_build_context_synchronously
       );
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
       // ignore: use_build_context_synchronously
       Util.goTo(
         context,
         const LoginPage(),
       );
     } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
   }

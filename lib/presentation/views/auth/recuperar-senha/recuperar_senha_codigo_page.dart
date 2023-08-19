@@ -35,7 +35,10 @@ class _RecuperarSenhaCodigoPageState extends State<RecuperarSenhaCodigoPage> {
     try {
       String codigoString = _digitoUmController.text + _digitoDoisController.text + _digitoTresController.text + _digitoQuatroController.text;
       int codigo = int.parse(codigoString);
+      Util.showLoading(context);
       await TokenService().validarTokenInformado(codigo, widget.email);
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
       // ignore: use_build_context_synchronously
       Util.goTo(
         context,
@@ -45,6 +48,7 @@ class _RecuperarSenhaCodigoPageState extends State<RecuperarSenhaCodigoPage> {
         ),
       );
     } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
   }

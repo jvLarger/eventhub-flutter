@@ -30,6 +30,7 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
 
   enviarTokenRecuperacao() async {
     try {
+      Util.showLoading(context);
       await TokenService().enviarTokenRecuperacao(
         Token(
           usuario: Usuario(
@@ -38,6 +39,8 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
         ),
       );
       // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
       Util.goTo(
         context,
         RecuperarSenhaCodigoPage(
@@ -45,6 +48,7 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
         ),
       );
     } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
   }
