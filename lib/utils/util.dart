@@ -80,4 +80,53 @@ class Util {
     String apenasNumeros = input.replaceAll(regex, '');
     return apenasNumeros;
   }
+
+  static showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  static hideLoading(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  static String converterDataPtBrParaEngl(String dataBr) {
+    String dataEng = "";
+
+    if (dataBr.isNotEmpty) {
+      dataEng = "${dataBr.split("/")[2]}-${dataBr.split("/")[1]}-${dataBr.split("/")[0]}";
+    }
+
+    return dataEng;
+  }
+
+  static String aplicarMascara(String texto, String mascara) {
+    int indiceTexto = 0;
+    String textoFormatado = '';
+
+    for (int i = 0; i < mascara.length; i++) {
+      if (indiceTexto >= texto.length) {
+        break;
+      }
+
+      if (mascara[i] == '#') {
+        textoFormatado += texto[indiceTexto];
+        indiceTexto++;
+      } else {
+        textoFormatado += mascara[i];
+      }
+    }
+
+    return textoFormatado;
+  }
+
+  static dateEngToPtBr(String data) {
+    return "${data.split("-")[2]}/${data.split("-")[1]}/${data.split("-")[0]}";
+  }
 }

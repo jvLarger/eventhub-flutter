@@ -88,4 +88,14 @@ class Api {
       ),
     );
   }
+
+  static alterarInformacoesUsuario(Usuario usuario) async {
+    return await http.put(
+      getURI('$baseURL/usuarios'),
+      headers: getHeader(),
+      body: jsonEncode(
+        usuario.toJson(),
+      ),
+    );
+  }
 }

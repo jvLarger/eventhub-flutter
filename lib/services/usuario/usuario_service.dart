@@ -50,7 +50,7 @@ class UsuarioService {
       );
 
       Api.apiKey = usuarioAutenticado.token!;
-
+      await UsuarioDB().removerUsuario();
       if (isManterConectado) {
         await UsuarioDB().inserirUsuario(usuarioAutenticado);
       }
@@ -77,6 +77,23 @@ class UsuarioService {
       );
 
       return usuario;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<Usuario> alterarInformacoesUsuario(Usuario usuario) async {
+    final response = await Api.alterarInformacoesUsuario(usuario);
+
+    if (response.statusCode == 200) {
+      Usuario usuarioAutenticado = Usuario.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      await UsuarioDB().alterarNomeCompleto(usuarioAutenticado);
+      return usuarioAutenticado;
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }

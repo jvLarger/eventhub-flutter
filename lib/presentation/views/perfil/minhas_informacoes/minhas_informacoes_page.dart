@@ -32,13 +32,37 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
   final MaskedTextController _documentoPrincipalController = MaskedTextController(mask: '000.000.000-00');
   final MaskedTextController _telefoneController = MaskedTextController(mask: '00 0 0000-0000');
 
-  alterarInformacoesUsuario() {}
+  alterarInformacoesUsuario() async {
+    try {
+      Util.showLoading(context);
+      await UsuarioService().alterarInformacoesUsuario(
+        Usuario(
+          nomeCompleto: _nomeCompletoController.text,
+          dataComemorativa: Util.converterDataPtBrParaEngl(_dataComemorativaController.text),
+          documentoPrincipal: Util.getSomenteNumeros(_documentoPrincipalController.text),
+          telefone: Util.getSomenteNumeros(_telefoneController.text),
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   buscarUsuarioLogado() async {
     try {
       Usuario usuario = await UsuarioService().buscarUsuarioLogado();
-
       _nomeCompletoController.text = usuario.nomeCompleto!;
+      _dataComemorativaController.text = usuario.dataComemorativa != null ? Util.dateEngToPtBr(usuario.dataComemorativa!) : "";
+      _telefoneController.text = usuario.telefone != null ? Util.aplicarMascara(usuario.telefone!, "## # ####-####") : "";
+      _documentoPrincipalController.text = usuario.documentoPrincipal != null
+          ? usuario.documentoPrincipal!.length == 11
+              ? Util.aplicarMascara(usuario.documentoPrincipal!, "###.###.###-##")
+              : Util.aplicarMascara(usuario.documentoPrincipal!, "##.###.###/####-##")
+          : "";
+
       if (mounted) {
         setState(() {});
       }
