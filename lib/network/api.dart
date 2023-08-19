@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
@@ -58,6 +59,33 @@ class Api {
     return await http.get(
       getURI('$baseURL/usuarios'),
       headers: getHeader(),
+    );
+  }
+
+  static enviarTokenRecuperacao(Token token) async {
+    return await http.post(
+      getURI('$baseURL/publico/recuperar-senha'),
+      headers: getHeader(),
+      body: jsonEncode(
+        token.toJson(),
+      ),
+    );
+  }
+
+  static validarTokenInformado(int codigo, String email) async {
+    return await http.get(
+      getURI('$baseURL/publico/validar-token/$codigo/$email'),
+      headers: getHeader(),
+    );
+  }
+
+  static alterarSenhaUsuario(Token token) async {
+    return await http.put(
+      getURI('$baseURL/publico/nova-senha'),
+      headers: getHeader(),
+      body: jsonEncode(
+        token.toJson(),
+      ),
     );
   }
 }

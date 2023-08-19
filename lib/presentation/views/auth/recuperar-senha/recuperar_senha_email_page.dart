@@ -1,7 +1,11 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/token/token.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/auth/recuperar-senha/recuperar_senha_codigo_page.dart';
+import 'package:eventhub/services/token/token_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -12,17 +16,37 @@ class RecuperarSenhaEmailPage extends StatefulWidget {
   const RecuperarSenhaEmailPage({super.key});
 
   @override
-  State<RecuperarSenhaEmailPage> createState() =>
-      _RecuperarSenhaEmailPageState();
+  State<RecuperarSenhaEmailPage> createState() => _RecuperarSenhaEmailPageState();
 }
 
 class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
   final TextEditingController _emailController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
+  }
+
+  enviarTokenRecuperacao() async {
+    try {
+      await TokenService().enviarTokenRecuperacao(
+        Token(
+          usuario: Usuario(
+            email: _emailController.text,
+          ),
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Util.goTo(
+        context,
+        RecuperarSenhaCodigoPage(
+          email: _emailController.text,
+        ),
+      );
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
   }
 
   @override
@@ -52,20 +76,35 @@ class _RecuperarSenhaEmailPageState extends State<RecuperarSenhaEmailPage> {
             const SizedBox(
               height: defaultPadding,
             ),
-            EventHubTextFormField(
-              label: "E-mail",
-              prefixIcon: const Icon(
-                Ionicons.mail_outline,
-                size: 15,
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  EventHubTextFormField(
+                    label: "E-mail",
+                    prefixIcon: const Icon(
+                      Ionicons.mail_outline,
+                      size: 15,
+                    ),
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'E-mail não informada!';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              controller: _emailController,
             ),
             const SizedBox(
               height: defaultPadding,
             ),
             ElevatedButton(
               onPressed: () {
-                Util.goTo(context, const RecuperarSenhaCodigoPage());
+                if (_formKey.currentState!.validate()) {
+                  enviarTokenRecuperacao();
+                }
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,

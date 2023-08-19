@@ -1,7 +1,11 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/token/token.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
+import 'package:eventhub/services/token/token_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -9,20 +13,50 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
 
 class RecuperarSenhaNovaSenhaPage extends StatefulWidget {
-  const RecuperarSenhaNovaSenhaPage({super.key});
+  final String email;
+  final int codigo;
+  const RecuperarSenhaNovaSenhaPage({
+    super.key,
+    required this.codigo,
+    required this.email,
+  });
 
   @override
-  State<RecuperarSenhaNovaSenhaPage> createState() =>
-      _RecuperarSenhaNovaSenhaPageState();
+  State<RecuperarSenhaNovaSenhaPage> createState() => _RecuperarSenhaNovaSenhaPageState();
 }
 
-class _RecuperarSenhaNovaSenhaPageState
-    extends State<RecuperarSenhaNovaSenhaPage> {
+class _RecuperarSenhaNovaSenhaPageState extends State<RecuperarSenhaNovaSenhaPage> {
+  final _formKey = GlobalKey<FormState>();
+
   bool _isNovaSenhaVisivel = false;
   bool _isRepitaNovaSenhaVisivel = false;
   final TextEditingController _novaSenhaController = TextEditingController();
-  final TextEditingController _repitaNovaSenhaController =
-      TextEditingController();
+  final TextEditingController _repitaNovaSenhaController = TextEditingController();
+
+  alterarSenhaUsuario() async {
+    try {
+      if (_novaSenhaController.text != _repitaNovaSenhaController.text) {
+        throw EventHubException("As senhas não coincidem!");
+      }
+
+      await TokenService().alterarSenhaUsuario(
+        Token(
+          codigo: widget.codigo,
+          usuario: Usuario(
+            email: widget.email,
+            senha: _novaSenhaController.text,
+          ),
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Util.goTo(
+        context,
+        const LoginPage(),
+      );
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,62 +85,74 @@ class _RecuperarSenhaNovaSenhaPageState
             const SizedBox(
               height: defaultPadding,
             ),
-            EventHubTextFormField(
-              label: "Nova Senha",
-              obscureText: !_isNovaSenhaVisivel,
-              prefixIcon: const Icon(
-                Ionicons.lock_closed_outline,
-                size: 15,
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  EventHubTextFormField(
+                    label: "Nova Senha",
+                    obscureText: !_isNovaSenhaVisivel,
+                    prefixIcon: const Icon(
+                      Ionicons.lock_closed_outline,
+                      size: 15,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        !_isNovaSenhaVisivel ? Ionicons.eye_outline : Ionicons.eye_off_outline,
+                        size: 15,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isNovaSenhaVisivel = !_isNovaSenhaVisivel;
+                        });
+                      },
+                    ),
+                    controller: _novaSenhaController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Senha não informada!';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  EventHubTextFormField(
+                    label: "Repita a Nova Senha",
+                    obscureText: !_isRepitaNovaSenhaVisivel,
+                    prefixIcon: const Icon(
+                      Ionicons.lock_closed_outline,
+                      size: 15,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        !_isRepitaNovaSenhaVisivel ? Ionicons.eye_outline : Ionicons.eye_off_outline,
+                        size: 15,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isRepitaNovaSenhaVisivel = !_isRepitaNovaSenhaVisivel;
+                        });
+                      },
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirmação de Senha não informada!';
+                      }
+                      return null;
+                    },
+                    controller: _repitaNovaSenhaController,
+                  ),
+                ],
               ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  !_isNovaSenhaVisivel
-                      ? Ionicons.eye_outline
-                      : Ionicons.eye_off_outline,
-                  size: 15,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isNovaSenhaVisivel = !_isNovaSenhaVisivel;
-                  });
-                },
-              ),
-              controller: _novaSenhaController,
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            EventHubTextFormField(
-              label: "Repita a Nova Senha",
-              obscureText: !_isRepitaNovaSenhaVisivel,
-              prefixIcon: const Icon(
-                Ionicons.lock_closed_outline,
-                size: 15,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  !_isRepitaNovaSenhaVisivel
-                      ? Ionicons.eye_outline
-                      : Ionicons.eye_off_outline,
-                  size: 15,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isRepitaNovaSenhaVisivel = !_isRepitaNovaSenhaVisivel;
-                  });
-                },
-              ),
-              controller: _repitaNovaSenhaController,
             ),
             const SizedBox(
               height: defaultPadding,
             ),
             ElevatedButton(
               onPressed: () {
-                Util.goTo(
-                  context,
-                  const LoginPage(),
-                );
+                alterarSenhaUsuario();
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
