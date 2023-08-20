@@ -1,3 +1,5 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/perfil/perfil.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
@@ -8,6 +10,7 @@ import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page
 import 'package:eventhub/presentation/views/faturamento/sacar_saldo_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
+import 'package:eventhub/services/perfil/perfil_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -27,9 +30,30 @@ class MeuPerfilPage extends StatefulWidget {
 }
 
 class _MeuPerfilPageState extends State<MeuPerfilPage> {
+  bool _isLoading = true;
+  Perfil _perfil = Perfil();
+
+  buscarMeuPerfil() async {
+    try {
+      _perfil = await PerfilService().buscarMeuPerfil();
+      setState(() {
+        _isLoading = false;
+      });
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarMeuPerfil();
+  }
+
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
+      isLoading: _isLoading,
       bottomNavigationBar: EventHubBottomBar(
         indexRecursoAtivo: 4,
         usuarioAutenticado: widget.usuarioAutenticado,
@@ -93,20 +117,20 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Text(
-                          "0",
-                          style: TextStyle(
+                          _perfil.numeroEventos != null ? _perfil.numeroEventos.toString() : "",
+                          style: const TextStyle(
                             fontSize: 32,
                             color: Color.fromRGBO(33, 33, 33, 1),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: defaultPadding / 2,
                         ),
-                        Text(
+                        const Text(
                           "Eventos",
                           style: TextStyle(
                             fontSize: 16,
@@ -122,21 +146,21 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                   width: 0.5,
                   color: const Color.fromRGBO(221, 213, 213, 1),
                 ),
-                const Expanded(
+                Expanded(
                   child: Column(
                     children: [
                       Text(
-                        "0",
-                        style: TextStyle(
+                        _perfil.numeroAmigos != null ? _perfil.numeroAmigos.toString() : "",
+                        style: const TextStyle(
                           fontSize: 32,
                           color: Color.fromRGBO(33, 33, 33, 1),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: defaultPadding / 2,
                       ),
-                      Text(
+                      const Text(
                         "Amigos",
                         style: TextStyle(
                           fontSize: 16,

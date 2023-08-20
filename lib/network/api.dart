@@ -121,4 +121,18 @@ class Api {
       ),
     );
   }
+
+  static buscarMeuPerfil() async {
+    return await http.get(
+      getURI('$baseURL/perfis'),
+      headers: getHeader(),
+    );
+  }
+
+  static buscarPerfil(int idUsuario) async {
+    return await http.get(
+      getURI('$baseURL/perfis/$idUsuario'),
+      headers: getHeader(),
+    );
+  }
 }
