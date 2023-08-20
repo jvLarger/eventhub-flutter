@@ -75,6 +75,19 @@ class Util {
     ));
   }
 
+  static void showSnackbarSuccess(BuildContext context, String cause) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: const Color.fromRGBO(7, 189, 116, 1),
+      duration: const Duration(seconds: 3),
+      content: Text(
+        cause,
+        style: const TextStyle(
+          fontFamily: 'Urbanist',
+        ),
+      ),
+    ));
+  }
+
   static String getSomenteNumeros(String input) {
     RegExp regex = RegExp(r'[^\d]');
     String apenasNumeros = input.replaceAll(regex, '');

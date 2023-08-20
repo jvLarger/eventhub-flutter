@@ -54,6 +54,8 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
       );
       // ignore: use_build_context_synchronously
       Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Informações salvas com sucesso!");
     } on EventHubException catch (err) {
       Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
