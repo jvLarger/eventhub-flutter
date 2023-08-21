@@ -1,7 +1,6 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/perfil/perfil.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
-import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
@@ -52,232 +51,233 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
 
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
-      isLoading: _isLoading,
-      bottomNavigationBar: EventHubBottomBar(
-        indexRecursoAtivo: 4,
-        usuarioAutenticado: widget.usuarioAutenticado,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: defaultPadding,
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : EventHubBody(
+            bottomNavigationBar: EventHubBottomBar(
+              indexRecursoAtivo: 4,
+              usuarioAutenticado: widget.usuarioAutenticado,
             ),
-            Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/images/logo_eventhub.svg",
-                  width: 25,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Text(
-                  "Perfil",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: defaultPadding,
                   ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: widget.usuarioAutenticado.foto != null ? NetworkImage("${Api.baseURL}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}") : const NetworkImage(""),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            Text(
-              widget.usuarioAutenticado.nomeCompleto!,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            const Divider(
-              height: 1,
-              color: Color.fromRGBO(221, 213, 213, 1),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: Column(
-                      children: [
-                        Text(
-                          _perfil.numeroEventos != null ? _perfil.numeroEventos.toString() : "",
-                          style: const TextStyle(
-                            fontSize: 32,
-                            color: Color.fromRGBO(33, 33, 33, 1),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: defaultPadding / 2,
-                        ),
-                        const Text(
-                          "Eventos",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromRGBO(97, 97, 97, 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 50,
-                  width: 0.5,
-                  color: const Color.fromRGBO(221, 213, 213, 1),
-                ),
-                Expanded(
-                  child: Column(
+                  Row(
                     children: [
-                      Text(
-                        _perfil.numeroAmigos != null ? _perfil.numeroAmigos.toString() : "",
-                        style: const TextStyle(
-                          fontSize: 32,
-                          color: Color.fromRGBO(33, 33, 33, 1),
-                          fontWeight: FontWeight.bold,
-                        ),
+                      SvgPicture.asset(
+                        "assets/images/logo_eventhub.svg",
+                        width: 25,
                       ),
                       const SizedBox(
-                        height: defaultPadding / 2,
+                        width: 10,
                       ),
                       const Text(
-                        "Amigos",
+                        "Perfil",
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Color.fromRGBO(97, 97, 97, 1),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
+                          Util.montarURlFotoByArquivo(widget.usuarioAutenticado.foto),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 1,
-              color: Color.fromRGBO(221, 213, 213, 1),
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.calendar_outline,
-              "Gerenciar meus Eventos",
-              () {
-                Util.goTo(context, MeusEventosPage());
-              },
-              false,
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.chatbox_outline,
-              "Chat",
-              () {
-                Util.goTo(context, SalasBatePapoPage());
-              },
-              false,
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            const Divider(
-              height: 1,
-              color: Color.fromRGBO(221, 213, 213, 1),
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.person_outline,
-              "Minhas Informações",
-              () {
-                Util.goTo(
-                  context,
-                  MinhasInformacoesPage(
-                    usuarioAutenticado: widget.usuarioAutenticado,
+                  const SizedBox(
+                    height: defaultPadding,
                   ),
-                );
-              },
-              false,
+                  Text(
+                    widget.usuarioAutenticado.nomeCompleto!,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                          child: Column(
+                            children: [
+                              Text(
+                                _perfil.numeroEventos != null ? _perfil.numeroEventos.toString() : "",
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  color: Color.fromRGBO(33, 33, 33, 1),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: defaultPadding / 2,
+                              ),
+                              const Text(
+                                "Eventos",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromRGBO(97, 97, 97, 1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 50,
+                        width: 0.5,
+                        color: const Color.fromRGBO(221, 213, 213, 1),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              _perfil.numeroAmigos != null ? _perfil.numeroAmigos.toString() : "",
+                              style: const TextStyle(
+                                fontSize: 32,
+                                color: Color.fromRGBO(33, 33, 33, 1),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: defaultPadding / 2,
+                            ),
+                            const Text(
+                              "Amigos",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromRGBO(97, 97, 97, 1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.calendar_outline,
+                    "Gerenciar meus Eventos",
+                    () {
+                      Util.goTo(context, const MeusEventosPage());
+                    },
+                    false,
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.chatbox_outline,
+                    "Chat",
+                    () {
+                      Util.goTo(context, const SalasBatePapoPage());
+                    },
+                    false,
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.person_outline,
+                    "Minhas Informações",
+                    () {
+                      Util.goTo(
+                        context,
+                        MinhasInformacoesPage(
+                          usuarioAutenticado: widget.usuarioAutenticado,
+                        ),
+                      );
+                    },
+                    false,
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.person_circle_outline,
+                    "Meu Perfil Público",
+                    () {
+                      Util.goTo(
+                        context,
+                        PerfilPublicoPage(
+                          idUsuario: _perfil.usuario!.id!,
+                        ),
+                      );
+                    },
+                    false,
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.bar_chart_outline,
+                    "Sacar Saldo",
+                    () {
+                      Util.goTo(context, const SacarSaldoPage());
+                    },
+                    false,
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
+                  getItemMenu(
+                    Ionicons.log_out_outline,
+                    "Sair do Aplicativo",
+                    () {
+                      UsuarioService().logout();
+                      Util.goToAndOverride(
+                        context,
+                        const LoginPage(),
+                      );
+                    },
+                    true,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.person_circle_outline,
-              "Meu Perfil Público",
-              () {
-                Util.goTo(context, PerfilPublicoPage());
-              },
-              false,
-            ),
-            /*    const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.people_outline,
-              "Adicionar Amigos",
-              () {},
-              false,
-            ),*/
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.bar_chart_outline,
-              "Sacar Saldo",
-              () {
-                Util.goTo(context, SacarSaldoPage());
-              },
-              false,
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            const Divider(
-              height: 1,
-              color: Color.fromRGBO(221, 213, 213, 1),
-            ),
-            const SizedBox(
-              height: defaultPadding,
-            ),
-            getItemMenu(
-              Ionicons.log_out_outline,
-              "Sair do Aplicativo",
-              () {
-                UsuarioService().logout();
-                Util.goToAndOverride(
-                  context,
-                  const LoginPage(),
-                );
-              },
-              true,
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Widget getItemMenu(IconData icone, String label, Function action, bool isDestaque) {

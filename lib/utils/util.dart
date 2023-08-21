@@ -3,12 +3,17 @@
 import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/error/standard_error.dart';
+import 'package:eventhub/network/api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
+import 'package:intl/intl.dart';
 
 class Util {
+  static DateFormat formatterDataComHora = DateFormat('dd/MM/yyyy HH:mm');
+
   static goTo(BuildContext context, Widget page) {
     Navigator.push(
       context,
@@ -141,5 +146,25 @@ class Util {
 
   static dateEngToPtBr(String data) {
     return "${data.split("-")[2]}/${data.split("-")[1]}/${data.split("-")[0]}";
+  }
+
+  static montarURlFotoByArquivo(Arquivo? arquivo) {
+    if (arquivo != null) {
+      return montarURlFoto(arquivo.nomeAbsoluto!);
+    } else {
+      return "https://i.imgur.com/X9DTFx2.png";
+    }
+  }
+
+  static montarURlFoto(String nomeAbsoluto) {
+    return "${Api.baseURL}/publico/imagens/$nomeAbsoluto";
+  }
+
+  static String formatarDataComHora(DateTime? data) {
+    if (data != null) {
+      return formatterDataComHora.format(data);
+    } else {
+      return "";
+    }
   }
 }
