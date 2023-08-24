@@ -30,7 +30,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
 
   buscarPerfil() async {
     try {
-      _perfil = await PerfilService().buscarMeuPerfil();
+      _perfil = await PerfilService().buscarPerfil(widget.idUsuario);
 
       _isLoading = false;
       setState(() {});

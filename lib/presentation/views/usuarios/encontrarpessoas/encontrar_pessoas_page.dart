@@ -1,8 +1,14 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/usuario/page_usuario.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
+import 'package:eventhub/presentation/views/usuarios/encontrarpessoas/components/lista_pessoas.dart';
+import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
@@ -19,6 +25,23 @@ class EncontrarPessoasPage extends StatefulWidget {
 }
 
 class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
+  int page = 0;
+  List<Usuario> _listaUsuarios = [];
+  buscarPorNome(String nomeCompleto) async {
+    page = 0;
+    _listaUsuarios = [];
+    try {
+      if (nomeCompleto.trim().isNotEmpty) {
+        PageUsuario pageUsuario = await UsuarioService().encontrarPessoas(nomeCompleto, page);
+        _listaUsuarios.addAll(pageUsuario.content!);
+      }
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
@@ -30,7 +53,7 @@ class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
         padding: const EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: defaultPadding,
             ),
             Row(
@@ -60,45 +83,17 @@ class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
                 Ionicons.search,
                 size: 15,
               ),
+              onchange: (value) {
+                buscarPorNome(value);
+              },
             ),
             const SizedBox(
               height: defaultPadding,
             ),
-            getParticipante("Tanner Stafford", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23r-RPu2dhP9HrI3bUSdkZ3duFe7CVNJ49Q&usqp=CAU", false),
-            getParticipante("Leatrice Handler", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWMsksaZD0YS_walS4Nk_P98cEdals3D_vVQ&usqp=CAU", false),
-            getParticipante("Chantal Shelburne", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0y7IMZdn0mMlGwIQ2o31Lo6jD6YGxfq6pWA&usqp=CAU", true),
-            getParticipante("Maryland Winkles", "https://cajamar.sp.gov.br/noticias/wp-content/uploads/sites/2/2021/07/site-vacinacao-33-anos.png", true),
+            ListaPessoas(
+              listaUsuario: _listaUsuarios,
+            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  getParticipante(String nome, String caminhoImagem, bool isAdicionar) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 25,
-        backgroundImage: NetworkImage(caminhoImagem),
-      ),
-      contentPadding: EdgeInsets.only(
-        left: 0,
-        right: 0,
-        bottom: defaultPadding,
-        top: 0,
-      ),
-      trailing: isAdicionar
-          ? ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              ),
-              child: Text("Adicionar"),
-            )
-          : null,
-      title: Text(
-        nome,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

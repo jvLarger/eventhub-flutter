@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/db/usuario_db.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/usuario/page_usuario.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
@@ -108,6 +109,22 @@ class UsuarioService {
     );
 
     if (response.statusCode == 200) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<PageUsuario> encontrarPessoas(String nomeCompleto, int page) async {
+    final response = await Api.encontrarPessoas(nomeCompleto, page);
+
+    if (response.statusCode == 200) {
+      PageUsuario pageUsuario = PageUsuario.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return pageUsuario;
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }

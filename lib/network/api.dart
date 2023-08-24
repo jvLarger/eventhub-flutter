@@ -20,7 +20,7 @@ class Api {
 
   static Uri getURI(String nmUrl) {
     Util.printInfo("URL:'$nmUrl'");
-    Util.printInfo("token: $apiKey");
+    // Util.printInfo("token: $apiKey");
     return Uri.parse(nmUrl);
   }
 
@@ -132,6 +132,13 @@ class Api {
   static buscarPerfil(int idUsuario) async {
     return await http.get(
       getURI('$baseURL/perfis/$idUsuario'),
+      headers: getHeader(),
+    );
+  }
+
+  static encontrarPessoas(String nomeCompleto, int page) async {
+    return await http.get(
+      getURI('$baseURL/usuarios/encontrados?nomeCompleto=$nomeCompleto&page=$page&size=5000'),
       headers: getHeader(),
     );
   }
