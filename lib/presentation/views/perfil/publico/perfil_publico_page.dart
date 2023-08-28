@@ -165,41 +165,49 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          ),
-                          child: _perfil.isAmigo!
-                              ? const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Ionicons.person_remove,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text("Remover "),
-                                  ],
-                                )
-                              : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Ionicons.person_add,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text("Adicionar"),
-                                  ],
+                        child: _perfil.isSolicitacaoAmizadePendente != null && _perfil.isSolicitacaoAmizadePendente!
+                            ? const Text(
+                                "Solicitação Pendente...",
+                                style: TextStyle(
+                                  color: colorBlue,
+                                  letterSpacing: 0.4,
                                 ),
-                        ),
+                              )
+                            : ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                ),
+                                child: _perfil.isAmigo!
+                                    ? const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Ionicons.person_remove,
+                                            size: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("Remover "),
+                                        ],
+                                      )
+                                    : const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Ionicons.person_add,
+                                            size: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("Adicionar"),
+                                        ],
+                                      ),
+                              ),
                       ),
                       const SizedBox(
                         width: defaultPadding,

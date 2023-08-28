@@ -6,6 +6,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/usuarios/encontrarpessoas/components/lista_pessoas.dart';
+import 'package:eventhub/services/amizade/amizade_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -25,6 +26,24 @@ class EncontrarPessoasPage extends StatefulWidget {
 }
 
 class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
+  enviarSolicitacaoAmizade(Usuario usuario, int index) async {
+    try {
+      Util.showLoading(context);
+      await AmizadeService().enviarSolicitacaoAmizade(usuario.id!);
+      _listaUsuarios[index].isSolicitacaoAmizadePendente = true;
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Solicitação enviada com sucesso");
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   int page = 0;
   List<Usuario> _listaUsuarios = [];
   buscarPorNome(String nomeCompleto) async {
@@ -91,6 +110,7 @@ class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
               height: defaultPadding,
             ),
             ListaPessoas(
+              enviarSolicitacaoAmizade: enviarSolicitacaoAmizade,
               listaUsuario: _listaUsuarios,
             ),
           ],

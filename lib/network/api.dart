@@ -142,4 +142,28 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static enviarSolicitacaoAmizade(int idUsuario) async {
+    return await http.post(
+      getURI('$baseURL/amizades/$idUsuario'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
+
+  static aceitarSolicitacaoAmizade(idNotificacao) async {
+    return await http.post(
+      getURI('$baseURL/amizades/$idNotificacao/aceitar'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
+
+  static removerAmizade(int idUsuario) async {
+    return await http.delete(
+      getURI('$baseURL/amizades/$idUsuario'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
 }

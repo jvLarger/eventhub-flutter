@@ -1,13 +1,18 @@
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
+import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 
 class CardPessoa extends StatelessWidget {
   final Usuario usuario;
+  final int index;
+  final Function(Usuario, int) enviarSolicitacaoAmizade;
   const CardPessoa({
     super.key,
+    required this.enviarSolicitacaoAmizade,
     required this.usuario,
+    required this.index,
   });
 
   @override
@@ -34,13 +39,26 @@ class CardPessoa extends StatelessWidget {
         top: 5,
       ),
       trailing: usuario.isAmigo != null && !usuario.isAmigo!
-          ? ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              ),
-              child: const Text("Adicionar"),
-            )
+          ? usuario.isSolicitacaoAmizadePendente != null && usuario.isSolicitacaoAmizadePendente!
+              ? const Text(
+                  "Solicitação Pendente...",
+                  style: TextStyle(
+                    color: colorBlue,
+                    letterSpacing: 0.4,
+                  ),
+                )
+              : ElevatedButton(
+                  onPressed: () {
+                    enviarSolicitacaoAmizade(
+                      usuario,
+                      index,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  child: const Text("Adicionar"),
+                )
           : null,
       title: Text(
         usuario.nomeCompleto!,

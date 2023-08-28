@@ -11,6 +11,7 @@ class Usuario {
   String? telefone;
   String? dataComemorativa;
   bool? isAmigo;
+  bool? isSolicitacaoAmizadePendente;
   Arquivo? foto;
 
   Usuario({
@@ -24,6 +25,7 @@ class Usuario {
     this.dataComemorativa,
     this.foto,
     this.isAmigo,
+    this.isSolicitacaoAmizadePendente,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> jsons) {
@@ -38,6 +40,7 @@ class Usuario {
       telefone: jsons['telefone'],
       dataComemorativa: jsons['dataComemorativa'],
       isAmigo: jsons['isAmigo'],
+      isSolicitacaoAmizadePendente: jsons['isSolicitacaoAmizadePendente'],
       foto: jsons['foto'] != null ? Arquivo.fromJson(jsons['foto']) : null,
     );
   }
@@ -53,5 +56,6 @@ class Usuario {
         'dataComemorativa': dataComemorativa,
         'foto': foto,
         'isAmigo': isAmigo,
+        'isSolicitacaoAmizadePendente': isSolicitacaoAmizadePendente,
       };
 }

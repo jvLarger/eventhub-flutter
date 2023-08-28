@@ -8,6 +8,7 @@ class Perfil {
   int? numeroAmigos;
   int? numeroEventos;
   bool? isAmigo;
+  bool? isSolicitacaoAmizadePendente;
   List<PublicacaoResumida>? publicacoes;
   List<UsuarioComentario>? comentarios;
 
@@ -18,6 +19,7 @@ class Perfil {
     this.numeroEventos,
     this.publicacoes,
     this.usuario,
+    this.isSolicitacaoAmizadePendente,
   });
 
   factory Perfil.fromJson(Map<String, dynamic> jsons) {
@@ -37,6 +39,7 @@ class Perfil {
       numeroAmigos: jsons['numeroAmigos'],
       numeroEventos: jsons['numeroEventos'],
       isAmigo: jsons['isAmigo'],
+      isSolicitacaoAmizadePendente: jsons['isSolicitacaoAmizadePendente'],
       publicacoes: publicacoes,
       comentarios: comentarios,
     );
@@ -48,6 +51,7 @@ class Perfil {
         'numeroAmigos': numeroAmigos,
         'numeroEventos': numeroEventos,
         'isAmigo': isAmigo,
+        'isSolicitacaoAmizadePendente': isSolicitacaoAmizadePendente,
         'publicacoes': publicacoes,
       };
 }

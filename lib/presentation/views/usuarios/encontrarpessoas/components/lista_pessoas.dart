@@ -6,8 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ListaPessoas extends StatelessWidget {
   final List<Usuario> listaUsuario;
+  final Function(Usuario, int) enviarSolicitacaoAmizade;
   const ListaPessoas({
     super.key,
+    required this.enviarSolicitacaoAmizade,
     required this.listaUsuario,
   });
 
@@ -54,6 +56,8 @@ class ListaPessoas extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(bottom: listaUsuario.length - 1 == index ? 0 : defaultPadding),
                 child: CardPessoa(
+                  index: index,
+                  enviarSolicitacaoAmizade: enviarSolicitacaoAmizade,
                   usuario: listaUsuario[index],
                 ),
               );
