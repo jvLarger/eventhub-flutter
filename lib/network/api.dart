@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_comentario.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
@@ -162,6 +163,34 @@ class Api {
   static removerAmizade(int idUsuario) async {
     return await http.delete(
       getURI('$baseURL/amizades/$idUsuario'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
+
+  static enviarSolicitacaoComentario(int idUsuario, UsuarioComentario usuarioComentario) async {
+    return await http.post(
+      getURI('$baseURL/usuarios/comentarios/$idUsuario'),
+      headers: getHeader(),
+      body: jsonEncode(
+        usuarioComentario.toJson(),
+      ),
+    );
+  }
+
+  static aceitarSolicitacaoComentario(int idNotificacao) async {
+    return await http.post(
+      getURI('$baseURL/usuarios/comentarios/$idNotificacao/aceitar'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
+
+  static removerComentario(int idUsuarioComentario) async {
+    return await http.delete(
+      getURI('$baseURL/usuarios/comentarios/$idUsuarioComentario'),
       headers: getHeader(),
       body: jsonEncode({}),
     );

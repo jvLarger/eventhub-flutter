@@ -112,6 +112,7 @@ class _EncontrarPessoasPageState extends State<EncontrarPessoasPage> {
             ListaPessoas(
               enviarSolicitacaoAmizade: enviarSolicitacaoAmizade,
               listaUsuario: _listaUsuarios,
+              usuarioAutenticado: widget.usuarioAutenticado,
             ),
           ],
         ),

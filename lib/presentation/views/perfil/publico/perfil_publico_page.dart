@@ -1,11 +1,15 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/perfil/perfil.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
+import 'package:eventhub/model/usuario/usuario_comentario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/perfil/publico/components/lista_comentarios_usuario.dart';
 import 'package:eventhub/presentation/views/perfil/publico/components/lista_publicacaoes_resumidas.dart';
+import 'package:eventhub/services/amizade/amizade_service.dart';
 import 'package:eventhub/services/perfil/perfil_service.dart';
+import 'package:eventhub/services/usuario/usuario_comentario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +17,11 @@ import 'package:ionicons/ionicons.dart';
 
 class PerfilPublicoPage extends StatefulWidget {
   final int idUsuario;
+  final UsuarioAutenticado usuarioAutenticado;
   const PerfilPublicoPage({
     super.key,
     required this.idUsuario,
+    required this.usuarioAutenticado,
   });
 
   @override
@@ -27,6 +33,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
   Perfil _perfil = Perfil();
   TabController? _tabController;
   int _indexTabAtiva = 0;
+  final TextEditingController _comentarioController = TextEditingController();
 
   buscarPerfil() async {
     try {
@@ -35,6 +42,92 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
       _isLoading = false;
       setState(() {});
     } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  enviarSolicitacaoComentario() async {
+    try {
+      Util.showLoading(context);
+
+      if (_comentarioController.text.trim().isEmpty) {
+        throw EventHubException("Comentário não informado!");
+      }
+
+      await UsuarioComentarioService().enviarSolicitacaoComentario(
+        widget.idUsuario,
+        UsuarioComentario(
+          comentario: _comentarioController.text,
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+
+      _comentarioController.text = "";
+
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Solicitação de comentário enviada com sucesso!");
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  removerComentario(usuarioComentario) async {
+    try {
+      Util.showLoading(context);
+
+      await UsuarioComentarioService().removerComentario(usuarioComentario.id);
+
+      buscarPerfil();
+
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Comentário removido com sucesso!");
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  enviarSolicitacaoAmizade() async {
+    try {
+      Util.showLoading(context);
+      await AmizadeService().enviarSolicitacaoAmizade(widget.idUsuario);
+      _perfil.isSolicitacaoAmizadePendente = true;
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Solicitação enviada com sucesso!");
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  removerAmizade() async {
+    try {
+      Util.showLoading(context);
+      await AmizadeService().removerAmizade(widget.idUsuario);
+      _perfil.isSolicitacaoAmizadePendente = false;
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Amizade removida com sucesso!");
+
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
   }
@@ -162,86 +255,100 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                   const SizedBox(
                     height: defaultPadding,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _perfil.isSolicitacaoAmizadePendente != null && _perfil.isSolicitacaoAmizadePendente!
-                            ? const Text(
-                                "Solicitação Pendente...",
-                                style: TextStyle(
-                                  color: colorBlue,
-                                  letterSpacing: 0.4,
-                                ),
-                              )
-                            : ElevatedButton(
+                  Visibility(
+                    visible: widget.idUsuario != widget.usuarioAutenticado.id,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _perfil.isSolicitacaoAmizadePendente != null && _perfil.isSolicitacaoAmizadePendente!
+                                  ? const Text(
+                                      "Solicitação Pendente...",
+                                      style: TextStyle(
+                                        color: colorBlue,
+                                        letterSpacing: 0.4,
+                                      ),
+                                    )
+                                  : _perfil.isAmigo!
+                                      ? ElevatedButton(
+                                          onPressed: () {
+                                            removerAmizade();
+                                          },
+                                          child: const Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Ionicons.person_remove,
+                                                size: 15,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text("Remover "),
+                                            ],
+                                          ),
+                                        )
+                                      : ElevatedButton(
+                                          onPressed: () {
+                                            enviarSolicitacaoAmizade();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                          ),
+                                          child: const Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Ionicons.person_add,
+                                                size: 15,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text("Adicionar"),
+                                            ],
+                                          ),
+                                        ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding,
+                            ),
+                            Expanded(
+                              child: OutlinedButton(
                                 onPressed: () {},
-                                style: ElevatedButton.styleFrom(
+                                style: OutlinedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                 ),
-                                child: _perfil.isAmigo!
-                                    ? const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Ionicons.person_remove,
-                                            size: 15,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text("Remover "),
-                                        ],
-                                      )
-                                    : const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Ionicons.person_add,
-                                            size: 15,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text("Adicionar"),
-                                        ],
-                                      ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.message_outlined,
+                                      size: 15,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text("Mensagem"),
+                                  ],
+                                ),
                               ),
-                      ),
-                      const SizedBox(
-                        width: defaultPadding,
-                      ),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.message_outlined,
-                                size: 15,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text("Mensagem"),
-                            ],
-                          ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: defaultPadding,
-                  ),
-                  const Divider(
-                    height: 1,
-                    color: Color.fromRGBO(221, 213, 213, 1),
+                        const SizedBox(
+                          height: defaultPadding,
+                        ),
+                        const Divider(
+                          height: 1,
+                          color: Color.fromRGBO(221, 213, 213, 1),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -280,19 +387,67 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                             children: [
                               ListaComentariosUsuario(
                                 listaComentarios: _perfil.comentarios!,
+                                tratarRemocaoComentario: (UsuarioComentario usuarioComentario) {
+                                  if (usuarioComentario.usuario!.id! == widget.usuarioAutenticado.id || usuarioComentario.usuarioOrigem!.id! == widget.usuarioAutenticado.id) {
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible: false, // user must tap button!
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                            'Excluir Comentário',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          content: const SingleChildScrollView(
+                                            child: ListBody(
+                                              children: <Widget>[
+                                                Text('Deseja realmente remover esse comentário?'),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text(
+                                                'Confirmar',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                removerComentario(usuarioComentario);
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Cancelar'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
                               ),
                               const SizedBox(
                                 height: defaultPadding,
                               ),
                               EventHubTextFormField(
                                 label: "Escreva alguma coisa...",
+                                controller: _comentarioController,
                                 suffixIcon: IconButton(
                                   icon: const Icon(
                                     Ionicons.send,
                                     color: colorBlue,
                                     size: 15,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    enviarSolicitacaoComentario();
+                                  },
                                 ),
                               ),
                             ],

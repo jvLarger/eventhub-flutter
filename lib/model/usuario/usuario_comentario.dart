@@ -4,6 +4,7 @@ import 'package:eventhub/utils/util.dart';
 class UsuarioComentario {
   int? id;
   Usuario? usuarioOrigem;
+  Usuario? usuario;
   DateTime? dataComentario;
   String? comentario;
 
@@ -12,6 +13,7 @@ class UsuarioComentario {
     this.dataComentario,
     this.id,
     this.usuarioOrigem,
+    this.usuario,
   });
 
   factory UsuarioComentario.fromJson(Map<String, dynamic> jsons) {
@@ -20,6 +22,7 @@ class UsuarioComentario {
       id: jsons['id'],
       dataComentario: DateTime.parse(jsons['dataComentario']),
       comentario: jsons['comentario'],
+      usuario: Usuario.fromJson(jsons['usuario']),
       usuarioOrigem: Usuario.fromJson(jsons['usuarioOrigem']),
     );
   }
@@ -29,5 +32,6 @@ class UsuarioComentario {
         'dataComentario': dataComentario,
         'comentario': comentario,
         'usuarioOrigem': usuarioOrigem,
+        'usuario': usuario,
       };
 }

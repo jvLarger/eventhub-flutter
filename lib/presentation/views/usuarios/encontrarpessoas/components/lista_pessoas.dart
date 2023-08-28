@@ -1,4 +1,5 @@
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/views/usuarios/encontrarpessoas/components/card_pessoa.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 class ListaPessoas extends StatelessWidget {
   final List<Usuario> listaUsuario;
   final Function(Usuario, int) enviarSolicitacaoAmizade;
+  final UsuarioAutenticado usuarioAutenticado;
   const ListaPessoas({
     super.key,
     required this.enviarSolicitacaoAmizade,
     required this.listaUsuario,
+    required this.usuarioAutenticado,
   });
 
   @override
@@ -56,6 +59,7 @@ class ListaPessoas extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(bottom: listaUsuario.length - 1 == index ? 0 : defaultPadding),
                 child: CardPessoa(
+                  usuarioAutenticado: usuarioAutenticado,
                   index: index,
                   enviarSolicitacaoAmizade: enviarSolicitacaoAmizade,
                   usuario: listaUsuario[index],

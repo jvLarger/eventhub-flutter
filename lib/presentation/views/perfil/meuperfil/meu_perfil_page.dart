@@ -236,6 +236,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                         context,
                         PerfilPublicoPage(
                           idUsuario: _perfil.usuario!.id!,
+                          usuarioAutenticado: widget.usuarioAutenticado,
                         ),
                       );
                     },

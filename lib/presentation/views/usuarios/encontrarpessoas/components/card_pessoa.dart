@@ -1,4 +1,5 @@
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class CardPessoa extends StatelessWidget {
   final Usuario usuario;
+  final UsuarioAutenticado usuarioAutenticado;
   final int index;
   final Function(Usuario, int) enviarSolicitacaoAmizade;
   const CardPessoa({
@@ -13,6 +15,7 @@ class CardPessoa extends StatelessWidget {
     required this.enviarSolicitacaoAmizade,
     required this.usuario,
     required this.index,
+    required this.usuarioAutenticado,
   });
 
   @override
@@ -23,6 +26,7 @@ class CardPessoa extends StatelessWidget {
           context,
           PerfilPublicoPage(
             idUsuario: usuario.id!,
+            usuarioAutenticado: usuarioAutenticado,
           ),
         );
       },
