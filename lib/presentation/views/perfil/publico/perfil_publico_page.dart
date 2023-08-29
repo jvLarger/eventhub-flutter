@@ -119,6 +119,8 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
       Util.showLoading(context);
       await AmizadeService().removerAmizade(widget.idUsuario);
       _perfil.isSolicitacaoAmizadePendente = false;
+      _perfil.isAmigo = false;
+      _perfil.numeroAmigos = _perfil.numeroAmigos! - 1;
       // ignore: use_build_context_synchronously
       Util.hideLoading(context);
 

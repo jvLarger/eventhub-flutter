@@ -195,4 +195,21 @@ class Api {
       body: jsonEncode({}),
     );
   }
+
+  static buscarNotificacoesPendentes() async {
+    return await http.get(
+      getURI('$baseURL/notificacoes/pendentes'),
+      headers: getHeader(),
+    );
+  }
+
+  static marcarComoLida(int idNotificacao) async {
+    return await http.put(
+      getURI('$baseURL/notificacoes/$idNotificacao/ler'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
 }

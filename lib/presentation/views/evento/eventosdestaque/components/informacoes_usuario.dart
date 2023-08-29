@@ -1,15 +1,40 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/notificacao/notificacao.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
+import 'package:eventhub/presentation/views/notificacao/notificacao_page.dart';
+import 'package:eventhub/services/notificacao/notificacao_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 
-class InformacoesUsuario extends StatelessWidget {
+class InformacoesUsuario extends StatefulWidget {
+  final UsuarioAutenticado usuarioAutenticado;
   const InformacoesUsuario({
     super.key,
     required this.usuarioAutenticado,
   });
 
-  final UsuarioAutenticado usuarioAutenticado;
+  @override
+  State<InformacoesUsuario> createState() => _InformacoesUsuarioState();
+}
+
+class _InformacoesUsuarioState extends State<InformacoesUsuario> {
+  List<Notificacao> _listaNotificacao = [];
+
+  buscarNotificacoesPendentes() async {
+    try {
+      _listaNotificacao = await NotificacaoService().buscarNotificacoesPendentes();
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarNotificacoesPendentes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +48,7 @@ class InformacoesUsuario extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: colorBlue,
                 backgroundImage: NetworkImage(
-                  Util.montarURlFotoByArquivo(usuarioAutenticado.foto),
+                  Util.montarURlFotoByArquivo(widget.usuarioAutenticado.foto),
                 ),
               ),
               const SizedBox(
@@ -36,7 +61,7 @@ class InformacoesUsuario extends StatelessWidget {
                     "Bem-vindo!",
                   ),
                   Text(
-                    usuarioAutenticado.nomeCompleto!,
+                    widget.usuarioAutenticado.nomeCompleto!,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 17,
@@ -46,19 +71,60 @@ class InformacoesUsuario extends StatelessWidget {
               )
             ],
           ),
-          GestureDetector(
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: const Color.fromRGBO(238, 238, 238, 1),
-                  width: 1,
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              const SizedBox(
+                width: 50,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Util.goTo(
+                    context,
+                    NotificacaoPage(
+                      usuarioAutenticado: widget.usuarioAutenticado,
+                      listaNotificacao: _listaNotificacao,
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: const Color.fromRGBO(238, 238, 238, 1),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(Icons.notifications_outlined),
                 ),
               ),
-              child: const Icon(Icons.notifications_outlined),
-            ),
+              Visibility(
+                visible: _listaNotificacao.isNotEmpty,
+                child: Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    height: 22,
+                    width: 22,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _listaNotificacao.length.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
           )
         ],
       ),
