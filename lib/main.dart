@@ -1,17 +1,39 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/config/themes/app_theme.dart';
 import 'package:eventhub/db/usuario_db.dart';
+import 'package:eventhub/firebase_options.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
+import 'package:eventhub/services/firebase/firebase_messaging_service.dart';
+import 'package:eventhub/services/firebase/notification_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/util.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const EventHubApp());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<NotificationService>(
+          create: (context) => NotificationService(),
+        ),
+        Provider<FirebaseMessagingService>(
+          create: (context) => FirebaseMessagingService(context.read<NotificationService>()),
+        ),
+      ],
+      child: const EventHubApp(),
+    ),
+  );
 }
 
 class EventHubApp extends StatefulWidget {
@@ -24,18 +46,16 @@ class EventHubApp extends StatefulWidget {
 class _EventHubAppState extends State<EventHubApp> {
   Future<UsuarioAutenticado?> validarUsuarioLogado() async {
     try {
-      UsuarioAutenticado? usuarioAutenticado =
-          await UsuarioDB().buscarUsuario();
-
+      UsuarioAutenticado? usuarioAutenticado = await UsuarioDB().buscarUsuario();
       if (usuarioAutenticado != null) {
-        bool isTokenValido =
-            await UsuarioService().isTokenValido(usuarioAutenticado.token!);
+        bool isTokenValido = await UsuarioService().isTokenValido(usuarioAutenticado.token!);
 
         if (!isTokenValido) {
           await UsuarioDB().removerUsuario();
           usuarioAutenticado = null;
         } else {
           Api.apiKey = usuarioAutenticado.token!;
+          usuarioAutenticado = await UsuarioService().tratarIdentificadorNotificacao(usuarioAutenticado);
         }
       }
 
@@ -44,6 +64,21 @@ class _EventHubAppState extends State<EventHubApp> {
       Util.showSnackbarError(context, err.cause);
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initilizeFirebaseMessaging();
+    checkNotifications();
+  }
+
+  initilizeFirebaseMessaging() async {
+    await Provider.of<FirebaseMessagingService>(context, listen: false).initialize();
+  }
+
+  checkNotifications() async {
+    await Provider.of<NotificationService>(context, listen: false).checkForNotifications();
   }
 
   @override

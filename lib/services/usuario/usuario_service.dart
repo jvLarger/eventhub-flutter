@@ -8,6 +8,7 @@ import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/util.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UsuarioService {
   Future<UsuarioAutenticado> criarUsuario(Usuario usuario) async {
@@ -128,5 +129,24 @@ class UsuarioService {
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }
+  }
+
+  Future<UsuarioAutenticado> tratarIdentificadorNotificacao(UsuarioAutenticado usuarioAutenticado) async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+
+    if (usuarioAutenticado.identificadorNotificacao != fcmToken) {
+      usuarioAutenticado.identificadorNotificacao = fcmToken;
+
+      final response = await Api.alterarIdentificadorNotificacao(usuarioAutenticado);
+
+      if (response.statusCode == 200) {
+        await UsuarioDB().alterarIdentificadorNotificacao(fcmToken);
+        return usuarioAutenticado;
+      } else {
+        throw EventHubException(Util.getMensagemErro(response));
+      }
+    }
+
+    return usuarioAutenticado;
   }
 }

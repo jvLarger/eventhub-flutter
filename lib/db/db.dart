@@ -7,7 +7,7 @@ import 'package:path/path.dart' show join;
 
 class EventHubDatabase {
   static const _databaseName = "eventhub.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2;
 
   EventHubDatabase._internal() {
     // if (_database == null) database;
@@ -44,7 +44,8 @@ class EventHubDatabase {
             nome_usuario VARCHAR(60) NOT NULL,
             email VARCHAR(60) NOT NULL,
             token TEXT NOT NULL,
-            nome_absoluto_foto TEXT
+            nome_absoluto_foto TEXT,
+            identificador_notificacao TEXT
           )
     ''');
   }

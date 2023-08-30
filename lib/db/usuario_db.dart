@@ -16,7 +16,7 @@ class UsuarioDB {
     try {
       Database db = await _getDatabase();
       await db.rawInsert(
-        "INSERT INTO usuario (id, nome_completo, nome_usuario, email, token, nome_absoluto_foto) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO usuario (id, nome_completo, nome_usuario, email, token, nome_absoluto_foto, identificador_notificacao) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [
           usuarioAutenticado.id,
           usuarioAutenticado.nomeCompleto,
@@ -24,6 +24,7 @@ class UsuarioDB {
           usuarioAutenticado.email,
           usuarioAutenticado.token,
           usuarioAutenticado.foto != null ? usuarioAutenticado.foto!.nomeAbsoluto! : null,
+          usuarioAutenticado.identificadorNotificacao,
         ],
       );
     } catch (error) {
@@ -84,6 +85,22 @@ class UsuarioDB {
         "UPDATE usuario SET nome_absoluto_foto = ?",
         [
           arquivo != null ? arquivo.nomeAbsoluto! : null,
+        ],
+      );
+    } catch (error) {
+      throw EventHubException(
+        "Ocorreu um erro ao alterar o usuário no banco de dados local.",
+      );
+    }
+  }
+
+  Future<void> alterarIdentificadorNotificacao(String? fcmToken) async {
+    try {
+      Database db = await _getDatabase();
+      await db.rawInsert(
+        "UPDATE usuario SET identificador_notificacao = ?",
+        [
+          fcmToken,
         ],
       );
     } catch (error) {

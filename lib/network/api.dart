@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/model/usuario/usuario_comentario.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
@@ -209,6 +210,16 @@ class Api {
       headers: getHeader(),
       body: jsonEncode(
         {},
+      ),
+    );
+  }
+
+  static alterarIdentificadorNotificacao(UsuarioAutenticado usuarioAutenticado) async {
+    return await http.put(
+      getURI('$baseURL/usuarios/identificador'),
+      headers: getHeader(),
+      body: jsonEncode(
+        usuarioAutenticado.toJson(),
       ),
     );
   }

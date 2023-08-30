@@ -41,8 +41,9 @@ class _LoginPageState extends State<LoginPage> {
         senha: _senhaController.text,
       );
 
-      UsuarioAutenticado usuarioAutenticado =
-          await UsuarioService().login(usuario, _isManterConectado);
+      UsuarioAutenticado usuarioAutenticado = await UsuarioService().login(usuario, _isManterConectado);
+
+      await UsuarioService().tratarIdentificadorNotificacao(usuarioAutenticado);
 
       // ignore: use_build_context_synchronously
       Util.goTo(
@@ -114,9 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        !_isSenhaVisivel
-                            ? Ionicons.eye_outline
-                            : Ionicons.eye_off_outline,
+                        !_isSenhaVisivel ? Ionicons.eye_outline : Ionicons.eye_off_outline,
                         size: 15,
                       ),
                       onPressed: () {

@@ -7,6 +7,7 @@ class UsuarioAutenticado {
   String? nomeUsuario;
   String? nomeCompleto;
   String? token;
+  String? identificadorNotificacao;
   Arquivo? foto;
 
   UsuarioAutenticado({
@@ -15,6 +16,7 @@ class UsuarioAutenticado {
     this.nomeUsuario,
     this.nomeCompleto,
     this.token,
+    this.identificadorNotificacao,
     this.foto,
   });
 
@@ -26,6 +28,7 @@ class UsuarioAutenticado {
       nomeUsuario: jsons['nomeUsuario'],
       nomeCompleto: jsons['nomeCompleto'],
       token: jsons['token'],
+      identificadorNotificacao: jsons['identificadorNotificacao'],
       foto: jsons['foto'] != null ? Arquivo.fromJson(jsons['foto']) : null,
     );
   }
@@ -37,6 +40,7 @@ class UsuarioAutenticado {
         'nomeCompleto': nomeCompleto,
         'token': token,
         'foto': foto,
+        'identificadorNotificacao': identificadorNotificacao,
       };
 
   factory UsuarioAutenticado.fromJsonDb(Map<String, dynamic> jsons) {
@@ -47,9 +51,8 @@ class UsuarioAutenticado {
       nomeUsuario: jsons['nome_usuario'],
       email: jsons['email'],
       token: jsons['token'],
-      foto: jsons['nome_absoluto_foto'] != null
-          ? Arquivo(nomeAbsoluto: jsons['nome_absoluto_foto'])
-          : null,
+      identificadorNotificacao: jsons['identificadorNotificacao'],
+      foto: jsons['nome_absoluto_foto'] != null ? Arquivo(nomeAbsoluto: jsons['nome_absoluto_foto']) : null,
     );
   }
 }
