@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
+import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
@@ -245,6 +246,26 @@ class Api {
   static excluirPublicacao(int idPublicacao) async {
     return await http.delete(
       getURI('$baseURL/publicacoes/$idPublicacao'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
+
+  static comentarPublicacao(int idPublicacao, PublicacaoComentario publicacaoComentario) async {
+    return await http.post(
+      getURI('$baseURL/publicacoes/comentarios/$idPublicacao'),
+      headers: getHeader(),
+      body: jsonEncode(
+        publicacaoComentario.toJson(),
+      ),
+    );
+  }
+
+  static excluirComentario(int idPublicacaoComentario) async {
+    return await http.delete(
+      getURI('$baseURL/publicacoes/comentarios/$idPublicacaoComentario'),
       headers: getHeader(),
       body: jsonEncode(
         {},

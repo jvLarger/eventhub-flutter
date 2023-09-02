@@ -31,6 +31,53 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
   Publicacao _publicacao = Publicacao();
   final TextEditingController _comentarioController = TextEditingController();
 
+  excluirComentario(publicacaoComentario, index) async {
+    try {
+      Util.showLoading(context);
+
+      await PublicacaoService().excluirComentario(publicacaoComentario.id!);
+      _publicacao.comentarios!.removeAt(index);
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Comentário removido com sucesso!");
+      // ignore: use_build_context_synchronously
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  comentarPublicacao() async {
+    try {
+      Util.showLoading(context);
+
+      if (_comentarioController.text.trim().length < 10) {
+        throw EventHubException("O comentário deve possuir pelo menos 10 caracteres!");
+      }
+
+      PublicacaoComentario publicacaoComentario = await PublicacaoService().comentarPublicacao(
+        widget.idPublicacao,
+        PublicacaoComentario(
+          descricao: _comentarioController.text.trim(),
+        ),
+      );
+
+      _publicacao.comentarios!.add(publicacaoComentario);
+      _comentarioController.text = "";
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Comentário criado com sucesso!");
+      // ignore: use_build_context_synchronously
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   excluirPublicacao() async {
     try {
       Util.showLoading(context);
@@ -203,8 +250,13 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                             color: colorBlue,
                             size: 15,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            comentarPublicacao();
+                          },
                         ),
+                      ),
+                      const SizedBox(
+                        height: defaultPadding,
                       ),
                     ],
                   ),
@@ -214,7 +266,7 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
           );
   }
 
-  Widget getContainerMensagemRecebida(PublicacaoComentario publicacaoComentario) {
+  Widget getContainerMensagemRecebida(PublicacaoComentario publicacaoComentario, int index) {
     return Column(
       children: [
         Container(
@@ -283,7 +335,9 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showMessageExclusaoComentario(publicacaoComentario, index);
+                      },
                       child: const Text(
                         "Excluir",
                         style: TextStyle(
@@ -332,14 +386,12 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
       scrollDirection: Axis.vertical,
       itemCount: _publicacao.comentarios!.length,
       itemBuilder: (context, index) {
-        return getComentario(
-          _publicacao.comentarios![index],
-        );
+        return getComentario(_publicacao.comentarios![index], index);
       },
     );
   }
 
-  Widget getComentario(PublicacaoComentario publicacaoComentario) {
+  Widget getComentario(PublicacaoComentario publicacaoComentario, int index) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -377,9 +429,7 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
           flex: 8,
           child: Column(
             children: [
-              getContainerMensagemRecebida(
-                publicacaoComentario,
-              ),
+              getContainerMensagemRecebida(publicacaoComentario, index),
             ],
           ),
         )
@@ -416,6 +466,50 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
               ),
               onPressed: () {
                 excluirPublicacao();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showMessageExclusaoComentario(PublicacaoComentario publicacaoComentario, int index) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Excluir Comentário',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja realmente remover esse comentário?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Confirmar',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                excluirComentario(publicacaoComentario, index);
                 Navigator.of(context).pop();
               },
             ),

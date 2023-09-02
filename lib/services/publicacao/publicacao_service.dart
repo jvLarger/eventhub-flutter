@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
+import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/util.dart';
 
@@ -40,6 +41,31 @@ class PublicacaoService {
 
   Future<void> excluirPublicacao(int idPublicacao) async {
     final response = await Api.excluirPublicacao(idPublicacao);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<PublicacaoComentario> comentarPublicacao(int idPublicacao, PublicacaoComentario publicacaoComentario) async {
+    final response = await Api.comentarPublicacao(idPublicacao, publicacaoComentario);
+
+    if (response.statusCode == 201) {
+      PublicacaoComentario publicacaoComentario = PublicacaoComentario.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return publicacaoComentario;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<void> excluirComentario(int idPublicacaoComentario) async {
+    final response = await Api.excluirComentario(idPublicacaoComentario);
 
     if (response.statusCode == 204) {
     } else {
