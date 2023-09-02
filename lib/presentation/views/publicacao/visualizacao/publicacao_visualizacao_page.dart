@@ -7,6 +7,7 @@ import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
+import 'package:eventhub/presentation/views/publicacao/visualizacao/publicacao_curtidas_page.dart';
 import 'package:eventhub/services/publicacao/publicacao_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -30,6 +31,38 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
   bool _isLoading = true;
   Publicacao _publicacao = Publicacao();
   final TextEditingController _comentarioController = TextEditingController();
+
+  curtirPublicacao() async {
+    try {
+      Util.showLoading(context);
+
+      await PublicacaoService().curtirPublicacao(widget.idPublicacao);
+      _publicacao.isCurti = true;
+      _publicacao.curtidas = _publicacao.curtidas! + 1;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  descurtirPublicacao() async {
+    try {
+      Util.showLoading(context);
+
+      await PublicacaoService().descurtirPublicacao(widget.idPublicacao);
+      _publicacao.isCurti = false;
+      _publicacao.curtidas = _publicacao.curtidas! - 1;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   excluirComentario(publicacaoComentario, index) async {
     try {
@@ -137,8 +170,8 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                         aspectRatio: 16 / 9,
                         autoPlayCurve: Curves.fastOutSlowIn,
                         enableInfiniteScroll: true,
-                        autoPlayAnimationDuration: const Duration(milliseconds: 3000),
-                        viewportFraction: 1,
+                        autoPlayAnimationDuration: const Duration(milliseconds: 5000),
+                        viewportFraction: 0.75,
                       ),
                     ),
                     const Positioned(
@@ -168,11 +201,22 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                               fontSize: 15,
                             ),
                           ),
-                          Text(
-                            "${_publicacao.curtidas} curtidas",
-                            style: const TextStyle(
-                              color: colorBlue,
-                              fontSize: 15,
+                          TextButton(
+                            onPressed: () {
+                              Util.goTo(
+                                context,
+                                PublicacaoCurtidasPage(
+                                  idPublicacao: widget.idPublicacao,
+                                  usuarioAutenticado: widget.usuarioAutenticado,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "${_publicacao.curtidas} curtidas",
+                              style: const TextStyle(
+                                color: colorBlue,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                         ],
@@ -205,7 +249,9 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                               Visibility(
                                 visible: _publicacao.isCurti!,
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    descurtirPublicacao();
+                                  },
                                   icon: const Icon(
                                     Ionicons.heart,
                                     color: colorBlue,
@@ -215,7 +261,9 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                               Visibility(
                                 visible: !_publicacao.isCurti!,
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    curtirPublicacao();
+                                  },
                                   icon: const Icon(
                                     Ionicons.heart_outline,
                                     color: colorBlue,

@@ -272,4 +272,31 @@ class Api {
       ),
     );
   }
+
+  static curtirPublicacao(int idPublicacao) async {
+    return await http.post(
+      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
+
+  static descurtirPublicacao(int idPublicacao) async {
+    return await http.delete(
+      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
+
+  static buscarUsuariosQueCurtiram(int idPublicacao) async {
+    return await http.get(
+      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      headers: getHeader(),
+    );
+  }
 }

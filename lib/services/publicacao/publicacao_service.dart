@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/util.dart';
 
@@ -68,6 +69,38 @@ class PublicacaoService {
     final response = await Api.excluirComentario(idPublicacaoComentario);
 
     if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<void> curtirPublicacao(int idPublicacao) async {
+    final response = await Api.curtirPublicacao(idPublicacao);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<void> descurtirPublicacao(int idPublicacao) async {
+    final response = await Api.descurtirPublicacao(idPublicacao);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Usuario>> buscarUsuariosQueCurtiram(int idPublicacao) async {
+    final response = await Api.buscarUsuariosQueCurtiram(idPublicacao);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Usuario.fromJson(model))
+          .toList();
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }
