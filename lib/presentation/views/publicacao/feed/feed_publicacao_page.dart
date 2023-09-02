@@ -73,7 +73,10 @@ class _FeedPublicacaoState extends State<FeedPublicacao> {
       onTap: () {
         Util.goTo(
           context,
-          PublicacaoVisualizacaoPage(),
+          PublicacaoVisualizacaoPage(
+            idPublicacao: 1,
+            usuarioAutenticado: widget.usuarioAutenticado,
+          ),
         );
       },
       child: Container(

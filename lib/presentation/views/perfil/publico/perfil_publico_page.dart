@@ -383,6 +383,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                     ),
                     child: _indexTabAtiva == 0
                         ? ListaPublicacoesResumidas(
+                            usuarioAutenticado: widget.usuarioAutenticado,
                             listaPublicacaoResumida: _perfil.publicacoes!,
                           )
                         : Column(

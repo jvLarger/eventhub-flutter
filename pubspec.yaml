@@ -51,6 +51,7 @@ dependencies:
   firebase_messaging: ^14.6.7
   firebase_core: ^2.15.1
   firebase_analytics: ^10.4.5
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

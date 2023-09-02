@@ -234,4 +234,11 @@ class Api {
       ),
     );
   }
+
+  static buscarPublicacao(int idPublicacao) async {
+    return await http.get(
+      getURI('$baseURL/publicacoes/$idPublicacao'),
+      headers: getHeader(),
+    );
+  }
 }

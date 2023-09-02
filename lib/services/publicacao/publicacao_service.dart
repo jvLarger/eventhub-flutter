@@ -21,4 +21,20 @@ class PublicacaoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<Publicacao> buscarPublicacao(int idPublicacao) async {
+    final response = await Api.buscarPublicacao(idPublicacao);
+
+    if (response.statusCode == 200) {
+      Publicacao publicacao = Publicacao.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return publicacao;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

@@ -9,6 +9,8 @@ class Publicacao {
   String? descricao;
   DateTime? data;
   int? curtidas;
+  bool? isMinhaPublicacao;
+  bool? isCurti;
   List<PublicacaoComentario>? comentarios;
   List<PublicacaoArquivo>? arquivos;
 
@@ -20,6 +22,8 @@ class Publicacao {
     this.curtidas,
     this.comentarios,
     this.arquivos,
+    this.isCurti,
+    this.isMinhaPublicacao,
   });
 
   factory Publicacao.fromJson(Map<String, dynamic> jsons) {
@@ -45,6 +49,8 @@ class Publicacao {
       curtidas: jsons['curtidas'],
       comentarios: comentarios,
       arquivos: arquivos,
+      isMinhaPublicacao: jsons['isMinhaPublicacao'],
+      isCurti: jsons['isCurti'],
     );
   }
 
@@ -56,5 +62,7 @@ class Publicacao {
         'curtidas': curtidas,
         'comentarios': comentarios,
         'arquivos': arquivos,
+        'isMinhaPublicacao': isMinhaPublicacao,
+        'isCurti': isCurti,
       };
 }
