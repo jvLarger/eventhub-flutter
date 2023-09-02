@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
@@ -220,6 +221,16 @@ class Api {
       headers: getHeader(),
       body: jsonEncode(
         usuarioAutenticado.toJson(),
+      ),
+    );
+  }
+
+  static criarPublicacao(Publicacao publicacao) async {
+    return await http.post(
+      getURI('$baseURL/publicacoes'),
+      headers: getHeader(),
+      body: jsonEncode(
+        publicacao.toJson(),
       ),
     );
   }

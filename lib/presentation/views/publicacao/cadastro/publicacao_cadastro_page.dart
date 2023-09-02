@@ -1,40 +1,91 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/publicacao/publicacao.dart';
+import 'package:eventhub/model/publicacao/publicacao_arquivo.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/publicacao/cadastro/components/publicacao_cadastro_galeria.dart';
+import 'package:eventhub/presentation/views/publicacao/feed/feed_publicacao_page.dart';
+import 'package:eventhub/services/publicacao/publicacao_service.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 
 class PublicacaoCadastroPage extends StatefulWidget {
-  const PublicacaoCadastroPage({super.key});
+  final UsuarioAutenticado usuarioAutenticado;
+  const PublicacaoCadastroPage({
+    super.key,
+    required this.usuarioAutenticado,
+  });
 
   @override
   State<PublicacaoCadastroPage> createState() => _PublicacaoCadastroPageState();
 }
 
 class _PublicacaoCadastroPageState extends State<PublicacaoCadastroPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _descricaoController = TextEditingController();
+  final List<PublicacaoArquivo> _listaPublicacaoArquivo = [];
+
+  criarPublicacao() async {
+    try {
+      Util.showLoading(context);
+
+      if (_listaPublicacaoArquivo.isEmpty) {
+        throw EventHubException("É necessário adicionar pelo menos uma imagem!");
+      }
+
+      await PublicacaoService().criarPublicacao(
+        Publicacao(
+          descricao: _descricaoController.text,
+          arquivos: _listaPublicacaoArquivo,
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Publicação criada com sucesso!");
+      // ignore: use_build_context_synchronously
+      Util.goToAndOverride(
+        context,
+        FeedPublicacao(usuarioAutenticado: widget.usuarioAutenticado),
+      );
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
-      topWidget: EventHubTopAppbar(
+      topWidget: const EventHubTopAppbar(
         title: "Nova Publicação",
       ),
       bottomNavigationBar: EventHubBottomButton(
         label: "Publicar",
-        onTap: () {},
+        onTap: () {
+          if (_formKey.currentState!.validate()) {
+            criarPublicacao();
+          }
+        },
       ),
       child: Padding(
         padding: const EdgeInsets.all(defaultPadding),
         child: Column(
           children: [
             Form(
+              key: _formKey,
               child: Column(
                 children: [
                   EventHubTextFormField(
                     label: "Descrição",
                     minLines: 4,
                     maxLines: 40,
+                    controller: _descricaoController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Descrição não informada!';
@@ -45,89 +96,25 @@ class _PublicacaoCadastroPageState extends State<PublicacaoCadastroPage> {
                   const SizedBox(
                     height: defaultPadding,
                   ),
-                  montarGaleria(MediaQuery.of(context).size.width),
+                  PublicacaoCadastroGaleria(
+                    listaPublicacaoArquivo: _listaPublicacaoArquivo,
+                    onUpload: (Arquivo arquivo) {
+                      _listaPublicacaoArquivo.add(
+                        PublicacaoArquivo(
+                          arquivo: arquivo,
+                        ),
+                      );
+                      setState(() {});
+                    },
+                    onRemove: (int index) {
+                      _listaPublicacaoArquivo.removeAt(index);
+                      setState(() {});
+                    },
+                  ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget montarGaleria(double widthTela) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        montarCardNovaFoto(widthTela),
-      ],
-    );
-  }
-
-  Widget montarCardNovaFoto(double widthTela) {
-    double widthCard = (widthTela - (10 + defaultPadding * 2)) / 3;
-    return Container(
-      height: widthCard,
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Color.fromRGBO(242, 242, 242, 1),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Ionicons.add,
-            color: colorBlue,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            "Adicionar Mais Fotos",
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromRGBO(109, 117, 128, 1),
-              letterSpacing: 0.2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget montarCardFoto(String link, double widthTela) {
-    double widthCard = (widthTela - (10 + defaultPadding * 2)) / 3;
-    return Container(
-      height: widthCard,
-      width: widthCard,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: Color.fromRGBO(224, 220, 220, 1),
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Image.network(
-          link,
-          fit: BoxFit.cover,
         ),
       ),
     );

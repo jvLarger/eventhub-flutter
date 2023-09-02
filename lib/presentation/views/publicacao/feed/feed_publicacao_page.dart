@@ -41,7 +41,11 @@ class _FeedPublicacaoState extends State<FeedPublicacao> {
             ),
             ElevatedButton(
               onPressed: () {
-                Util.goTo(context, PublicacaoCadastroPage());
+                Util.goTo(
+                    context,
+                    PublicacaoCadastroPage(
+                      usuarioAutenticado: widget.usuarioAutenticado,
+                    ));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
