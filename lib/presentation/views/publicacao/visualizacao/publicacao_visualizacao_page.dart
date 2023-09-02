@@ -31,6 +31,28 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
   Publicacao _publicacao = Publicacao();
   final TextEditingController _comentarioController = TextEditingController();
 
+  excluirPublicacao() async {
+    try {
+      Util.showLoading(context);
+      await PublicacaoService().excluirPublicacao(widget.idPublicacao);
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Publicação excluída com sucesso!");
+      // ignore: use_build_context_synchronously
+      Util.goToAndOverride(
+        context,
+        PerfilPublicoPage(
+          idUsuario: widget.usuarioAutenticado.id!,
+          usuarioAutenticado: widget.usuarioAutenticado,
+        ),
+      );
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   buscarPublicacao() async {
     try {
       _publicacao = await PublicacaoService().buscarPublicacao(widget.idPublicacao);
@@ -124,7 +146,9 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                               Visibility(
                                 visible: _publicacao.isMinhaPublicacao!,
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showMessageExclusao();
+                                  },
                                   icon: const Icon(
                                     Ionicons.trash_outline,
                                     color: colorBlue,
@@ -157,6 +181,7 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
                       ),
                       Text(
                         _publicacao.descricao!,
+                        textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -359,6 +384,50 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
           ),
         )
       ],
+    );
+  }
+
+  void showMessageExclusao() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Excluir Publicação',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja realmente remover essa publicação?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Confirmar',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                excluirPublicacao();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

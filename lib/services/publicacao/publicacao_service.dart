@@ -37,4 +37,13 @@ class PublicacaoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> excluirPublicacao(int idPublicacao) async {
+    final response = await Api.excluirPublicacao(idPublicacao);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

@@ -241,4 +241,14 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static excluirPublicacao(int idPublicacao) async {
+    return await http.delete(
+      getURI('$baseURL/publicacoes/$idPublicacao'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
 }
