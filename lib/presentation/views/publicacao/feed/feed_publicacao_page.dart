@@ -91,6 +91,7 @@ class _FeedPublicacaoState extends State<FeedPublicacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: EventHubBottomBar(
         indexRecursoAtivo: 1,
         usuarioAutenticado: widget.usuarioAutenticado,
