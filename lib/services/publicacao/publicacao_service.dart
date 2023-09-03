@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/publicacao/page_publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
@@ -101,6 +102,22 @@ class PublicacaoService {
       ) as List)
           .map((model) => Usuario.fromJson(model))
           .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<PagePublicacao> buscarFeedPublicacao(int page) async {
+    final response = await Api.buscarFeedPublicacao(page);
+
+    if (response.statusCode == 200) {
+      PagePublicacao pagePublicacao = PagePublicacao.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return pagePublicacao;
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }

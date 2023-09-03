@@ -299,4 +299,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarFeedPublicacao(int page) async {
+    return await http.get(
+      getURI('$baseURL/publicacoes?page=$page'),
+      headers: getHeader(),
+    );
+  }
 }
