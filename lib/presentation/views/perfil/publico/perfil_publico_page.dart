@@ -5,6 +5,7 @@ import 'package:eventhub/model/usuario/usuario_comentario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/chat/salaprivada/sala_privada_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/components/lista_comentarios_usuario.dart';
 import 'package:eventhub/presentation/views/perfil/publico/components/lista_publicacaoes_resumidas.dart';
 import 'package:eventhub/services/amizade/amizade_service.dart';
@@ -320,7 +321,16 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                             ),
                             Expanded(
                               child: OutlinedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (_perfil.isAmigo!) {
+                                    Util.goTo(
+                                      context,
+                                      const SalaPrivadaPage(),
+                                    );
+                                  } else {
+                                    Util.showSnackbarError(context, "Somente é possível enviar mensagem para amigos!");
+                                  }
+                                },
                                 style: OutlinedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                 ),

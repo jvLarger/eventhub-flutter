@@ -1,7 +1,10 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/sala/sala_bate_papo.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/chat/salaprivada/sala_privada_page.dart';
+import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -15,64 +18,91 @@ class SalasBatePapoPage extends StatefulWidget {
 }
 
 class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
-  @override
-  Widget build(BuildContext context) {
-    return EventHubBody(
-      topWidget: const EventHubTopAppbar(
-        title: "Bate Papo",
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            EventHubTextFormField(
-              label: "Pesquise pelo nome",
-              prefixIcon: const Icon(
-                Ionicons.search,
-                size: 15,
-              ),
-            ),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            getParticipante("Tanner Stafford", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23r-RPu2dhP9HrI3bUSdkZ3duFe7CVNJ49Q&usqp=CAU", "3 mensagens não lidas"),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            getParticipante("Leatrice Handler", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWMsksaZD0YS_walS4Nk_P98cEdals3D_vVQ&usqp=CAU", null),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            getParticipante("Chantal Shelburne", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0y7IMZdn0mMlGwIQ2o31Lo6jD6YGxfq6pWA&usqp=CAU", null),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            getParticipante("Maryland Winkles", "https://cajamar.sp.gov.br/noticias/wp-content/uploads/sites/2/2021/07/site-vacinacao-33-anos.png", null),
-          ],
-        ),
-      ),
-    );
+  bool _isLoading = true;
+  List<SalaBatePapo> _listaSalaBatePapo = [];
+  final TextEditingController _nomeCompletoController = TextEditingController();
+
+  buscarSalasDeBatePapo() async {
+    try {
+      _listaSalaBatePapo = await MensagemService().buscarSalasBatePapo();
+      _isLoading = false;
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
   }
 
-  getParticipante(String nome, String caminhoImagem, String? subtitle) {
+  @override
+  void initState() {
+    super.initState();
+    buscarSalasDeBatePapo();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : EventHubBody(
+            topWidget: const EventHubTopAppbar(
+              title: "Bate Papo",
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: defaultPadding,
+                    left: defaultPadding,
+                    right: defaultPadding,
+                  ),
+                  child: EventHubTextFormField(
+                    label: "Pesquise pelo nome",
+                    controller: _nomeCompletoController,
+                    prefixIcon: const Icon(
+                      Ionicons.search,
+                      size: 15,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, i) {
+                    return getParticipante(_listaSalaBatePapo[i]);
+                  },
+                  itemCount: _listaSalaBatePapo.length,
+                ),
+              ],
+            ),
+          );
+  }
+
+  getParticipante(SalaBatePapo salaBatePapo) {
     return ListTile(
       leading: CircleAvatar(
         radius: 25,
-        backgroundImage: NetworkImage(caminhoImagem),
+        backgroundImage: NetworkImage(
+          Util.montarURlFotoByArquivo(
+            salaBatePapo.usuario!.foto,
+          ),
+        ),
       ),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      contentPadding: EdgeInsets.only(
-        left: 0,
-        right: 0,
-        top: 0,
+      subtitle: salaBatePapo.mensagensNaoLidas! > 0 ? Text("${salaBatePapo.mensagensNaoLidas!} mensage${salaBatePapo.mensagensNaoLidas! == 1 ? 'm' : 'ns'} não lida${salaBatePapo.mensagensNaoLidas! == 1 ? '' : 's'}") : null,
+      contentPadding: const EdgeInsets.only(
+        left: defaultPadding,
+        right: defaultPadding,
+        top: 8,
+        bottom: 8,
       ),
-      trailing: Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        Util.goTo(context, SalaPrivadaPage());
+        Util.goTo(context, const SalaPrivadaPage());
       },
       title: Text(
-        nome,
-        style: TextStyle(
+        salaBatePapo.usuario!.nomeCompleto!,
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
         ),
       ),

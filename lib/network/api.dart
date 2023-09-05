@@ -306,4 +306,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarSalasBatePapo() async {
+    return await http.get(
+      getURI('$baseURL/mensagens/salas'),
+      headers: getHeader(),
+    );
+  }
 }
