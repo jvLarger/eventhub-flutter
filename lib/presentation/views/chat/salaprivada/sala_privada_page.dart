@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
@@ -22,7 +24,9 @@ class SalaPrivadaPage extends StatefulWidget {
 
 class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
   final TextEditingController _descricaoController = TextEditingController();
-
+  List<Mensagem> _listaMensagens = [];
+  bool _isLoading = true;
+  Timer? timer;
   enviarMensagem() async {
     if (_descricaoController.text.trim() != "") {
       try {
@@ -33,6 +37,8 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
             descricao: _descricaoController.text,
           ),
         );
+
+        _listaMensagens.add(mensagem);
         // ignore: use_build_context_synchronously
         Util.hideLoading(context);
         // ignore: use_build_context_synchronously
@@ -44,46 +50,108 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
     }
   }
 
+  buscarMensagens() async {
+    try {
+      _listaMensagens = await MensagemService().buscarMensagens(
+        widget.usuario.id!,
+      );
+      _isLoading = false;
+      if (mounted) {
+        setState(() {});
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  buscarMensagensRecebidasENaoLidas() async {
+    try {
+      _listaMensagens.addAll(
+        await MensagemService().buscarMensagensRecebidasENaoLidas(
+          widget.usuario.id!,
+        ),
+      );
+      if (mounted) {
+        setState(() {});
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarMensagens();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      buscarMensagensRecebidasENaoLidas();
+    });
+  }
+
+  @override
+  void dispose() {
+    timer!.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
-      appBar: AppBar(
-        title: Text(widget.usuario.nomeCompleto!),
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Color.fromRGBO(245, 245, 245, 1),
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : EventHubBody(
+            appBar: AppBar(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      Util.montarURlFotoByArquivo(widget.usuario.foto),
+                    ),
+                    radius: 15,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(widget.usuario.nomeCompleto!)
+                ],
+              ),
             ),
-          ),
-        ),
-        padding: const EdgeInsets.all(defaultPadding),
-        child: EventHubTextFormField(
-          label: "Escreva alguma mensagem...",
-          controller: _descricaoController,
-          suffixIcon: IconButton(
-            icon: const Icon(
-              Ionicons.send,
-              color: colorBlue,
-              size: 15,
+            bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Color.fromRGBO(245, 245, 245, 1),
+                  ),
+                ),
+              ),
+              padding: const EdgeInsets.all(defaultPadding),
+              child: EventHubTextFormField(
+                label: "Escreva alguma mensagem...",
+                controller: _descricaoController,
+                suffixIcon: IconButton(
+                  icon: const Icon(
+                    Ionicons.send,
+                    color: colorBlue,
+                    size: 15,
+                  ),
+                  onPressed: () {
+                    enviarMensagem();
+                  },
+                ),
+              ),
             ),
-            onPressed: () {
-              enviarMensagem();
-            },
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            getMensagemRecebida(),
-            getMensagemEnviada(),
-          ],
-        ),
-      ),
-    );
+            child: Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                children: [
+                  getMensagemRecebida(),
+                  getMensagemEnviada(),
+                ],
+              ),
+            ),
+          );
   }
 
   Widget getMensagemRecebida() {
@@ -93,23 +161,6 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqmPKaH4GXJy1UGNzYYsB6u8ZjGo1AVZwZtA&usqp=CAU",
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
             Expanded(
               flex: 7,
               child: Column(

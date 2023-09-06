@@ -36,4 +36,32 @@ class MensagemService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<List<Mensagem>> buscarMensagens(int id) async {
+    final response = await Api.buscarMensagens(id);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Mensagem.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Mensagem>> buscarMensagensRecebidasENaoLidas(int id) async {
+    final response = await Api.buscarMensagensRecebidasENaoLidas(id);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Mensagem.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

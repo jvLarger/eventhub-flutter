@@ -324,4 +324,18 @@ class Api {
       ),
     );
   }
+
+  static buscarMensagens(int id) async {
+    return await http.get(
+      getURI('$baseURL/mensagens/$id'),
+      headers: getHeader(),
+    );
+  }
+
+  static buscarMensagensRecebidasENaoLidas(int id) async {
+    return await http.get(
+      getURI('$baseURL/mensagens/$id/novas'),
+      headers: getHeader(),
+    );
+  }
 }
