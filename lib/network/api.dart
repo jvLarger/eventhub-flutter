@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
 import 'package:eventhub/model/token/token.dart';
@@ -311,6 +312,16 @@ class Api {
     return await http.get(
       getURI('$baseURL/mensagens/salas'),
       headers: getHeader(),
+    );
+  }
+
+  static enviarMensagem(int id, Mensagem mensagem) async {
+    return await http.post(
+      getURI('$baseURL/mensagens/$id'),
+      headers: getHeader(),
+      body: jsonEncode(
+        mensagem.toJson(),
+      ),
     );
   }
 }

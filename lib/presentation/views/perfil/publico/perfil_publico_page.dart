@@ -325,7 +325,9 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                                   if (_perfil.isAmigo!) {
                                     Util.goTo(
                                       context,
-                                      const SalaPrivadaPage(),
+                                      SalaPrivadaPage(
+                                        usuario: _perfil.usuario!,
+                                      ),
                                     );
                                   } else {
                                     Util.showSnackbarError(context, "Somente é possível enviar mensagem para amigos!");

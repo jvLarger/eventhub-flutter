@@ -1,22 +1,54 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/mensagem/mensagem.dart';
+import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
+import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 class SalaPrivadaPage extends StatefulWidget {
-  const SalaPrivadaPage({super.key});
+  final Usuario usuario;
+  const SalaPrivadaPage({
+    super.key,
+    required this.usuario,
+  });
 
   @override
   State<SalaPrivadaPage> createState() => _SalaPrivadaPageState();
 }
 
 class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
+  final TextEditingController _descricaoController = TextEditingController();
+
+  enviarMensagem() async {
+    if (_descricaoController.text.trim() != "") {
+      try {
+        Util.showLoading(context);
+        Mensagem mensagem = await MensagemService().enviarMensagem(
+          widget.usuario.id!,
+          Mensagem(
+            descricao: _descricaoController.text,
+          ),
+        );
+        // ignore: use_build_context_synchronously
+        Util.hideLoading(context);
+        // ignore: use_build_context_synchronously
+        setState(() {});
+      } on EventHubException catch (err) {
+        Util.hideLoading(context);
+        Util.showSnackbarError(context, err.cause);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
       appBar: AppBar(
-        title: Text("Ashley Silva"),
+        title: Text(widget.usuario.nomeCompleto!),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -29,13 +61,16 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
         padding: const EdgeInsets.all(defaultPadding),
         child: EventHubTextFormField(
           label: "Escreva alguma mensagem...",
+          controller: _descricaoController,
           suffixIcon: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Ionicons.send,
               color: colorBlue,
               size: 15,
             ),
-            onPressed: () {},
+            onPressed: () {
+              enviarMensagem();
+            },
           ),
         ),
       ),

@@ -98,7 +98,12 @@ class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        Util.goTo(context, const SalaPrivadaPage());
+        Util.goTo(
+          context,
+          SalaPrivadaPage(
+            usuario: salaBatePapo.usuario!,
+          ),
+        );
       },
       title: Text(
         salaBatePapo.usuario!.nomeCompleto!,
