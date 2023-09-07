@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 
 class Util {
   static DateFormat formatterDataComHora = DateFormat('dd/MM/yyyy HH:mm');
+  static DateFormat formatterDataOnlyHora = DateFormat('HH:mm');
 
   static goTo(BuildContext context, Widget page) {
     Navigator.push(
@@ -163,6 +164,14 @@ class Util {
   static String formatarDataComHora(DateTime? data) {
     if (data != null) {
       return formatterDataComHora.format(data);
+    } else {
+      return "";
+    }
+  }
+
+  static String formatarDataOnlyHora(DateTime? data) {
+    if (data != null) {
+      return formatterDataOnlyHora.format(data);
     } else {
       return "";
     }

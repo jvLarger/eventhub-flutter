@@ -5,6 +5,7 @@ import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
+import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
 import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -24,6 +25,7 @@ class SalaPrivadaPage extends StatefulWidget {
 
 class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
   final TextEditingController _descricaoController = TextEditingController();
+  ScrollController _scrollController = new ScrollController();
   List<Mensagem> _listaMensagens = [];
   bool _isLoading = true;
   Timer? timer;
@@ -37,12 +39,17 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
             descricao: _descricaoController.text,
           ),
         );
-
+        _descricaoController.text = "";
         _listaMensagens.add(mensagem);
         // ignore: use_build_context_synchronously
         Util.hideLoading(context);
         // ignore: use_build_context_synchronously
         setState(() {});
+        _scrollController.animateTo(
+          0.0,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
       } on EventHubException catch (err) {
         Util.hideLoading(context);
         Util.showSnackbarError(context, err.cause);
@@ -73,6 +80,11 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
       );
       if (mounted) {
         setState(() {});
+        _scrollController.animateTo(
+          0.0,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
       }
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
@@ -83,7 +95,7 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
   void initState() {
     super.initState();
     buscarMensagens();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       buscarMensagensRecebidasENaoLidas();
     });
   }
@@ -100,127 +112,105 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : EventHubBody(
-            appBar: AppBar(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      Util.montarURlFotoByArquivo(widget.usuario.foto),
+        : WillPopScope(
+            onWillPop: () async {
+              Navigator.pop(context);
+              Util.goToAndOverride(
+                context,
+                const SalasBatePapoPage(),
+              );
+              return false;
+            },
+            child: EventHubBody(
+              appBar: AppBar(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        Util.montarURlFotoByArquivo(widget.usuario.foto),
+                      ),
+                      radius: 15,
                     ),
-                    radius: 15,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(widget.usuario.nomeCompleto!)
-                ],
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(widget.usuario.nomeCompleto!)
+                  ],
+                ),
               ),
-            ),
-            bottomNavigationBar: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: Color.fromRGBO(245, 245, 245, 1),
+              bottomNavigationBar: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Color.fromRGBO(245, 245, 245, 1),
+                      ),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(defaultPadding),
+                  child: EventHubTextFormField(
+                    label: "Escreva alguma mensagem...",
+                    controller: _descricaoController,
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Ionicons.send,
+                        color: colorBlue,
+                        size: 15,
+                      ),
+                      onPressed: () {
+                        enviarMensagem();
+                      },
+                    ),
                   ),
                 ),
               ),
-              padding: const EdgeInsets.all(defaultPadding),
-              child: EventHubTextFormField(
-                label: "Escreva alguma mensagem...",
-                controller: _descricaoController,
-                suffixIcon: IconButton(
-                  icon: const Icon(
-                    Ionicons.send,
-                    color: colorBlue,
-                    size: 15,
-                  ),
-                  onPressed: () {
-                    enviarMensagem();
-                  },
+              child: Padding(
+                padding: const EdgeInsets.all(defaultPadding),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      controller: _scrollController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, i) {
+                        return getMensagem(_listaMensagens[i]);
+                      },
+                      itemCount: _listaMensagens.length,
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(defaultPadding),
-              child: Column(
-                children: [
-                  getMensagemRecebida(),
-                  getMensagemEnviada(),
-                ],
               ),
             ),
           );
   }
 
-  Widget getMensagemRecebida() {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 7,
-              child: Column(
-                children: [
-                  getContainerMensagemRecebida("Oii, tudo bem?", "10:00"),
-                  getContainerMensagemRecebida("Você vai ir no show hoje a noite? Mal posso esperar!", "10:00"),
-                ],
-              ),
-            )
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget getMensagemEnviada() {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  getContainerMensagemEnviada("Simm, vou ir!", "10:00"),
-                  getContainerMensagemEnviada("Mal posso esperar!", "10:00"),
-                ],
-              ),
-            )
-          ],
-        )
-      ],
-    );
-    ;
-  }
-
   getContainerMensagemRecebida(String mensagem, String hora) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(244, 246, 249, 1),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(12),
-            bottomRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-          )),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Color.fromRGBO(244, 246, 249, 1),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+        ),
+      ),
       child: Row(
         children: [
           Expanded(
             flex: 8,
             child: Text(
               mensagem,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: defaultPadding,
           ),
           Expanded(
@@ -230,7 +220,7 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
               children: [
                 Text(
                   hora,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                   ),
                 )
@@ -244,28 +234,29 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
 
   Widget getContainerMensagemEnviada(String mensagem, String hora) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-          color: colorBlue.withOpacity(0.8),
-          borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-            topLeft: Radius.circular(12),
-          )),
+        color: colorBlue.withOpacity(0.8),
+        borderRadius: const BorderRadius.only(
+          bottomRight: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          topLeft: Radius.circular(12),
+        ),
+      ),
       child: Row(
         children: [
           Expanded(
             flex: 8,
             child: Text(
               mensagem,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: defaultPadding,
           ),
           Expanded(
@@ -275,7 +266,7 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
               children: [
                 Text(
                   hora,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                   ),
@@ -286,5 +277,13 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
         ],
       ),
     );
+  }
+
+  Widget getMensagem(Mensagem mensagem) {
+    if (mensagem.usuarioOrigem!.id != widget.usuario.id) {
+      return getContainerMensagemEnviada(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem));
+    } else {
+      return getContainerMensagemRecebida(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem));
+    }
   }
 }
