@@ -10,6 +10,7 @@ import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/estados_brasileiros.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/evento_cadastro_galeria.dart';
+import 'package:eventhub/presentation/views/evento/cadastro/components/selecao_categorias.dart';
 import 'package:eventhub/services/viacep/viacep_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -97,11 +98,14 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       topWidget: EventHubTopAppbar(
         title: "Dados do Evento",
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Ionicons.trash_outline,
-              color: colorBlue,
+          Visibility(
+            visible: widget.evento != null,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Ionicons.trash_outline,
+                color: colorBlue,
+              ),
             ),
           )
         ],
@@ -244,6 +248,23 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                   ),
                   EventHubTextFormField(
                     label: "Categorias",
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0),
+                          ),
+                        ),
+                        builder: (BuildContext context) {
+                          return SelecaoCategoria(
+                            listaCategoriasSelecionadas: [],
+                          );
+                        },
+                      );
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Categorias não informadas!';

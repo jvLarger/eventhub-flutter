@@ -53,6 +53,7 @@ dependencies:
   firebase_analytics: ^10.4.5
   carousel_slider: ^4.2.1
   brasil_fields: ^1.14.0
+  material_design_icons_flutter: ^7.0.7296
 
 dev_dependencies:
   flutter_test:

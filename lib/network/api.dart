@@ -345,4 +345,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarTodasCategorias() async {
+    return await http.get(
+      getURI('$baseURL/categorias'),
+      headers: getHeader(),
+    );
+  }
 }
