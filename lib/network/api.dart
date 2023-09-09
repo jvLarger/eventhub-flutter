@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
@@ -350,6 +352,29 @@ class Api {
     return await http.get(
       getURI('$baseURL/categorias'),
       headers: getHeader(),
+    );
+  }
+
+  static criarEvento(Evento evento) async {
+    log(jsonEncode(
+      evento.toJson(),
+    ));
+    return await http.post(
+      getURI('$baseURL/eventos'),
+      headers: getHeader(),
+      body: jsonEncode(
+        evento.toJson(),
+      ),
+    );
+  }
+
+  static alterarEvento(int idEvento, Evento evento) async {
+    return await http.put(
+      getURI('$baseURL/eventos/$idEvento'),
+      headers: getHeader(),
+      body: jsonEncode(
+        evento.toJson(),
+      ),
     );
   }
 }

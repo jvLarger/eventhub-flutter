@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 class Util {
   static DateFormat formatterDataComHora = DateFormat('dd/MM/yyyy HH:mm');
   static DateFormat formatterDataOnlyHora = DateFormat('HH:mm');
+  static DateFormat formatterDataEng = DateFormat('yyyy-MM-dd');
 
   static goTo(BuildContext context, Widget page) {
     Navigator.push(
@@ -175,6 +176,58 @@ class Util {
       return formatterDataOnlyHora.format(data);
     } else {
       return "";
+    }
+  }
+
+  static String formatarDataApiEng(DateTime? data) {
+    if (data != null) {
+      return formatterDataEng.format(data);
+    } else {
+      return "";
+    }
+  }
+
+  static double converterValorRealToDouble(String valorString) {
+    double valor = 0.0;
+
+    if (valorString.trim().isNotEmpty) {
+      RegExp regex = RegExp(r'[\d.,]+');
+      Iterable<Match> matches = regex.allMatches(valorString);
+      String resultado = '';
+      for (Match match in matches) {
+        resultado += match.group(0)!;
+      }
+      resultado = resultado.replaceAll(".", "");
+      resultado = resultado.replaceAll(",", ".");
+
+      valor = double.parse(resultado);
+    }
+
+    return valor;
+  }
+
+  static String formatarHoraApi(TimeOfDay? horaInicio) {
+    if (horaInicio != null) {
+      return "${leftPad(horaInicio.hour.toString(), "0", 2)}:${leftPad(horaInicio.minute.toString(), "0", 2)}";
+    } else {
+      return "";
+    }
+  }
+
+  static String leftPad(String texto, String caractereDePreenchimento, int tamanhoAlvo) {
+    if (texto.length >= tamanhoAlvo) {
+      return texto; // Não é necessário preenchimento
+    }
+
+    final preenchimento = caractereDePreenchimento * (tamanhoAlvo - texto.length);
+    return preenchimento + texto;
+  }
+
+  static TimeOfDay? parseStringToTimeOfDay(String? hora) {
+    if (hora != null) {
+      return TimeOfDay(hour: int.parse(hora.split(":")[0]), minute: int.parse(hora.split(":")[1]));
+    } else {
+      return null;
     }
   }
 }

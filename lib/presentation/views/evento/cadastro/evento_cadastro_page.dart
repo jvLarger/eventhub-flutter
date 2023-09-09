@@ -12,6 +12,8 @@ import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/estados_brasileiros.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/evento_cadastro_galeria.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/selecao_categorias.dart';
+import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page.dart';
+import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/services/viacep/viacep_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -32,6 +34,7 @@ class EventoCadastroPage extends StatefulWidget {
 }
 
 class _EventoCadastroPageState extends State<EventoCadastroPage> {
+  final _formKey = GlobalKey<FormState>();
   List<EventoArquivo> _listaArquivos = [];
   List<EventoCategoria> _listaCategorias = [];
   bool _isApenasConvidados = false;
@@ -50,6 +53,49 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
   final TextEditingController _categoriasController = TextEditingController();
   final FocusNode _numeroFocus = FocusNode();
   final FocusNode _logradouroFocus = FocusNode();
+
+  void salvarEvento() async {
+    Evento evento = Evento(
+      nome: _nomeController.text,
+      data: DateTime.parse(Util.converterDataPtBrParaEngl(_dataController.text)),
+      horaInicio: TimeOfDay(
+        hour: int.parse(_horaInicioController.text.split(":")[0]),
+        minute: int.parse(_horaInicioController.text.split(":")[1]),
+      ),
+      valor: Util.converterValorRealToDouble(_valorController.text),
+      descricao: _descricaoController.text,
+      categorias: _listaCategorias,
+      arquivos: _listaArquivos,
+      cep: _cepController.text,
+      cidade: _cidadeController.text,
+      estado: _estado,
+      logradouro: _logradouroController.text,
+      bairro: _bairroController.text,
+      numero: _numeroController.text,
+      complemento: _complementoController.text,
+      restrito: _isApenasConvidados,
+    );
+
+    try {
+      Util.showLoading(context);
+
+      if (widget.evento == null) {
+        await EventoService().criarEvento(evento);
+      } else {
+        await EventoService().alterarEvento(widget.evento!.id!, evento);
+      }
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.goToAndOverride(
+        context,
+        const MeusEventosPage(),
+      );
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   void buscarCep(String cepComPontuacao) async {
     String cep = Util.getSomenteNumeros(cepComPontuacao);
@@ -117,6 +163,7 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
         child: Column(
           children: [
             Form(
+              key: _formKey,
               child: Column(
                 children: [
                   EventHubTextFormField(
@@ -195,7 +242,7 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                             );
 
                             if (picked != null) {
-                              _horaInicioController.text = "${picked.hour}:${picked.minute}";
+                              _horaInicioController.text = "${Util.leftPad(picked.hour.toString(), "0", 2)}:${Util.leftPad(picked.minute.toString(), "0", 2)}";
                             }
                           },
                           validator: (value) {
@@ -446,7 +493,11 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                     height: defaultPadding,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        salvarEvento();
+                      }
+                    },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
