@@ -2,13 +2,14 @@ import 'package:eventhub/model/evento/evento_arquivo.dart';
 import 'package:eventhub/model/evento/evento_categoria.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/utils/util.dart';
+import 'package:flutter/material.dart';
 
 class Evento {
   int? id;
   Usuario? usuario;
   String? nome;
   DateTime? data;
-  DateTime? horaInicio;
+  TimeOfDay? horaInicio;
   double? valor;
   String? descricao;
   String? cep;
@@ -66,7 +67,7 @@ class Evento {
       usuario: jsons['usuario'] != null ? Usuario.fromJson(jsons['usuario']) : null,
       nome: jsons['nome'],
       data: jsons['data'] != null ? DateTime.parse(jsons['data']) : null,
-      horaInicio: jsons['horaInicio'] != null ? DateTime.parse(jsons['horaInicio']) : null,
+      horaInicio: jsons['horaInicio'] != null ? TimeOfDay.fromDateTime(jsons['horaInicio']) : null,
       valor: jsons['valor'],
       descricao: jsons['descricao'],
       cep: jsons['cep'],

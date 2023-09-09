@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class EventHubTextFormField extends StatelessWidget {
   const EventHubTextFormField({
@@ -18,6 +19,7 @@ class EventHubTextFormField extends StatelessWidget {
     this.onTap,
     this.maxLines,
     this.minLines,
+    this.inputFormatters,
   });
 
   final TextEditingController? controller;
@@ -35,6 +37,7 @@ class EventHubTextFormField extends StatelessWidget {
   final Function()? onTap;
   final int? minLines;
   final int? maxLines;
+  final List<TextInputFormatter>? inputFormatters;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -48,6 +51,7 @@ class EventHubTextFormField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly ?? false,
       onTap: onTap,
+      inputFormatters: inputFormatters ?? [],
       minLines: minLines ?? 1,
       maxLines: maxLines ?? 1,
       decoration: InputDecoration(

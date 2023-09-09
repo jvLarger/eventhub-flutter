@@ -338,4 +338,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static consultarCep(String cep) async {
+    return await http.get(
+      getURI('https://viacep.com.br/ws/$cep/json/'),
+      headers: getHeader(),
+    );
+  }
 }
