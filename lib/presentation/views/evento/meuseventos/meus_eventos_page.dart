@@ -71,7 +71,11 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
               },
             ),
             child: Padding(
-              padding: const EdgeInsets.all(defaultPadding),
+              padding: const EdgeInsets.only(
+                top: defaultPadding,
+                right: defaultPadding,
+                left: defaultPadding,
+              ),
               child: Column(
                 children: [
                   TabBar(
