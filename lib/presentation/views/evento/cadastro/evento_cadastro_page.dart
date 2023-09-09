@@ -1,6 +1,7 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
+import 'package:eventhub/model/categoria/categoria.dart';
 import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/evento/evento_arquivo.dart';
 import 'package:eventhub/model/evento/evento_categoria.dart';
@@ -46,6 +47,7 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
   final TextEditingController _complementoController = TextEditingController();
+  final TextEditingController _categoriasController = TextEditingController();
   final FocusNode _numeroFocus = FocusNode();
   final FocusNode _logradouroFocus = FocusNode();
 
@@ -248,6 +250,8 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                   ),
                   EventHubTextFormField(
                     label: "Categorias",
+                    controller: _categoriasController,
+                    readOnly: true,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -260,7 +264,11 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                         ),
                         builder: (BuildContext context) {
                           return SelecaoCategoria(
-                            listaCategoriasSelecionadas: [],
+                            listaCategoriasSelecionadas: getListaCategoriasSelecionadasNoEvento(),
+                            limiteSelecao: 3,
+                            updateCategoriasSelecionadas: (List<Categoria> listaCategoriasSelecionadas) {
+                              updateCategoriasSelecionadas(listaCategoriasSelecionadas);
+                            },
                           );
                         },
                       );
@@ -455,82 +463,55 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
     );
   }
 
-  Widget montarGaleria(double widthTela) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            montarCardNovaFoto(widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          children: [
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-          ],
-        )
-      ],
-    );
+  List<Categoria> getListaCategoriasSelecionadasNoEvento() {
+    List<Categoria> listaCategoriasSelecionadasNoEvento = [];
+
+    for (EventoCategoria eventoCategoria in _listaCategorias) {
+      listaCategoriasSelecionadasNoEvento.add(eventoCategoria.categoria!);
+    }
+
+    return listaCategoriasSelecionadasNoEvento;
   }
 
-  Widget montarCardNovaFoto(double widthTela) {
-    double widthCard = (widthTela - (10 + defaultPadding * 2)) / 3;
-    return Container(
-      height: widthCard,
-      width: widthCard,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: Color.fromRGBO(224, 220, 220, 1),
+  void updateCategoriasSelecionadas(List<Categoria> listaCategoriasSelecionadas) {
+    List<EventoCategoria> listaEventoCategoria = [];
+    for (Categoria categoria in listaCategoriasSelecionadas) {
+      listaEventoCategoria.add(
+        EventoCategoria(
+          id: getIdEventoCategoriaSelecionadaPorCategoria(categoria),
+          categoria: categoria,
         ),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Center(
-        child: Icon(
-          Ionicons.add_circle_outline,
-          color: Color.fromRGBO(134, 131, 131, 1),
-        ),
-      ),
-    );
+      );
+    }
+    _listaCategorias = listaEventoCategoria;
+    setState(() {});
+    popularInputCategoriasSelecionadas();
   }
 
-  Widget montarCardFoto(String link, double widthTela) {
-    double widthCard = (widthTela - (10 + defaultPadding * 2)) / 3;
-    return Container(
-      height: widthCard,
-      width: widthCard,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: Color.fromRGBO(224, 220, 220, 1),
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Image.network(
-          link,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+  int? getIdEventoCategoriaSelecionadaPorCategoria(Categoria categoria) {
+    int? idEventoCategoria;
+
+    for (EventoCategoria eventoCategoria in _listaCategorias) {
+      if (eventoCategoria.categoria!.id == categoria.id) {
+        idEventoCategoria = eventoCategoria.id;
+        break;
+      }
+    }
+
+    return idEventoCategoria;
+  }
+
+  void popularInputCategoriasSelecionadas() {
+    String categorias = "";
+    int i = 0;
+    for (EventoCategoria eventoCategoria in _listaCategorias) {
+      categorias += eventoCategoria.categoria!.nome!;
+      if (i < _listaCategorias.length - 1) {
+        categorias += ", ";
+      }
+      i++;
+    }
+
+    _categoriasController.text = categorias;
   }
 }

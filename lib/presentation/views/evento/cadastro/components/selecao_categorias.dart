@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 
 class SelecaoCategoria extends StatefulWidget {
   final List<Categoria> listaCategoriasSelecionadas;
+  final Function(List<Categoria>) updateCategoriasSelecionadas;
+  final int? limiteSelecao;
   const SelecaoCategoria({
     super.key,
     required this.listaCategoriasSelecionadas,
+    required this.updateCategoriasSelecionadas,
+    this.limiteSelecao,
   });
 
   @override
@@ -57,41 +61,84 @@ class _SelecaoCategoriaState extends State<SelecaoCategoria> {
           )
         : Container(
             height: MediaQuery.of(context).size.height / 100 * 75,
-            padding: const EdgeInsets.all(defaultPadding),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Categorias',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.only(
+              top: defaultPadding,
+              left: defaultPadding,
+              right: defaultPadding,
+            ),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
+              ),
+              color: Colors.white,
+            ),
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Categorias',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Divider(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: _listaTodasCategorias.length,
-                    itemBuilder: (context, index) {
-                      return getCardCategoria(_listaTodasCategorias[index]);
-                    },
-                  )
-                ],
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: _listaTodasCategorias.length,
+                      itemBuilder: (context, index) {
+                        return getCardCategoria(_listaTodasCategorias[index]);
+                      },
+                    ),
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              _mapaCategoriasMarcadas.clear();
+                              setState(() {});
+                              widget.updateCategoriasSelecionadas(getListaCategoriasSelecionadas());
+                            },
+                            child: const Text("Limpar"),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: defaultPadding,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Aplicar'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -109,13 +156,29 @@ class _SelecaoCategoriaState extends State<SelecaoCategoria> {
           value: _mapaCategoriasMarcadas.containsKey(categoria.id!),
           onChanged: (bool? value) {
             if (value!) {
-              _mapaCategoriasMarcadas.putIfAbsent(categoria.id!, () => categoria);
+              if (widget.limiteSelecao == null || _mapaCategoriasMarcadas.length < widget.limiteSelecao!) {
+                _mapaCategoriasMarcadas.putIfAbsent(categoria.id!, () => categoria);
+                widget.updateCategoriasSelecionadas(getListaCategoriasSelecionadas());
+              } else {
+                Util.showSnackbarError(context, "Somente é permitido selecionar ${widget.limiteSelecao!} categorias!");
+              }
             } else {
               _mapaCategoriasMarcadas.remove(categoria.id!);
+              widget.updateCategoriasSelecionadas(getListaCategoriasSelecionadas());
             }
 
             setState(() {});
           },
         ));
+  }
+
+  List<Categoria> getListaCategoriasSelecionadas() {
+    List<Categoria> listaCategoriasSelecionadas = [];
+
+    for (Categoria categoria in _mapaCategoriasMarcadas.values) {
+      listaCategoriasSelecionadas.add(categoria);
+    }
+
+    return listaCategoriasSelecionadas;
   }
 }

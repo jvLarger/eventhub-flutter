@@ -71,6 +71,7 @@ class Util {
   static void showSnackbarError(BuildContext context, String cause) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: const Color.fromRGBO(247, 85, 85, 1),
+      behavior: SnackBarBehavior.floating,
       duration: const Duration(seconds: 3),
       content: Text(
         cause,
