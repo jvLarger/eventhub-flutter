@@ -15,6 +15,7 @@ class Util {
   static DateFormat formatterDataComHora = DateFormat('dd/MM/yyyy HH:mm');
   static DateFormat formatterDataOnlyHora = DateFormat('HH:mm');
   static DateFormat formatterDataEng = DateFormat('yyyy-MM-dd');
+  static NumberFormat nf = NumberFormat("#,##0.00", "pt");
 
   static goTo(BuildContext context, Widget page) {
     Navigator.push(
@@ -182,6 +183,14 @@ class Util {
   static String formatarDataApiEng(DateTime? data) {
     if (data != null) {
       return formatterDataEng.format(data);
+    } else {
+      return "";
+    }
+  }
+
+  static String formatarReal(double? valor) {
+    if (valor != null) {
+      return nf.format(valor);
     } else {
       return "";
     }

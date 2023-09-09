@@ -1,9 +1,12 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/evento_cadastro_page.dart';
 import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_page.dart';
+import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +22,23 @@ class MeusEventosPage extends StatefulWidget {
 class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderStateMixin {
   TabController? _tabController;
   int _indexTabAtiva = 0;
+  bool _isLoading = true;
+  List<Evento> _listaEventosPendentes = [];
+  List<Evento> _listaEventosConcluidos = [];
+
+  buscarMeusEventos() async {
+    try {
+      _listaEventosPendentes = await EventoService().buscarMeusEventosPendentes();
+      _listaEventosConcluidos = await EventoService().buscarMeusEventosConcluidos();
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   @override
   void initState() {
@@ -28,85 +48,94 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
       initialIndex: 0,
     );
     super.initState();
+    buscarMeusEventos();
   }
 
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
-      topWidget: const EventHubTopAppbar(
-        title: "Meus Eventos",
-      ),
-      bottomNavigationBar: EventHubBottomButton(
-        label: "Novo Evento",
-        onTap: () {
-          Util.goTo(
-            context,
-            EventoCadastroPage(),
-          );
-        },
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            TabBar(
-              unselectedLabelColor: Colors.black,
-              labelColor: colorBlue,
-              labelStyle: const TextStyle(
-                fontSize: 18,
-                fontFamily: 'Urbanist',
-              ),
-              onTap: (value) {
-                _indexTabAtiva = value;
-                setState(() {});
-              },
-              tabs: const [
-                Tab(
-                  text: 'Pendentes',
-                ),
-                Tab(
-                  text: 'Concluídos',
-                )
-              ],
-              controller: _tabController,
-              indicatorSize: TabBarIndicatorSize.tab,
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : EventHubBody(
+            topWidget: const EventHubTopAppbar(
+              title: "Meus Eventos",
             ),
-            Container(
-              padding: const EdgeInsets.only(
-                top: 28,
+            bottomNavigationBar: EventHubBottomButton(
+              label: "Novo Evento",
+              onTap: () {
+                Util.goTo(
+                  context,
+                  const EventoCadastroPage(),
+                );
+              },
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                children: [
+                  TabBar(
+                    unselectedLabelColor: Colors.black,
+                    labelColor: colorBlue,
+                    labelStyle: const TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Urbanist',
+                    ),
+                    onTap: (value) {
+                      _indexTabAtiva = value;
+                      setState(() {});
+                    },
+                    tabs: const [
+                      Tab(
+                        text: 'Pendentes',
+                      ),
+                      Tab(
+                        text: 'Concluídos',
+                      )
+                    ],
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 28,
+                    ),
+                    child: _indexTabAtiva == 0 ? montarListaPendentes() : montarListaConcluidos(),
+                  )
+                ],
               ),
-              child: _indexTabAtiva == 0 ? montarListaPendentes() : montarListaConcluidos(),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   Widget montarListaConcluidos() {
-    return Column(
-      children: [
-        getCardConcluido(),
-        getCardConcluido(),
-        getCardConcluido(),
-      ],
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      itemCount: _listaEventosConcluidos.length,
+      itemBuilder: (context, index) {
+        return getCardConcluido(_listaEventosConcluidos[index]);
+      },
     );
   }
 
   Widget montarListaPendentes() {
-    return Column(
-      children: [
-        getCardPendente(),
-        getCardPendente(),
-        getCardPendente(),
-      ],
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      itemCount: _listaEventosPendentes.length,
+      itemBuilder: (context, index) {
+        return getCardPendente(_listaEventosPendentes[index]);
+      },
     );
   }
 
-  getCardPendente() {
+  getCardPendente(Evento evento) {
     return Container(
         padding: const EdgeInsets.all(10),
-        margin: EdgeInsets.only(bottom: defaultPadding),
+        margin: const EdgeInsets.only(bottom: defaultPadding),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -131,7 +160,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      "https://images.unsplash.com/photo-1565035010268-a3816f98589a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
@@ -148,12 +177,12 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     children: [
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             flex: 8,
                             child: Text(
-                              "DJ & Music Concert Concert Concert",
+                              evento.nome!,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -165,7 +194,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                           Expanded(
                             flex: 2,
                             child: GestureDetector(
-                              child: Icon(
+                              child: const Icon(
                                 Icons.send_outlined,
                                 size: 18,
                                 color: colorBlue,
@@ -177,9 +206,9 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       const SizedBox(
                         height: 8,
                       ),
-                      const Text(
-                        "Qui, Dez 30 • 18.00 - 22.00",
-                        style: TextStyle(
+                      Text(
+                        evento.dataEHoraFormatada!,
+                        style: const TextStyle(
                           fontSize: 14,
                           color: colorBlue,
                         ),
@@ -187,33 +216,33 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       const SizedBox(
                         height: 8,
                       ),
-                      const Row(
+                      Row(
                         children: [
                           Expanded(
                             flex: 7,
                             child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Ionicons.map_outline,
                                   color: colorBlue,
                                   size: 14,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Expanded(
                                   child: Text(
-                                    "Centro, Caxias do Sul RS",
+                                    "${evento.bairro!}, ${evento.cidade!} / ${evento.estado!}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: EventHubBadge(
                               label: "Pendente",
@@ -227,7 +256,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               children: [
                 Expanded(
@@ -236,12 +265,17 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
                     onPressed: () {
-                      Util.goTo(context, EventoIndicadoresPage());
+                      Util.goTo(
+                        context,
+                        EventoIndicadoresPage(
+                          idEvento: evento.id!,
+                        ),
+                      );
                     },
-                    child: Text("Ver indicadores"),
+                    child: const Text("Ver indicadores"),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
@@ -252,10 +286,12 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     onPressed: () {
                       Util.goTo(
                         context,
-                        EventoCadastroPage(),
+                        EventoCadastroPage(
+                          evento: evento,
+                        ),
                       );
                     },
-                    child: Text("Alterar"),
+                    child: const Text("Alterar"),
                   ),
                 ),
               ],
@@ -264,10 +300,10 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
         ));
   }
 
-  getCardConcluido() {
+  getCardConcluido(Evento evento) {
     return Container(
         padding: const EdgeInsets.all(10),
-        margin: EdgeInsets.only(bottom: defaultPadding),
+        margin: const EdgeInsets.only(bottom: defaultPadding),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -292,7 +328,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      "https://images.unsplash.com/photo-1565035010268-a3816f98589a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
@@ -309,12 +345,12 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                     children: [
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             flex: 8,
                             child: Text(
-                              "DJ & Music Concert Concert Concert",
+                              evento.nome!,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -328,9 +364,9 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       const SizedBox(
                         height: 8,
                       ),
-                      const Text(
-                        "Qui, Dez 30 • 18.00 - 22.00",
-                        style: TextStyle(
+                      Text(
+                        evento.dataEHoraFormatada!,
+                        style: const TextStyle(
                           fontSize: 14,
                           color: colorBlue,
                         ),
@@ -338,33 +374,33 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       const SizedBox(
                         height: 8,
                       ),
-                      const Row(
+                      Row(
                         children: [
                           Expanded(
                             flex: 7,
                             child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Ionicons.map_outline,
                                   color: colorBlue,
                                   size: 14,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Expanded(
                                   child: Text(
-                                    "Centro, Caxias do Sul RS",
+                                    "${evento.bairro!}, ${evento.cidade!} / ${evento.estado!}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
-                          Expanded(
+                          const Expanded(
                             flex: 5,
                             child: EventHubBadge(
                               label: "Concluído",
@@ -378,7 +414,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               children: [
                 Expanded(
@@ -387,12 +423,17 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     ),
                     onPressed: () {
-                      Util.goTo(context, EventoIndicadoresPage());
+                      Util.goTo(
+                        context,
+                        EventoIndicadoresPage(
+                          idEvento: evento.id!,
+                        ),
+                      );
                     },
-                    child: Text("Ver indicadores"),
+                    child: const Text("Ver indicadores"),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
               ],

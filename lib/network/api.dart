@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/evento/evento.dart';
@@ -356,9 +355,6 @@ class Api {
   }
 
   static criarEvento(Evento evento) async {
-    log(jsonEncode(
-      evento.toJson(),
-    ));
     return await http.post(
       getURI('$baseURL/eventos'),
       headers: getHeader(),
@@ -375,6 +371,30 @@ class Api {
       body: jsonEncode(
         evento.toJson(),
       ),
+    );
+  }
+
+  static excluirEvento(int idEvento) async {
+    return await http.delete(
+      getURI('$baseURL/eventos/$idEvento'),
+      headers: getHeader(),
+      body: jsonEncode(
+        {},
+      ),
+    );
+  }
+
+  static buscarMeusEventosConcluidos() async {
+    return await http.get(
+      getURI('$baseURL/eventos/concluidos'),
+      headers: getHeader(),
+    );
+  }
+
+  static buscarMeusEventosPendentes() async {
+    return await http.get(
+      getURI('$baseURL/eventos/pendentes'),
+      headers: getHeader(),
     );
   }
 }

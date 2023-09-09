@@ -40,7 +40,7 @@ class ViaCep {
       gia: jsons['gia'],
       ddd: jsons['ddd'],
       siafi: jsons['siafi'],
-      erro: jsons['erro'],
+      erro: jsons['erro'] == 'true',
     );
   }
 

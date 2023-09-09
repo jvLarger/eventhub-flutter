@@ -37,4 +37,41 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> excluirEvento(int idEvento) async {
+    final response = await Api.excluirEvento(idEvento);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Evento>> buscarMeusEventosPendentes() async {
+    final response = await Api.buscarMeusEventosPendentes();
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Evento.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Evento>> buscarMeusEventosConcluidos() async {
+    final response = await Api.buscarMeusEventosConcluidos();
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Evento.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

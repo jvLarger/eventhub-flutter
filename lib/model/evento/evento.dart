@@ -24,6 +24,7 @@ class Evento {
   bool? restrito;
   List<EventoArquivo>? arquivos;
   List<EventoCategoria>? categorias;
+  String? dataEHoraFormatada;
 
   Evento({
     this.id,
@@ -45,6 +46,7 @@ class Evento {
     this.restrito,
     this.arquivos,
     this.categorias,
+    this.dataEHoraFormatada,
   });
 
   factory Evento.fromJson(Map<String, dynamic> jsons) {
@@ -82,6 +84,7 @@ class Evento {
       restrito: jsons['restrito'],
       arquivos: arquivos,
       categorias: categorias,
+      dataEHoraFormatada: jsons['dataEHoraFormatada'],
     );
   }
 
@@ -105,5 +108,6 @@ class Evento {
         'restrito': restrito,
         'arquivos': arquivos,
         'categorias': categorias,
+        'dataEHoraFormatada': dataEHoraFormatada,
       };
 }

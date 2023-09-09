@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 class EventoIndicadoresPage extends StatefulWidget {
-  const EventoIndicadoresPage({super.key});
+  final int idEvento;
+  const EventoIndicadoresPage({
+    super.key,
+    required this.idEvento,
+  });
 
   @override
   State<EventoIndicadoresPage> createState() => _EventoIndicadoresPageState();

@@ -87,6 +87,8 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       // ignore: use_build_context_synchronously
       Util.hideLoading(context);
       // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      // ignore: use_build_context_synchronously
       Util.goToAndOverride(
         context,
         const MeusEventosPage(),
@@ -131,7 +133,90 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
   }
 
   void tratarLoadInformacoesAoAlterarUmEvento() {
-    if (widget.evento != null) {}
+    if (widget.evento != null) {
+      _nomeController.text = widget.evento!.nome ?? "";
+      _dataController.text = DateFormat('dd/MM/yyyy').format(widget.evento!.data!);
+      _horaInicioController.text = "${Util.leftPad(widget.evento!.horaInicio!.hour.toString(), "0", 2)}:${Util.leftPad(widget.evento!.horaInicio!.minute.toString(), "0", 2)}";
+      _valorController.text = "R\$ ${Util.formatarReal(widget.evento!.valor)}";
+      _descricaoController.text = widget.evento!.descricao ?? "";
+      _cepController.text = Util.aplicarMascara(widget.evento!.cep!, "##.###-###");
+      _cidadeController.text = widget.evento!.cidade ?? "";
+      _estado = widget.evento!.estado ?? "";
+      _logradouroController.text = widget.evento!.logradouro ?? "";
+      _bairroController.text = widget.evento!.bairro ?? "";
+      _numeroController.text = widget.evento!.numero ?? "";
+      _complementoController.text = widget.evento!.complemento ?? "";
+      _isApenasConvidados = widget.evento!.restrito!;
+      _listaArquivos = widget.evento!.arquivos!;
+      _listaCategorias = widget.evento!.categorias!;
+      setState(() {});
+      popularInputCategoriasSelecionadas();
+    }
+  }
+
+  excluirEvento() async {
+    try {
+      Util.showLoading(context);
+      await EventoService().excluirEvento(widget.evento!.id!);
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Evento cancelado com sucesso!");
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      Util.goToAndOverride(
+        context,
+        const MeusEventosPage(),
+      );
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  void showMessageExclusao() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Excluir Evento',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja realmente cancelar esse evento? Todos os ingressos vendidos serão estornados e você não receberá nenhum valor!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Confirmar',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () {
+                excluirEvento();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -149,7 +234,9 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
           Visibility(
             visible: widget.evento != null,
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showMessageExclusao();
+              },
               icon: const Icon(
                 Ionicons.trash_outline,
                 color: colorBlue,
