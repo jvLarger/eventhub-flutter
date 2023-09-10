@@ -1,23 +1,49 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
 import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingressos_page.dart';
 import 'package:eventhub/presentation/views/perfil/meuperfil/meu_perfil_page.dart';
 import 'package:eventhub/presentation/views/publicacao/feed/feed_publicacao_page.dart';
 import 'package:eventhub/presentation/views/usuarios/encontrarpessoas/encontrar_pessoas_page.dart';
+import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-class EventHubBottomBar extends StatelessWidget {
+class EventHubBottomBar extends StatefulWidget {
+  final int indexRecursoAtivo;
+  final UsuarioAutenticado usuarioAutenticado;
+
   const EventHubBottomBar({
     super.key,
     required this.indexRecursoAtivo,
     required this.usuarioAutenticado,
   });
 
-  final int indexRecursoAtivo;
-  final UsuarioAutenticado usuarioAutenticado;
+  @override
+  State<EventHubBottomBar> createState() => _EventHubBottomBarState();
+}
+
+class _EventHubBottomBarState extends State<EventHubBottomBar> {
+  int _numeroMensagensNaoLidas = 0;
+
+  buscarNumeroMensagensNaoLidas() async {
+    try {
+      _numeroMensagensNaoLidas = await MensagemService().buscarNumeroMensagensNaoLidas();
+      if (mounted) {
+        setState(() {});
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarNumeroMensagensNaoLidas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +62,7 @@ class EventHubBottomBar extends StatelessWidget {
                 navegarPara(
                   context,
                   EventosDestaquePage(
-                    usuarioAutenticado: usuarioAutenticado,
+                    usuarioAutenticado: widget.usuarioAutenticado,
                   ),
                   0,
                 );
@@ -67,7 +93,7 @@ class EventHubBottomBar extends StatelessWidget {
                 navegarPara(
                   context,
                   FeedPublicacao(
-                    usuarioAutenticado: usuarioAutenticado,
+                    usuarioAutenticado: widget.usuarioAutenticado,
                   ),
                   1,
                 );
@@ -98,7 +124,7 @@ class EventHubBottomBar extends StatelessWidget {
                 navegarPara(
                   context,
                   EncontrarPessoasPage(
-                    usuarioAutenticado: usuarioAutenticado,
+                    usuarioAutenticado: widget.usuarioAutenticado,
                   ),
                   2,
                 );
@@ -129,7 +155,7 @@ class EventHubBottomBar extends StatelessWidget {
                 navegarPara(
                   context,
                   MeusIngressosPage(
-                    usuarioAutenticado: usuarioAutenticado,
+                    usuarioAutenticado: widget.usuarioAutenticado,
                   ),
                   3,
                 );
@@ -160,27 +186,46 @@ class EventHubBottomBar extends StatelessWidget {
                 navegarPara(
                   context,
                   MeuPerfilPage(
-                    usuarioAutenticado: usuarioAutenticado,
+                    usuarioAutenticado: widget.usuarioAutenticado,
                   ),
                   4,
                 );
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
                 children: [
-                  Icon(
-                    Ionicons.person_outline,
-                    color: getColor(4),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Ionicons.person_outline,
+                        color: getColor(4),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Meu Perfil",
+                        style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 1,
+                          color: getColor(4),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "Meu Perfil",
-                    style: TextStyle(
-                      fontSize: 10,
-                      letterSpacing: 1,
-                      color: getColor(4),
+                  Positioned(
+                    right: 5,
+                    top: 5,
+                    child: Visibility(
+                      visible: _numeroMensagensNaoLidas > 0,
+                      child: Container(
+                        height: 13,
+                        width: 13,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -193,7 +238,7 @@ class EventHubBottomBar extends StatelessWidget {
   }
 
   Color getColor(int index) {
-    if (indexRecursoAtivo == index) {
+    if (widget.indexRecursoAtivo == index) {
       return colorBlue;
     } else {
       return const Color.fromRGBO(158, 158, 158, 1);
@@ -201,7 +246,7 @@ class EventHubBottomBar extends StatelessWidget {
   }
 
   void navegarPara(BuildContext context, Widget page, index) {
-    if (indexRecursoAtivo != index) {
+    if (widget.indexRecursoAtivo != index) {
       Util.goToAndOverride(context, page);
     }
   }

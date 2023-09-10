@@ -64,4 +64,18 @@ class MensagemService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<int> buscarNumeroMensagensNaoLidas() async {
+    final response = await Api.buscarNumeroMensagensNaoLidas();
+
+    if (response.statusCode == 200) {
+      int numeroMensagensNaoLidas = jsonDecode(
+        utf8.decode(response.bodyBytes),
+      );
+
+      return numeroMensagensNaoLidas;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

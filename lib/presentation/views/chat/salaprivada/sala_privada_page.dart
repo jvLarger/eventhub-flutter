@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
@@ -14,9 +15,11 @@ import 'package:ionicons/ionicons.dart';
 
 class SalaPrivadaPage extends StatefulWidget {
   final Usuario usuario;
+  final UsuarioAutenticado usuarioAutenticado;
   const SalaPrivadaPage({
     super.key,
     required this.usuario,
+    required this.usuarioAutenticado,
   });
 
   @override
@@ -117,7 +120,9 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
               Navigator.pop(context);
               Util.goToAndOverride(
                 context,
-                const SalasBatePapoPage(),
+                SalasBatePapoPage(
+                  usuarioAutenticado: widget.usuarioAutenticado,
+                ),
               );
               return false;
             },

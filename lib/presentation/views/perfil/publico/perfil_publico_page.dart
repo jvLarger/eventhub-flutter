@@ -327,6 +327,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                                       context,
                                       SalaPrivadaPage(
                                         usuario: _perfil.usuario!,
+                                        usuarioAutenticado: widget.usuarioAutenticado,
                                       ),
                                     );
                                   } else {

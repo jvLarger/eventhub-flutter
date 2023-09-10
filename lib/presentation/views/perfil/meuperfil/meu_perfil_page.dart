@@ -9,6 +9,7 @@ import 'package:eventhub/presentation/views/evento/meuseventos/meus_eventos_page
 import 'package:eventhub/presentation/views/faturamento/sacar_saldo_page.dart';
 import 'package:eventhub/presentation/views/perfil/minhas_informacoes/minhas_informacoes_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
+import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/services/perfil/perfil_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
@@ -32,6 +33,19 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
   bool _isLoading = true;
   Perfil _perfil = Perfil();
 
+  int _numeroMensagensNaoLidas = 0;
+
+  buscarNumeroMensagensNaoLidas() async {
+    try {
+      _numeroMensagensNaoLidas = await MensagemService().buscarNumeroMensagensNaoLidas();
+      if (mounted) {
+        setState(() {});
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   buscarMeuPerfil() async {
     try {
       _perfil = await PerfilService().buscarMeuPerfil();
@@ -47,6 +61,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
   void initState() {
     super.initState();
     buscarMeuPerfil();
+    buscarNumeroMensagensNaoLidas();
   }
 
   @override
@@ -190,6 +205,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                       Util.goTo(context, const MeusEventosPage());
                     },
                     false,
+                    false,
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -198,9 +214,15 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                     Ionicons.chatbox_outline,
                     "Chat",
                     () {
-                      Util.goTo(context, const SalasBatePapoPage());
+                      Util.goTo(
+                        context,
+                        SalasBatePapoPage(
+                          usuarioAutenticado: widget.usuarioAutenticado,
+                        ),
+                      );
                     },
                     false,
+                    _numeroMensagensNaoLidas > 0,
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -224,6 +246,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                       );
                     },
                     false,
+                    false,
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -241,6 +264,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                       );
                     },
                     false,
+                    false,
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -251,6 +275,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                     () {
                       Util.goTo(context, const SacarSaldoPage());
                     },
+                    false,
                     false,
                   ),
                   const SizedBox(
@@ -274,6 +299,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                       );
                     },
                     true,
+                    false,
                   ),
                 ],
               ),
@@ -281,49 +307,68 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
           );
   }
 
-  Widget getItemMenu(IconData icone, String label, Function action, bool isDestaque) {
-    return GestureDetector(
-      onTap: () {
-        action();
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: [
-                Icon(
-                  icone,
-                  color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
+  Widget getItemMenu(IconData icone, String label, Function action, bool isDestaque, bool isAlerta) {
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () {
+            action();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Icon(
+                      icone,
+                      color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              label,
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null),
-            ),
-          ),
-          Visibility(
-            visible: !isDestaque,
-            child: Expanded(
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.chevron_right,
-                    color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
+              ),
+              Expanded(
+                flex: 7,
+                child: Text(
+                  label,
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null),
+                ),
+              ),
+              Visibility(
+                visible: !isDestaque,
+                child: Expanded(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.chevron_right,
+                        color: isDestaque ? const Color.fromRGBO(247, 85, 85, 1) : null,
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              )
+            ],
+          ),
+        ),
+        Positioned(
+          left: 0,
+          top: 0,
+          child: Visibility(
+            visible: isAlerta && _numeroMensagensNaoLidas > 0,
+            child: Container(
+              height: 13,
+              width: 13,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -411,4 +411,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarNumeroMensagensNaoLidas() async {
+    return await http.get(
+      getURI('$baseURL/mensagens/nao-lidas'),
+      headers: getHeader(),
+    );
+  }
 }
