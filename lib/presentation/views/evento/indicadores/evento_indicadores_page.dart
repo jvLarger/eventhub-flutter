@@ -1,6 +1,9 @@
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/evento/indicadores_evento.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_participantes_page.dart';
+import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -18,68 +21,95 @@ class EventoIndicadoresPage extends StatefulWidget {
 }
 
 class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
+  bool _isLoding = true;
+  IndicadoresEvento _indicadoresEvento = IndicadoresEvento();
+  buscarIndicadoresEvento() async {
+    try {
+      _indicadoresEvento = await EventoService().buscarIndicadoresEvento(widget.idEvento);
+      if (mounted) {
+        setState(() {
+          _isLoding = false;
+        });
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarIndicadoresEvento();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
-      topWidget: const EventHubTopAppbar(
-        title: "Indicadores",
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            getCardHeader(),
-            ListTile(
-              onTap: () {
-                Util.goTo(
-                  context,
-                  EventoIndicadoresParticipantesPage(),
-                );
-              },
-              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-              iconColor: const Color.fromRGBO(33, 33, 33, 1),
-              leading: const Icon(Ionicons.people_outline),
-              trailing: const Icon(Ionicons.chevron_forward),
-              title: const Text(
-                "Lista de Participantes (44)",
-                style: TextStyle(
-                  color: Color.fromRGBO(33, 33, 33, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+    return _isLoding
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : EventHubBody(
+            topWidget: const EventHubTopAppbar(
+              title: "Indicadores",
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                children: [
+                  getCardHeader(),
+                  ListTile(
+                    onTap: () {
+                      Util.goTo(
+                        context,
+                        EventoIndicadoresParticipantesPage(
+                          idEvento: widget.idEvento,
+                        ),
+                      );
+                    },
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    iconColor: const Color.fromRGBO(33, 33, 33, 1),
+                    leading: const Icon(Ionicons.people_outline),
+                    trailing: const Icon(Ionicons.chevron_forward),
+                    title: Text(
+                      "Lista de Participantes (${_indicadoresEvento.ingressosVendidos})",
+                      style: const TextStyle(
+                        color: Color.fromRGBO(33, 33, 33, 1),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding * 2,
+                  ),
+                  Text(
+                    "R\$ ${Util.formatarReal(_indicadoresEvento.faturamento!.valorTotalFaturamento!)}",
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Text(
+                    "Faturamento",
+                    style: TextStyle(
+                      color: Color.fromRGBO(97, 97, 97, 1),
+                      fontSize: 16,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              height: defaultPadding * 2,
-            ),
-            const Text(
-              "R\$ 4587,23",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            const Text(
-              "Faturamento",
-              style: TextStyle(
-                color: Color.fromRGBO(97, 97, 97, 1),
-                fontSize: 16,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Widget getCardHeader() {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.only(bottom: defaultPadding),
+      margin: const EdgeInsets.only(bottom: defaultPadding),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -104,7 +134,7 @@ class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.network(
-                    "https://images.unsplash.com/photo-1565035010268-a3816f98589a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+                    Util.montarURlFotoByArquivo(_indicadoresEvento.evento!.arquivos![0].arquivo),
                     fit: BoxFit.cover,
                     width: 100,
                     height: 100,
@@ -121,12 +151,12 @@ class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
                   children: [
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           flex: 8,
                           child: Text(
-                            "DJ & Music Concert Concert Concert",
+                            _indicadoresEvento.evento!.nome!,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -140,9 +170,9 @@ class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text(
-                      "Qui, Dez 30 • 18.00 - 22.00",
-                      style: TextStyle(
+                    Text(
+                      _indicadoresEvento.evento!.dataEHoraFormatada!,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: colorBlue,
                       ),
@@ -150,23 +180,23 @@ class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(
                           flex: 7,
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Ionicons.map_outline,
                                 color: colorBlue,
                                 size: 14,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Expanded(
                                 child: Text(
-                                  "Centro, Caxias do Sul RS",
+                                  "${_indicadoresEvento.evento!.bairro!}, ${_indicadoresEvento.evento!.cidade!} / ${_indicadoresEvento.evento!.estado!}",
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )

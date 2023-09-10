@@ -397,4 +397,18 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarIndicadoresEvento(int idEvento) async {
+    return await http.get(
+      getURI('$baseURL/eventos/$idEvento/indicadores'),
+      headers: getHeader(),
+    );
+  }
+
+  static buscarIngressosVendidosEvento(int idEvento) async {
+    return await http.get(
+      getURI('$baseURL/eventos/$idEvento/indicadores/participantes'),
+      headers: getHeader(),
+    );
+  }
 }

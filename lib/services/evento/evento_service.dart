@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/evento/indicadores_evento.dart';
+import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/util.dart';
 
@@ -69,6 +71,36 @@ class EventoService {
         utf8.decode(response.bodyBytes),
       ) as List)
           .map((model) => Evento.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<IndicadoresEvento> buscarIndicadoresEvento(int idEvento) async {
+    final response = await Api.buscarIndicadoresEvento(idEvento);
+
+    if (response.statusCode == 200) {
+      IndicadoresEvento indicadoresEvento = IndicadoresEvento.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return indicadoresEvento;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Ingresso>> buscarIngressosVendidosEvento(int idEvento) async {
+    final response = await Api.buscarIngressosVendidosEvento(idEvento);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Ingresso.fromJson(model))
           .toList();
     } else {
       throw EventHubException(Util.getMensagemErro(response));
