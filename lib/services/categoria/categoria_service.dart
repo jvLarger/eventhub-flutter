@@ -19,4 +19,18 @@ class CategoriaService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<List<Categoria>> buscarCategoriasPopulares() async {
+    final response = await Api.buscarCategoriasPopulares();
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Categoria.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

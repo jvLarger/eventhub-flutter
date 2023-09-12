@@ -418,4 +418,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarCategoriasPopulares() async {
+    return await http.get(
+      getURI('$baseURL/categorias/populares'),
+      headers: getHeader(),
+    );
+  }
 }
