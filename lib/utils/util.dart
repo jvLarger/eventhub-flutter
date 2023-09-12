@@ -152,6 +152,14 @@ class Util {
     return "${data.split("-")[2]}/${data.split("-")[1]}/${data.split("-")[0]}";
   }
 
+  static datePtBrToEng(String data) {
+    if (data.isNotEmpty) {
+      return "${data.split("/")[2]}-${data.split("/")[1]}-${data.split("/")[0]}";
+    } else {
+      return "";
+    }
+  }
+
   static montarURlFotoByArquivo(Arquivo? arquivo) {
     if (arquivo != null) {
       return montarURlFoto(arquivo.nomeAbsoluto!);

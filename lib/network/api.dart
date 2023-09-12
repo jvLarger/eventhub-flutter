@@ -425,4 +425,21 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarEventos(
+    double latitude,
+    double longitude,
+    String idsCategorias,
+    String nome,
+    double raio,
+    String data,
+    double valorInicial,
+    double valorFinal,
+    int page,
+  ) async {
+    return await http.get(
+      getURI('$baseURL/eventos?latitude=$latitude&longitude=$longitude&categorias=$idsCategorias&nome=$nome&raio=$raio&data=$data&valorInicial=$valorInicial&valorFinal=$valorFinal&page=$page'),
+      headers: getHeader(),
+    );
+  }
 }

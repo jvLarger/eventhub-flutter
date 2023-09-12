@@ -42,7 +42,7 @@ class ListaPessoas extends StatelessWidget {
                 height: 10,
               ),
               const Text(
-                "Desculpe, o filtro que você informou não pode ser encontrando. Por favor, verifique novamente o conteúdo informado e tente novamente.",
+                "Desculpe, o filtro que você informou não pode ser encontrado. Por favor, verifique novamente o conteúdo informado e tente novamente.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,

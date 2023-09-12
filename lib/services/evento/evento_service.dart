@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/categoria/categoria.dart';
 import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/evento/indicadores_evento.dart';
 import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/utils/util.dart';
+import 'package:geolocator/geolocator.dart';
 
 class EventoService {
   Future<Evento> criarEvento(Evento evento) async {
@@ -101,6 +103,49 @@ class EventoService {
         utf8.decode(response.bodyBytes),
       ) as List)
           .map((model) => Ingresso.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Evento>> buscarEventos(
+    Position position,
+    List<Categoria> categorias,
+    String nome,
+    double raio,
+    String data,
+    double valorInicial,
+    double valorFinal,
+    int page,
+  ) async {
+    String idsCategorias = "";
+    int i = 0;
+    for (Categoria categoria in categorias) {
+      idsCategorias += categoria.id!.toString();
+      if (i < categorias.length - 1) {
+        idsCategorias += ", ";
+      }
+      i++;
+    }
+
+    final response = await Api.buscarEventos(
+      position.latitude,
+      position.longitude,
+      idsCategorias,
+      nome,
+      raio,
+      Util.datePtBrToEng(data),
+      valorInicial,
+      valorFinal,
+      page,
+    );
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Evento.fromJson(model))
           .toList();
     } else {
       throw EventHubException(Util.getMensagemErro(response));

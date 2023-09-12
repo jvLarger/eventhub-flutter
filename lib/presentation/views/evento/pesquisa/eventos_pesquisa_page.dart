@@ -1,16 +1,19 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/categoria/categoria.dart';
+import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
-import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/selecao_categorias.dart';
 import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/services/categoria/categoria_service.dart';
+import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
@@ -24,21 +27,26 @@ class EventosPesquisaPage extends StatefulWidget {
 
 class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   bool _isLoading = true;
+  bool _isExistisMoreData = false;
   List<Categoria> _listaCategoriasPopulares = [];
   List<Categoria> _listaCategoriasFiltro = [];
-  Map<int, Categoria> _mapaCategoriasSelecionadas = Map();
+  List<Evento> _listaEventos = [];
+  final Map<int, Categoria> _mapaCategoriasSelecionadas = {};
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _dataFiltroController = TextEditingController();
   final TextEditingController _valorInicialFiltroController = TextEditingController();
   final TextEditingController _valorFinalFiltroController = TextEditingController();
   final TextEditingController _categoriasControllerFiltroController = TextEditingController();
   final TextEditingController _raioFiltroController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   double _raio = 50;
   double _valorInicial = 0;
-  double _valorFinal = 0;
+  double _valorFinal = 1000;
   String _data = "";
   Position? _position;
+
+  int _page = 0;
 
   Future<void> getCoordenadasGeograficas() async {
     LocationPermission permission;
@@ -68,14 +76,32 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
     }
   }
 
-  buscarEventos() {}
-
-  buscarMaisEventos() {}
+  buscarEventos() async {
+    try {
+      _page = 0;
+      List<Evento> listaEventosEncontrados = await EventoService().buscarEventos(
+        _position!,
+        _mapaCategoriasSelecionadas.values.toList(),
+        _nomeController.text,
+        _raio,
+        _data,
+        _valorInicial,
+        _valorFinal,
+        _page,
+      );
+      _listaEventos = listaEventosEncontrados;
+      _page++;
+      _isExistisMoreData = listaEventosEncontrados.isNotEmpty && listaEventosEncontrados.length >= 4;
+      setState(() {});
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
 
   limparFiltros() {
     _raio = 50;
     _valorInicial = 0;
-    _valorFinal = 0;
+    _valorFinal = 1000;
     _data = "";
     _mapaCategoriasSelecionadas.clear();
     _listaCategoriasFiltro.clear();
@@ -153,6 +179,35 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   void initState() {
     super.initState();
     buscarConfiguracoesIniciais();
+    buscarMaisEventos();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        buscarMaisEventos();
+      }
+    });
+  }
+
+  buscarMaisEventos() async {
+    try {
+      if (_isExistisMoreData) {
+        List<Evento> listaEventosEncontrados = await EventoService().buscarEventos(
+          _position!,
+          _mapaCategoriasSelecionadas.values.toList(),
+          _nomeController.text,
+          _raio,
+          _data,
+          _valorInicial,
+          _valorFinal,
+          _page,
+        );
+        _listaEventos.addAll(listaEventosEncontrados);
+        _page++;
+        _isExistisMoreData = listaEventosEncontrados.isNotEmpty && listaEventosEncontrados.length >= 4;
+        setState(() {});
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
   }
 
   @override
@@ -163,86 +218,123 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
               child: CircularProgressIndicator(),
             ),
           )
-        : EventHubBody(
-            child: Padding(
-              padding: const EdgeInsets.all(
-                defaultPadding,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: defaultPadding,
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Icon(Icons.arrow_back),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: EventHubTextFormField(
-                          label: "Qual tipo de evento você está procurando?",
-                          controller: _nomeController,
-                          prefixIcon: const Icon(
-                            Ionicons.search,
-                            size: 15,
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              openFiltrosPesquisa();
+        : Scaffold(
+            body: SingleChildScrollView(
+              controller: _scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(
+                  defaultPadding,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Icon(Icons.arrow_back),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: EventHubTextFormField(
+                            label: "Qual tipo de evento você está procurando?",
+                            controller: _nomeController,
+                            onchange: (String value) {
+                              buscarEventos();
                             },
-                            icon: const Icon(
-                              Ionicons.funnel_outline,
-                              color: colorBlue,
+                            prefixIcon: const Icon(
+                              Ionicons.search,
                               size: 15,
                             ),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                openFiltrosPesquisa();
+                              },
+                              icon: const Icon(
+                                Ionicons.funnel_outline,
+                                color: colorBlue,
+                                size: 15,
+                              ),
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: defaultPadding,
-                  ),
-                  getWidgetCategoriasPopulares(),
-                  const SizedBox(
-                    height: defaultPadding,
-                  ),
-                  Text(
-                    "5 Encontrados",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                        )
+                      ],
                     ),
-                  ),
-                  SizedBox(
-                    height: defaultPadding,
-                  ),
-                  getCardEvento(),
-                  getCardEvento(),
-                  getCardEvento(),
-                  getCardEvento(),
-                  getCardEvento(),
-                ],
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    getWidgetCategoriasPopulares(),
+                    _listaEventos.isNotEmpty
+                        ? ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemBuilder: (context, i) {
+                              if (i == _listaEventos.length && _isExistisMoreData) {
+                                return const CupertinoActivityIndicator();
+                              }
+
+                              if (_listaEventos.length != i) {
+                                return getCardEvento(_listaEventos[i], i);
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                            itemCount: _listaEventos.length + 1,
+                          )
+                        : Column(
+                            children: [
+                              const SizedBox(
+                                height: defaultPadding * 2,
+                              ),
+                              SvgPicture.asset(
+                                "assets/images/empty.svg",
+                                width: 250,
+                              ),
+                              const SizedBox(
+                                height: defaultPadding,
+                              ),
+                              const Text(
+                                "Nada Encontrado",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "Desculpe, não foi possível localizar eventos com o filtro que você informou. Por favor, verifique novamente o conteúdo informado e tente novamente.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          )
+                  ],
+                ),
               ),
             ),
           );
   }
 
-  Widget getCardEvento() {
+  Widget getCardEvento(Evento evento, int index) {
     return GestureDetector(
       onTap: () {
-        Util.goTo(context, EventoVisualizacaoPage());
+        Util.goTo(context, const EventoVisualizacaoPage());
       },
       child: Container(
         padding: const EdgeInsets.all(10),
-        margin: EdgeInsets.only(bottom: defaultPadding),
+        margin: const EdgeInsets.only(bottom: defaultPadding),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -267,7 +359,7 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
-                      "https://images.unsplash.com/photo-1565035010268-a3816f98589a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
@@ -284,12 +376,12 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                     children: [
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             flex: 8,
                             child: Text(
-                              "DJ & Music Concert Concert Concert",
+                              evento.nome!,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -301,17 +393,14 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                         ],
                       ),
                       const SizedBox(
-                        height: 8,
+                        height: 10,
                       ),
-                      const Text(
-                        "Qui, Dez 30 • 18.00 - 22.00",
-                        style: TextStyle(
+                      Text(
+                        evento.dataEHoraFormatada!,
+                        style: const TextStyle(
                           fontSize: 14,
                           color: colorBlue,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 8,
                       ),
                       Row(
                         children: [
@@ -319,31 +408,31 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                             flex: 8,
                             child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Ionicons.map_outline,
                                   color: colorBlue,
                                   size: 14,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Expanded(
                                   child: Text(
-                                    "Centro, Caxias do Sul RS",
+                                    "${evento.bairro!}, ${evento.cidade!} / ${evento.estado!}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Expanded(
                             flex: 2,
                             child: IconButton(
                               onPressed: () {},
-                              icon: Icon(
+                              icon: const Icon(
                                 Ionicons.heart_outline,
                                 color: colorBlue,
                               ),
