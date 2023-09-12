@@ -28,12 +28,16 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   List<Categoria> _listaCategoriasFiltro = [];
   Map<int, Categoria> _mapaCategoriasSelecionadas = Map();
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _dataController = TextEditingController();
+  final TextEditingController _dataFiltroController = TextEditingController();
   final TextEditingController _valorInicialFiltroController = TextEditingController();
   final TextEditingController _valorFinalFiltroController = TextEditingController();
   final TextEditingController _categoriasControllerFiltroController = TextEditingController();
   final TextEditingController _raioFiltroController = TextEditingController();
 
+  double _raio = 50;
+  double _valorInicial = 0;
+  double _valorFinal = 0;
+  String _data = "";
   Position? _position;
 
   Future<void> getCoordenadasGeograficas() async {
@@ -69,7 +73,15 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   buscarMaisEventos() {}
 
   limparFiltros() {
+    _raio = 50;
+    _valorInicial = 0;
+    _valorFinal = 0;
+    _data = "";
+    _mapaCategoriasSelecionadas.clear();
+    _listaCategoriasFiltro.clear();
     atualizarControllerCategoriasFiltro();
+    setState(() {});
+    buscarEventos();
   }
 
   aplicarFiltrosPesquisa() {
@@ -88,7 +100,14 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
         _mapaCategoriasSelecionadas.putIfAbsent(categoria.id!, () => categoria);
       }
 
+      _valorInicial = valorInicialFiltro;
+      _valorFinal = valorFinalFiltro;
+      _raio = Util.converterValorRealToDouble(_raioFiltroController.text);
+      _data = _dataFiltroController.text;
+
       setState(() {});
+
+      buscarEventos();
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
     }
@@ -97,6 +116,10 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   loadFiltrosPesquisa() {
     _listaCategoriasFiltro = _mapaCategoriasSelecionadas.values.toList();
     atualizarControllerCategoriasFiltro();
+    _valorInicialFiltroController.text = "R\$ ${Util.formatarReal(_valorInicial)}";
+    _valorFinalFiltroController.text = "R\$ ${Util.formatarReal(_valorFinal)}";
+    _raioFiltroController.text = _raio.toInt().toString();
+    _dataFiltroController.text = _data;
   }
 
   atualizarControllerCategoriasFiltro() {
@@ -537,31 +560,31 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
-                        initialDate: _dataController.text.isEmpty
+                        initialDate: _dataFiltroController.text.isEmpty
                             ? DateTime.now()
                             : DateTime.now().copyWith(
-                                day: int.parse(_dataController.text.split("/")[0]),
-                                month: int.parse(_dataController.text.split("/")[1]),
-                                year: int.parse(_dataController.text.split("/")[2]),
+                                day: int.parse(_dataFiltroController.text.split("/")[0]),
+                                month: int.parse(_dataFiltroController.text.split("/")[1]),
+                                year: int.parse(_dataFiltroController.text.split("/")[2]),
                               ),
                         firstDate: DateTime(1950),
-                        lastDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 1000)),
                       );
                       if (pickedDate != null) {
                         String dataFormatada = DateFormat('dd/MM/yyyy').format(pickedDate);
-                        _dataController.text = dataFormatada;
+                        _dataFiltroController.text = dataFormatada;
                       }
                     },
                     suffixIcon: IconButton(
                       onPressed: () {
-                        _dataController.text = "";
+                        _dataFiltroController.text = "";
                       },
                       icon: const Icon(
                         Ionicons.trash,
                         size: 15,
                       ),
                     ),
-                    controller: _dataController,
+                    controller: _dataFiltroController,
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -578,7 +601,7 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                             limparFiltros();
                             Navigator.of(context).pop();
                           },
-                          child: Text("Limpar"),
+                          child: const Text("Limpar"),
                         ),
                       ),
                       const SizedBox(
