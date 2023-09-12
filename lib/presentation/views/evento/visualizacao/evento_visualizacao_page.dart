@@ -1,472 +1,515 @@
+import 'dart:async';
+
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/evento/evento_arquivo.dart';
+import 'package:eventhub/model/ingresso/ingresso.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/views/ingresso/compra/titular/titular_ingresso_page.dart';
+import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
+import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ionicons/ionicons.dart';
 
 class EventoVisualizacaoPage extends StatefulWidget {
-  const EventoVisualizacaoPage({super.key});
+  final int idEvento;
+  final UsuarioAutenticado usuarioAutenticado;
+  const EventoVisualizacaoPage({
+    super.key,
+    required this.idEvento,
+    required this.usuarioAutenticado,
+  });
 
   @override
   State<EventoVisualizacaoPage> createState() => _EventoVisualizacaoPageState();
 }
 
 class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
+  bool _isLoading = true;
+  Evento _evento = Evento();
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  final Completer<GoogleMapController> _mapController = Completer<GoogleMapController>();
+  CameraPosition _kGooglePlex = const CameraPosition(
+    target: LatLng(1, 1),
+    zoom: 14.4746,
+  );
+  buscarEvento() async {
+    try {
+      Evento evento = await EventoService().buscarEvento(widget.idEvento);
+
+      _kGooglePlex = CameraPosition(
+        target: LatLng(evento.latitude!, evento.longitude!),
+        zoom: 20,
+      );
+
+      Marker marker1 = Marker(
+        markerId: const MarkerId('place_name1'),
+        position: LatLng(evento.latitude!, evento.longitude!),
+      );
+
+      markers[const MarkerId('place_name1')] = marker1;
+
+      if (mounted) {
+        setState(() {
+          _evento = evento;
+          _isLoading = false;
+        });
+      }
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buscarEvento();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return EventHubBody(
-      bottomNavigationBar: EventHubBottomButton(
-        label: "Comprar Ingresso",
-        onTap: () {
-          Util.goTo(context, TitularIngressoPage());
-        },
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 300,
-            width: double.maxFinite,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                filterQuality: FilterQuality.high,
-                image: NetworkImage(
-                  "https://images.unsplash.com/photo-1632008649281-0846891f76bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1625&q=80",
-                ),
-              ),
+    return _isLoading
+        ? const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-            child: Padding(
-              padding: EdgeInsets.all(
-                defaultPadding,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      BackButton(),
-                    ],
-                  )
-                ],
-              ),
+          )
+        : EventHubBody(
+            bottomNavigationBar: EventHubBottomButton(
+              label: "Comprar Ingresso",
+              onTap: () {
+                Util.goTo(context, const TitularIngressoPage());
+              },
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(defaultPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Stack(
                   children: [
-                    Text(
-                      "Rock in Rio",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                    CarouselSlider(
+                      items: getImagensSliders(),
+                      options: CarouselOptions(
+                        height: 260.0,
+                        enlargeCenterPage: true,
+                        autoPlay: true,
+                        aspectRatio: 16 / 9,
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enableInfiniteScroll: true,
+                        autoPlayAnimationDuration: const Duration(milliseconds: 5000),
+                        viewportFraction: 0.8,
                       ),
                     ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Ionicons.heart_outline,
-                            color: colorBlue,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.send_rounded,
-                            color: colorBlue,
-                          ),
-                        )
-                      ],
+                    const Positioned(
+                      top: defaultPadding,
+                      left: defaultPadding / 2,
+                      child: BackButton(),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    EventHubBadge(
-                      color: colorBlue,
-                      label: "Música",
-                    ),
-                    Stack(
-                      children: [
-                        SizedBox(
-                          width: 140,
-                          height: 40,
-                        ),
-                        Positioned(
-                          left: 1 * 20,
-                          child: const CircleAvatar(
-                            backgroundImage: NetworkImage("https://www.jacalculei.com.br/wp-content/uploads/2022/02/O-que-e%CC%81-Pessoa-Juri%CC%81dica-.png"),
-                            radius: 20,
-                          ),
-                        ),
-                        Positioned(
-                          left: 2 * 20,
-                          child: const CircleAvatar(
-                            backgroundImage: NetworkImage("https://www.jacalculei.com.br/wp-content/uploads/2022/02/O-que-e%CC%81-Pessoa-Juri%CC%81dica-.png"),
-                            radius: 20,
-                          ),
-                        ),
-                        Positioned(
-                          left: 3 * 20,
-                          child: const CircleAvatar(
-                            backgroundImage: NetworkImage("https://www.jacalculei.com.br/wp-content/uploads/2022/02/O-que-e%CC%81-Pessoa-Juri%CC%81dica-.png"),
-                            radius: 20,
-                          ),
-                        ),
-                        Positioned(
-                          left: 4 * 20,
-                          child: const CircleAvatar(
-                            backgroundImage: NetworkImage("https://www.jacalculei.com.br/wp-content/uploads/2022/02/O-que-e%CC%81-Pessoa-Juri%CC%81dica-.png"),
-                            radius: 20,
-                          ),
-                        )
-                      ],
-                    ),
-                    Text(
-                      "+ 20.000 confirmados",
-                      style: TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Divider(),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: colorBlue.withOpacity(
-                            0.2,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Ionicons.calendar_outline,
-                            color: colorBlue,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: defaultPadding / 2,
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.all(defaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Sáb, Dezembro 20, 2023",
-                            style: TextStyle(
-                              fontSize: 17,
+                            _evento.nome!,
+                            style: const TextStyle(
+                              fontSize: 25,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(
-                            height: 5,
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Ionicons.heart_outline,
+                                  color: colorBlue,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.send_rounded,
+                                  color: colorBlue,
+                                ),
+                              )
+                            ],
                           ),
-                          Text("18.00 - 23.00"),
                         ],
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: defaultPadding,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: colorBlue.withOpacity(
-                            0.2,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Ionicons.ticket_outline,
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          EventHubBadge(
                             color: colorBlue,
+                            label: _evento.categorias![0].categoria!.nome!,
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: defaultPadding / 2,
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "R\$ 450,00",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                          Visibility(
+                            visible: _evento.ultimosIngressoVendidos != null && _evento.ultimosIngressoVendidos!.isNotEmpty,
+                            child: Stack(
+                              children: getUltimasVendaIngressos(),
                             ),
                           ),
-                          SizedBox(
-                            height: 5,
+                          const SizedBox(
+                            width: 5,
                           ),
-                          Text("Preço do Ingresso"),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: defaultPadding,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: colorBlue.withOpacity(
-                            0.2,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Ionicons.map_outline,
-                            color: colorBlue,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: defaultPadding / 2,
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Centro, Caxias do Sul / RS",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                          Visibility(
+                            visible: _evento.ingressosVendidos != null && _evento.ingressosVendidos! > 0,
+                            child: Text(
+                              " ${_evento.ingressosVendidos} confirmados",
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text("Av. Bento Gonçalves 478 - Centro - Caxias do Sul / RS"),
                         ],
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Divider(),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: CircleAvatar(
-                        radius: 32,
-                        backgroundImage: NetworkImage("https://i1.sndcdn.com/avatars-000635832897-vphyre-t500x500.jpg"),
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(
-                      width: defaultPadding / 2,
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const Divider(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
                         children: [
-                          Text(
-                            "Mundo da Música",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: colorBlue.withOpacity(
+                                  0.2,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Ionicons.calendar_outline,
+                                  color: colorBlue,
+                                ),
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 5,
+                          const SizedBox(
+                            width: defaultPadding / 2,
                           ),
-                          Text("Organizador"),
+                          Expanded(
+                            flex: 8,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _evento.dataEHoraFormatada!.split(" • ")[0],
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(_evento.dataEHoraFormatada!.split(" • ")[1]),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      width: defaultPadding / 2,
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        ),
-                        child: Text(
-                          "Ver Perfil",
-                          style: TextStyle(
-                            fontSize: 13,
+                      const SizedBox(
+                        height: defaultPadding,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: colorBlue.withOpacity(
+                                  0.2,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Ionicons.ticket_outline,
+                                  color: colorBlue,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(
+                            width: defaultPadding / 2,
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "R\$ ${Util.formatarReal(_evento.valor)}",
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                const Text("Preço do Ingresso"),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: defaultPadding / 1.5,
-                ),
-                Text(
-                  "Sobre o Evento",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut ",
-                ),
-                SizedBox(
-                  height: defaultPadding / 1.5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Galeria (Pré-Evento)",
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(
+                        height: defaultPadding,
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Ver Tudo",
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: colorBlue.withOpacity(
+                                  0.2,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Ionicons.map_outline,
+                                  color: colorBlue,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: defaultPadding / 2,
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${_evento.bairro!}, ${_evento.cidade!} / ${_evento.estado!}",
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text("${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}"),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Divider(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: CircleAvatar(
+                              radius: 32,
+                              backgroundImage: NetworkImage(
+                                Util.montarURlFotoByArquivo(_evento.usuario!.foto),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: defaultPadding / 2,
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _evento.usuario!.nomeCompleto!,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                const Text("Organizador"),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: defaultPadding / 2,
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Util.goTo(
+                                  context,
+                                  PerfilPublicoPage(
+                                    idUsuario: _evento.usuario!.id!,
+                                    usuarioAutenticado: widget.usuarioAutenticado,
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                              ),
+                              child: const Text(
+                                "Ver Perfil",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: defaultPadding / 1.5,
+                      ),
+                      const Text(
+                        "Sobre o Evento",
                         style: TextStyle(
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                montarGaleria(MediaQuery.of(context).size.width),
-                SizedBox(
-                  height: defaultPadding / 1.5,
-                ),
-                Text(
-                  "Localização",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Ionicons.map_outline,
-                      color: colorBlue,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Text(
-                        "Av. Bento Gonçalves 478 - Centro - Caxias do Sul / RS",
+                      const SizedBox(
+                        height: 5,
                       ),
-                    )
-                  ],
-                ),
+                      Text(
+                        _evento.descricao!,
+                      ),
+                      const SizedBox(
+                        height: defaultPadding / 1.5,
+                      ),
+                      const Text(
+                        "Localização",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Ionicons.map_outline,
+                            color: colorBlue,
+                            size: 20,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              "${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}",
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: defaultPadding / 1.5,
+                      ),
+                      SizedBox(
+                        height: 200,
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: _kGooglePlex,
+                          markers: markers.values.toSet(),
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController.complete(controller);
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
   }
 
-  Widget montarGaleria(double widthTela) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
+  List<Widget> getImagensSliders() {
+    List<Widget> lista = [];
+
+    for (EventoArquivo eventoArquivo in _evento.arquivos!) {
+      lista.add(
+        Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(
+                Util.montarURlFotoByArquivo(
+                  eventoArquivo.arquivo,
+                ),
+              ),
+              fit: BoxFit.cover,
             ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-            SizedBox(
-              width: 5,
-            ),
-            montarCardFoto("https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=", widthTela),
-          ],
+          ),
         ),
-      ],
-    );
+      );
+    }
+    return lista;
   }
 
-  Widget montarCardFoto(String link, double widthTela) {
-    double widthCard = (widthTela - (10 + defaultPadding * 2)) / 3;
-    return Container(
-      height: widthCard,
-      width: widthCard,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: Color.fromRGBO(224, 220, 220, 1),
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Image.network(
-          link,
-          fit: BoxFit.cover,
-        ),
+  List<Widget> getUltimasVendaIngressos() {
+    List<Widget> listaUltimasVendaIngressos = [];
+
+    listaUltimasVendaIngressos.add(
+      const SizedBox(
+        width: 140,
+        height: 40,
       ),
     );
+
+    int count = 1;
+
+    for (Ingresso ingresso in _evento.ultimosIngressoVendidos!) {
+      listaUltimasVendaIngressos.add(
+        Positioned(
+          left: count * 20,
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(
+              Util.montarURlFotoByArquivo(
+                ingresso.usuario!.foto,
+              ),
+            ),
+            radius: 20,
+          ),
+        ),
+      );
+      count++;
+    }
+
+    return listaUltimasVendaIngressos;
   }
 }

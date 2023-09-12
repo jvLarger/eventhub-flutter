@@ -442,4 +442,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarEvento(int idEvento) async {
+    return await http.get(
+      getURI('$baseURL/eventos/$idEvento'),
+      headers: getHeader(),
+    );
+  }
 }

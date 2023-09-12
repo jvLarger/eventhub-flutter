@@ -55,6 +55,7 @@ dependencies:
   brasil_fields: ^1.14.0
   material_design_icons_flutter: ^7.0.7296
   geolocator: ^10.0.1
+  google_maps_flutter: ^2.5.0
 
 dev_dependencies:
   flutter_test:

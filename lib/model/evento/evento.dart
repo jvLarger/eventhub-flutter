@@ -1,5 +1,6 @@
 import 'package:eventhub/model/evento/evento_arquivo.dart';
 import 'package:eventhub/model/evento/evento_categoria.dart';
+import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,9 @@ class Evento {
   List<EventoArquivo>? arquivos;
   List<EventoCategoria>? categorias;
   String? dataEHoraFormatada;
+  int? ingressosVendidos;
+  List<Ingresso>? ultimosIngressoVendidos;
+  bool? demonstreiInteresse;
 
   Evento({
     this.id,
@@ -47,6 +51,9 @@ class Evento {
     this.arquivos,
     this.categorias,
     this.dataEHoraFormatada,
+    this.ingressosVendidos,
+    this.ultimosIngressoVendidos,
+    this.demonstreiInteresse,
   });
 
   factory Evento.fromJson(Map<String, dynamic> jsons) {
@@ -62,6 +69,12 @@ class Evento {
 
     if (jsons['categorias'] != null) {
       categorias = (jsons['categorias'] as List).map((model) => EventoCategoria.fromJson(model)).toList();
+    }
+
+    List<Ingresso> ultimosIngressoVendidos = List.empty();
+
+    if (jsons['ultimosIngressoVendidos'] != null) {
+      ultimosIngressoVendidos = (jsons['ultimosIngressoVendidos'] as List).map((model) => Ingresso.fromJson(model)).toList();
     }
 
     return Evento(
@@ -84,7 +97,10 @@ class Evento {
       restrito: jsons['restrito'],
       arquivos: arquivos,
       categorias: categorias,
+      ultimosIngressoVendidos: ultimosIngressoVendidos,
+      ingressosVendidos: jsons['ingressosVendidos'],
       dataEHoraFormatada: jsons['dataEHoraFormatada'],
+      demonstreiInteresse: jsons['demonstreiInteresse'],
     );
   }
 
@@ -109,5 +125,8 @@ class Evento {
         'arquivos': arquivos,
         'categorias': categorias,
         'dataEHoraFormatada': dataEHoraFormatada,
+        'ingressosVendidos': ingressosVendidos,
+        'ultimosIngressoVendidos': ultimosIngressoVendidos,
+        'demonstreiInteresse': demonstreiInteresse,
       };
 }

@@ -43,7 +43,12 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
             EventHubTextFormField(
               readOnly: true,
               onTap: () {
-                Util.goTo(context, EventosPesquisaPage());
+                Util.goTo(
+                  context,
+                  EventosPesquisaPage(
+                    usuarioAutenticado: widget.usuarioAutenticado,
+                  ),
+                );
               },
               label: "Qual tipo de evento você está procurando?",
               prefixIcon: Icon(

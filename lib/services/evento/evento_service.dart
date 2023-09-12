@@ -151,4 +151,20 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<Evento> buscarEvento(int idEvento) async {
+    final response = await Api.buscarEvento(idEvento);
+
+    if (response.statusCode == 200) {
+      Evento evento = Evento.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return evento;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

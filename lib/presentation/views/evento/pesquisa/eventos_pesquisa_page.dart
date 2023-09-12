@@ -2,6 +2,7 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/categoria/categoria.dart';
 import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/components/selecao_categorias.dart';
@@ -19,7 +20,11 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
 class EventosPesquisaPage extends StatefulWidget {
-  const EventosPesquisaPage({super.key});
+  final UsuarioAutenticado usuarioAutenticado;
+  const EventosPesquisaPage({
+    super.key,
+    required this.usuarioAutenticado,
+  });
 
   @override
   State<EventosPesquisaPage> createState() => _EventosPesquisaPageState();
@@ -330,7 +335,13 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   Widget getCardEvento(Evento evento, int index) {
     return GestureDetector(
       onTap: () {
-        Util.goTo(context, const EventoVisualizacaoPage());
+        Util.goTo(
+          context,
+          EventoVisualizacaoPage(
+            idEvento: evento.id!,
+            usuarioAutenticado: widget.usuarioAutenticado,
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(10),
