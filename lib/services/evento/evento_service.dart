@@ -167,4 +167,22 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> demonstrarInteresse(int idEvento) async {
+    final response = await Api.demonstrarInteresse(idEvento);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<void> removerInteresse(int idEvento) async {
+    final response = await Api.removerInteresse(idEvento);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

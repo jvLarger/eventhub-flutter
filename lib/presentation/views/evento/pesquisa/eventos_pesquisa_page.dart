@@ -215,6 +215,36 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
     }
   }
 
+  void removerInteresse(Evento evento, int index) async {
+    try {
+      Util.showLoading(context);
+
+      await EventoService().removerInteresse(evento.id!);
+      _listaEventos[index].demonstreiInteresse = false;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  void demonstrarInteresse(Evento evento, int index) async {
+    try {
+      Util.showLoading(context);
+
+      await EventoService().demonstrarInteresse(evento.id!);
+      _listaEventos[index].demonstreiInteresse = true;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _isLoading
@@ -441,13 +471,25 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
                           ),
                           Expanded(
                             flex: 2,
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Ionicons.heart_outline,
-                                color: colorBlue,
-                              ),
-                            ),
+                            child: evento.demonstreiInteresse!
+                                ? IconButton(
+                                    onPressed: () {
+                                      removerInteresse(evento, index);
+                                    },
+                                    icon: const Icon(
+                                      Ionicons.heart,
+                                      color: colorBlue,
+                                    ),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      demonstrarInteresse(evento, index);
+                                    },
+                                    icon: const Icon(
+                                      Ionicons.heart_outline,
+                                      color: colorBlue,
+                                    ),
+                                  ),
                           )
                         ],
                       )

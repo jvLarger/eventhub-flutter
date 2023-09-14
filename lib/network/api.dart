@@ -449,4 +449,18 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static demonstrarInteresse(int idEvento) async {
+    return await http.post(
+      getURI('$baseURL/eventos/interesses/$idEvento'),
+      headers: getHeader(),
+    );
+  }
+
+  static removerInteresse(int idEvento) async {
+    return await http.delete(
+      getURI('$baseURL/eventos/interesses/$idEvento'),
+      headers: getHeader(),
+    );
+  }
 }

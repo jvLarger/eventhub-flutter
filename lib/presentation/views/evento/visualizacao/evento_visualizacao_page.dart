@@ -9,6 +9,7 @@ import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
+import 'package:eventhub/presentation/views/evento/pesquisa/eventos_pesquisa_page.dart';
 import 'package:eventhub/presentation/views/ingresso/compra/titular/titular_ingresso_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
@@ -40,6 +41,37 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
     target: LatLng(1, 1),
     zoom: 14.4746,
   );
+
+  void removerInteresse() async {
+    try {
+      Util.showLoading(context);
+
+      await EventoService().removerInteresse(_evento.id!);
+      _evento.demonstreiInteresse = false;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  void demonstrarInteresse() async {
+    try {
+      Util.showLoading(context);
+
+      await EventoService().demonstrarInteresse(_evento.id!);
+      _evento.demonstreiInteresse = true;
+      setState(() {});
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   buscarEvento() async {
     try {
       Evento evento = await EventoService().buscarEvento(widget.idEvento);
@@ -81,379 +113,403 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
               child: CircularProgressIndicator(),
             ),
           )
-        : EventHubBody(
-            bottomNavigationBar: EventHubBottomButton(
-              label: "Comprar Ingresso",
-              onTap: () {
-                Util.goTo(context, const TitularIngressoPage());
-              },
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    CarouselSlider(
-                      items: getImagensSliders(),
-                      options: CarouselOptions(
-                        height: 260.0,
-                        enlargeCenterPage: true,
-                        autoPlay: true,
-                        aspectRatio: 16 / 9,
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enableInfiniteScroll: true,
-                        autoPlayAnimationDuration: const Duration(milliseconds: 5000),
-                        viewportFraction: 0.8,
-                      ),
-                    ),
-                    const Positioned(
-                      top: defaultPadding,
-                      left: defaultPadding / 2,
-                      child: BackButton(),
-                    ),
-                  ],
+        : WillPopScope(
+            onWillPop: () async {
+              Navigator.pop(context);
+              Util.goToAndOverride(
+                context,
+                EventosPesquisaPage(
+                  usuarioAutenticado: widget.usuarioAutenticado,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              );
+              return false;
+            },
+            child: EventHubBody(
+              bottomNavigationBar: EventHubBottomButton(
+                label: "Comprar Ingresso",
+                onTap: () {
+                  Util.goTo(context, const TitularIngressoPage());
+                },
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _evento.nome!,
-                            style: const TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Ionicons.heart_outline,
-                                  color: colorBlue,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.send_rounded,
-                                  color: colorBlue,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          EventHubBadge(
-                            color: colorBlue,
-                            label: _evento.categorias![0].categoria!.nome!,
-                          ),
-                          Visibility(
-                            visible: _evento.ultimosIngressoVendidos != null && _evento.ultimosIngressoVendidos!.isNotEmpty,
-                            child: Stack(
-                              children: getUltimasVendaIngressos(),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Visibility(
-                            visible: _evento.ingressosVendidos != null && _evento.ingressosVendidos! > 0,
-                            child: Text(
-                              " ${_evento.ingressosVendidos} confirmados",
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Divider(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: colorBlue.withOpacity(
-                                  0.2,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Ionicons.calendar_outline,
-                                  color: colorBlue,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding / 2,
-                          ),
-                          Expanded(
-                            flex: 8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _evento.dataEHoraFormatada!.split(" • ")[0],
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(_evento.dataEHoraFormatada!.split(" • ")[1]),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: defaultPadding,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: colorBlue.withOpacity(
-                                  0.2,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Ionicons.ticket_outline,
-                                  color: colorBlue,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding / 2,
-                          ),
-                          Expanded(
-                            flex: 8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "R\$ ${Util.formatarReal(_evento.valor)}",
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                const Text("Preço do Ingresso"),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: defaultPadding,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: colorBlue.withOpacity(
-                                  0.2,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Ionicons.map_outline,
-                                  color: colorBlue,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding / 2,
-                          ),
-                          Expanded(
-                            flex: 8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${_evento.bairro!}, ${_evento.cidade!} / ${_evento.estado!}",
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text("${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}"),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Divider(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: CircleAvatar(
-                              radius: 32,
-                              backgroundImage: NetworkImage(
-                                Util.montarURlFotoByArquivo(_evento.usuario!.foto),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding / 2,
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _evento.usuario!.nomeCompleto!,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                const Text("Organizador"),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: defaultPadding / 2,
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Util.goTo(
-                                  context,
-                                  PerfilPublicoPage(
-                                    idUsuario: _evento.usuario!.id!,
-                                    usuarioAutenticado: widget.usuarioAutenticado,
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                              ),
-                              child: const Text(
-                                "Ver Perfil",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: defaultPadding / 1.5,
-                      ),
-                      const Text(
-                        "Sobre o Evento",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
+                      CarouselSlider(
+                        items: getImagensSliders(),
+                        options: CarouselOptions(
+                          height: 260.0,
+                          enlargeCenterPage: true,
+                          autoPlay: true,
+                          aspectRatio: 16 / 9,
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          enableInfiniteScroll: true,
+                          autoPlayAnimationDuration: const Duration(milliseconds: 5000),
+                          viewportFraction: 0.8,
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
+                      const Positioned(
+                        top: defaultPadding,
+                        left: defaultPadding / 2,
+                        child: BackButton(),
                       ),
-                      Text(
-                        _evento.descricao!,
-                      ),
-                      const SizedBox(
-                        height: defaultPadding / 1.5,
-                      ),
-                      const Text(
-                        "Localização",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Ionicons.map_outline,
-                            color: colorBlue,
-                            size: 20,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Text(
-                              "${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}",
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: defaultPadding / 1.5,
-                      ),
-                      SizedBox(
-                        height: 200,
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: _kGooglePlex,
-                          markers: markers.values.toSet(),
-                          onMapCreated: (GoogleMapController controller) {
-                            _mapController.complete(controller);
-                          },
-                        ),
-                      )
                     ],
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(defaultPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _evento.nome!,
+                              style: const TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                _evento.demonstreiInteresse!
+                                    ? IconButton(
+                                        onPressed: () {
+                                          removerInteresse();
+                                        },
+                                        icon: const Icon(
+                                          Ionicons.heart,
+                                          color: colorBlue,
+                                        ),
+                                      )
+                                    : IconButton(
+                                        onPressed: () {
+                                          demonstrarInteresse();
+                                        },
+                                        icon: const Icon(
+                                          Ionicons.heart_outline,
+                                          color: colorBlue,
+                                        ),
+                                      ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.send_rounded,
+                                    color: colorBlue,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            EventHubBadge(
+                              color: colorBlue,
+                              label: _evento.categorias![0].categoria!.nome!,
+                            ),
+                            Visibility(
+                              visible: _evento.ultimosIngressoVendidos != null && _evento.ultimosIngressoVendidos!.isNotEmpty,
+                              child: Stack(
+                                children: getUltimasVendaIngressos(),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Visibility(
+                              visible: _evento.ingressosVendidos != null && _evento.ingressosVendidos! > 0,
+                              child: Text(
+                                " ${_evento.ingressosVendidos} confirmados",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Divider(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: colorBlue.withOpacity(
+                                    0.2,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Ionicons.calendar_outline,
+                                    color: colorBlue,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding / 2,
+                            ),
+                            Expanded(
+                              flex: 8,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _evento.dataEHoraFormatada!.split(" • ")[0],
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(_evento.dataEHoraFormatada!.split(" • ")[1]),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: defaultPadding,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: colorBlue.withOpacity(
+                                    0.2,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Ionicons.ticket_outline,
+                                    color: colorBlue,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding / 2,
+                            ),
+                            Expanded(
+                              flex: 8,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "R\$ ${Util.formatarReal(_evento.valor)}",
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  const Text("Preço do Ingresso"),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: defaultPadding,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: colorBlue.withOpacity(
+                                    0.2,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Ionicons.map_outline,
+                                    color: colorBlue,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding / 2,
+                            ),
+                            Expanded(
+                              flex: 8,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${_evento.bairro!}, ${_evento.cidade!} / ${_evento.estado!}",
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text("${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}"),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Divider(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: CircleAvatar(
+                                radius: 32,
+                                backgroundImage: NetworkImage(
+                                  Util.montarURlFotoByArquivo(_evento.usuario!.foto),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding / 2,
+                            ),
+                            Expanded(
+                              flex: 4,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _evento.usuario!.nomeCompleto!,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  const Text("Organizador"),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: defaultPadding / 2,
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Util.goTo(
+                                    context,
+                                    PerfilPublicoPage(
+                                      idUsuario: _evento.usuario!.id!,
+                                      usuarioAutenticado: widget.usuarioAutenticado,
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                                ),
+                                child: const Text(
+                                  "Ver Perfil",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: defaultPadding / 1.5,
+                        ),
+                        const Text(
+                          "Sobre o Evento",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          _evento.descricao!,
+                        ),
+                        const SizedBox(
+                          height: defaultPadding / 1.5,
+                        ),
+                        const Text(
+                          "Localização",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Ionicons.map_outline,
+                              color: colorBlue,
+                              size: 20,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Text(
+                                "${_evento.logradouro!} ${_evento.numero!} ${_evento.complemento != null ? "( ${_evento.complemento} )" : ""} - ${_evento.bairro!} - ${_evento.cidade!} / ${_evento.estado!}",
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: defaultPadding / 1.5,
+                        ),
+                        SizedBox(
+                          height: 200,
+                          child: GoogleMap(
+                            mapType: MapType.normal,
+                            initialCameraPosition: _kGooglePlex,
+                            markers: markers.values.toSet(),
+                            onMapCreated: (GoogleMapController controller) {
+                              _mapController.complete(controller);
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           );
   }
