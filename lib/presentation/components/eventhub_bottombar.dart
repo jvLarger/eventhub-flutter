@@ -26,23 +26,9 @@ class EventHubBottomBar extends StatefulWidget {
 }
 
 class _EventHubBottomBarState extends State<EventHubBottomBar> {
-  int _numeroMensagensNaoLidas = 0;
-
-  buscarNumeroMensagensNaoLidas() async {
-    try {
-      _numeroMensagensNaoLidas = await MensagemService().buscarNumeroMensagensNaoLidas();
-      if (mounted) {
-        setState(() {});
-      }
-    } on EventHubException catch (err) {
-      Util.showSnackbarError(context, err.cause);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    buscarNumeroMensagensNaoLidas();
   }
 
   @override
@@ -217,7 +203,7 @@ class _EventHubBottomBarState extends State<EventHubBottomBar> {
                     right: 5,
                     top: 5,
                     child: Visibility(
-                      visible: _numeroMensagensNaoLidas > 0,
+                      visible: false,
                       child: Container(
                         height: 13,
                         width: 13,

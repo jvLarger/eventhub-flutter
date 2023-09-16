@@ -99,10 +99,19 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
     }
   }
 
+  registrarVisualizacaoEvento() async {
+    try {
+      await EventoService().registrarVisualizacaoEvento(widget.idEvento);
+    } on EventHubException catch (err) {
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     buscarEvento();
+    registrarVisualizacaoEvento();
   }
 
   @override

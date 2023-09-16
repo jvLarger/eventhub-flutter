@@ -49,10 +49,12 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
   final TextEditingController _logradouroController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
+  final TextEditingController _numeroMaximoIngressosController = TextEditingController();
   final TextEditingController _complementoController = TextEditingController();
   final TextEditingController _categoriasController = TextEditingController();
   final FocusNode _numeroFocus = FocusNode();
   final FocusNode _logradouroFocus = FocusNode();
+  bool _isVisivel = true;
 
   void salvarEvento() async {
     Evento evento = Evento(
@@ -74,6 +76,8 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       numero: _numeroController.text,
       complemento: _complementoController.text,
       restrito: _isApenasConvidados,
+      visivel: _isVisivel,
+      numeroMaximoIngressos: _numeroMaximoIngressosController.text.isNotEmpty ? int.parse(_numeroMaximoIngressosController.text) : null,
     );
 
     try {
@@ -146,7 +150,9 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       _bairroController.text = widget.evento!.bairro ?? "";
       _numeroController.text = widget.evento!.numero ?? "";
       _complementoController.text = widget.evento!.complemento ?? "";
+      _numeroMaximoIngressosController.text = widget.evento!.numeroMaximoIngressos != null ? widget.evento!.numeroMaximoIngressos.toString() : "";
       _isApenasConvidados = widget.evento!.restrito!;
+      _isVisivel = widget.evento!.visivel!;
       _listaArquivos = widget.evento!.arquivos!;
       _listaCategorias = widget.evento!.categorias!;
       setState(() {});
@@ -349,20 +355,45 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                   const SizedBox(
                     height: defaultPadding,
                   ),
-                  EventHubTextFormField(
-                    label: "Valor do Ingresso",
-                    controller: _valorController,
-                    textInputType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      CentavosInputFormatter(moeda: true),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: EventHubTextFormField(
+                          label: "Valor do Ingresso",
+                          controller: _valorController,
+                          textInputType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            CentavosInputFormatter(moeda: true),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Valor do Ingresso não informado!';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: defaultPadding,
+                      ),
+                      Expanded(
+                        child: EventHubTextFormField(
+                          label: "Ingressos Disponíveis",
+                          controller: _numeroMaximoIngressosController,
+                          textInputType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Número máximo de ingressos não informado!';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
                     ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Valor do Ingresso não informado!';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(
                     height: defaultPadding,
@@ -571,6 +602,35 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                         },
                         child: const Text(
                           "Apenas Convidados",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                        ),
+                        checkColor: colorBlue,
+                        value: _isVisivel,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _isVisivel = !_isVisivel;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isVisivel = !_isVisivel;
+                          });
+                        },
+                        child: const Text(
+                          "Exibir nas buscas",
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       )

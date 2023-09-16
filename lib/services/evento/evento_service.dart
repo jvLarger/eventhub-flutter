@@ -185,4 +185,13 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> registrarVisualizacaoEvento(int idEvento) async {
+    final response = await Api.registrarVisualizacaoEvento(idEvento);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

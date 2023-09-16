@@ -80,26 +80,87 @@ class _EventoIndicadoresPageState extends State<EventoIndicadoresPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: defaultPadding * 2,
+                    height: defaultPadding / 2,
                   ),
-                  Text(
-                    "R\$ ${Util.formatarReal(_indicadoresEvento.faturamento!.valorTotalFaturamento!)}",
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                          child: Column(
+                            children: [
+                              Text(
+                                "R\$ ${Util.formatarReal(_indicadoresEvento.faturamento!.valorTotalFaturamento!)}",
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  color: Color.fromRGBO(33, 33, 33, 1),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: defaultPadding / 2,
+                              ),
+                              const Text(
+                                "Faturamento",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromRGBO(97, 97, 97, 1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 50,
+                        width: 0.5,
+                        color: const Color.fromRGBO(221, 213, 213, 1),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              _indicadoresEvento.evento!.numeroVisualizacoes.toString(),
+                              style: const TextStyle(
+                                fontSize: 32,
+                                color: Color.fromRGBO(33, 33, 33, 1),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: defaultPadding / 2,
+                            ),
+                            const Text(
+                              "Visualizações",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromRGBO(97, 97, 97, 1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Color.fromRGBO(221, 213, 213, 1),
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: defaultPadding,
                   ),
-                  const Text(
-                    "Faturamento",
-                    style: TextStyle(
+                  Text(
+                    "Foi descontado R\$ ${Util.formatarReal(_indicadoresEvento.faturamento!.valorTotalTaxas!)} em taxas referentes a taxa de utilização do aplicativo dos R\$ ${Util.formatarReal(_indicadoresEvento.faturamento!.valorTotalIngressos!)} obtidos com a venda de ingressos.",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
                       color: Color.fromRGBO(97, 97, 97, 1),
-                      fontSize: 16,
-                      letterSpacing: 0.2,
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
