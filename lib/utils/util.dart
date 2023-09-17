@@ -88,6 +88,7 @@ class Util {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: const Color.fromRGBO(7, 189, 116, 1),
       duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
       content: Text(
         cause,
         style: const TextStyle(

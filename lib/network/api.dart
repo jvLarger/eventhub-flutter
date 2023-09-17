@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/publicacao/publicacao.dart';
 import 'package:eventhub/model/publicacao/publicacao_comentario.dart';
@@ -470,6 +471,16 @@ class Api {
       headers: getHeader(),
       body: jsonEncode(
         {},
+      ),
+    );
+  }
+
+  static comprarIngresso(Ingresso ingresso) async {
+    return await http.post(
+      getURI('$baseURL/ingressos'),
+      headers: getHeader(),
+      body: jsonEncode(
+        ingresso.toJson(),
       ),
     );
   }

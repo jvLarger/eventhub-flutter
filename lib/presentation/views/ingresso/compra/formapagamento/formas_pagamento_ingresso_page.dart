@@ -1,3 +1,5 @@
+import 'package:eventhub/model/ingresso/ingresso.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
@@ -7,14 +9,20 @@ import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 
 class FormasPagamentoIngressoPage extends StatefulWidget {
-  const FormasPagamentoIngressoPage({super.key});
+  final Ingresso ingresso;
+  final UsuarioAutenticado usuarioAutenticado;
+  const FormasPagamentoIngressoPage({
+    super.key,
+    required this.ingresso,
+    required this.usuarioAutenticado,
+  });
 
   @override
   State<FormasPagamentoIngressoPage> createState() => _FormasPagamentoIngressoPageState();
 }
 
 class _FormasPagamentoIngressoPageState extends State<FormasPagamentoIngressoPage> {
-  String formaPagamento = "";
+  String formaPagamento = "CC";
   @override
   Widget build(BuildContext context) {
     return EventHubBody(
@@ -22,9 +30,15 @@ class _FormasPagamentoIngressoPageState extends State<FormasPagamentoIngressoPag
         title: "Forma de Pagamento",
       ),
       bottomNavigationBar: EventHubBottomButton(
-        label: "Continuar - R\$ 450,00",
+        label: "Continuar - R\$ ${Util.formatarReal(widget.ingresso.evento!.valor)}",
         onTap: () {
-          Util.goTo(context, PagamentoCartaoIngressoPage());
+          Util.goTo(
+            context,
+            PagamentoCartaoIngressoPage(
+              ingresso: widget.ingresso,
+              usuarioAutenticado: widget.usuarioAutenticado,
+            ),
+          );
         },
       ),
       child: Padding(
@@ -32,52 +46,61 @@ class _FormasPagamentoIngressoPageState extends State<FormasPagamentoIngressoPag
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Selecione o método de pagamento desejado"),
-            SizedBox(
+            const Text("Selecione o método de pagamento desejado"),
+            const SizedBox(
               height: defaultPadding,
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              margin: EdgeInsets.only(bottom: defaultPadding),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 60.0,
-                    color: Colors.black.withOpacity(0.05),
-                    offset: const Offset(
-                      0,
-                      4,
+            GestureDetector(
+              onTap: () {
+                setState(
+                  () {
+                    formaPagamento = "CC";
+                  },
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.only(bottom: defaultPadding),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 60.0,
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(
+                        0,
+                        4,
+                      ),
+                      spreadRadius: 4,
+                    )
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Cartão de Crédito",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.2,
+                        fontSize: 16,
+                      ),
                     ),
-                    spreadRadius: 4,
-                  )
-                ],
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Cartão de Crédito",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.2,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Radio(
-                    value: "C",
-                    activeColor: colorBlue,
-                    groupValue: formaPagamento,
-                    onChanged: (value) {
-                      setState(
-                        () {
-                          formaPagamento = value!;
-                        },
-                      );
-                    },
-                  )
-                ],
+                    Radio(
+                      value: "CC",
+                      activeColor: colorBlue,
+                      groupValue: formaPagamento,
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            formaPagamento = value!;
+                          },
+                        );
+                      },
+                    )
+                  ],
+                ),
               ),
             )
           ],

@@ -137,7 +137,21 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
               bottomNavigationBar: EventHubBottomButton(
                 label: "Comprar Ingresso",
                 onTap: () {
-                  Util.goTo(context, const TitularIngressoPage());
+                  try {
+                    if (_evento.numeroMaximoIngressos! <= _evento.ingressosVendidos!) {
+                      throw EventHubException("Número máximo de ingressos para esse evento atingido!");
+                    }
+
+                    Util.goTo(
+                      context,
+                      TitularIngressoPage(
+                        evento: _evento,
+                        usuarioAutenticado: widget.usuarioAutenticado,
+                      ),
+                    );
+                  } on EventHubException catch (err) {
+                    Util.showSnackbarError(context, err.cause);
+                  }
                 },
               ),
               child: Column(
