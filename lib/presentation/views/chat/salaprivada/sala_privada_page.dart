@@ -28,7 +28,7 @@ class SalaPrivadaPage extends StatefulWidget {
 
 class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
   final TextEditingController _descricaoController = TextEditingController();
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List<Mensagem> _listaMensagens = [];
   bool _isLoading = true;
   Timer? timer;

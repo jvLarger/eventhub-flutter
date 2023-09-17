@@ -1,11 +1,9 @@
-import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
 import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingressos_page.dart';
 import 'package:eventhub/presentation/views/perfil/meuperfil/meu_perfil_page.dart';
 import 'package:eventhub/presentation/views/publicacao/feed/feed_publicacao_page.dart';
 import 'package:eventhub/presentation/views/usuarios/encontrarpessoas/encontrar_pessoas_page.dart';
-import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';

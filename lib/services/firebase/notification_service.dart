@@ -51,6 +51,7 @@ class NotificationService {
     try {
       var tzName = await FlutterNativeTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(tzName));
+      // ignore: empty_catches
     } catch (err) {}
   }
 

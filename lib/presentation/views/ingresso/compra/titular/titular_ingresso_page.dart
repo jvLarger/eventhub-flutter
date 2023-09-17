@@ -35,6 +35,8 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nomeCompletoController = TextEditingController();
   final TextEditingController _dataComemorativaController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
   final MaskedTextController _documentoPrincipalController = MaskedTextController(mask: '000.000.000-00');
   final MaskedTextController _telefoneController = MaskedTextController(mask: '00 0 0000-0000');
   bool _isLiOsTermos = false;
@@ -43,6 +45,7 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
     try {
       Usuario usuario = await UsuarioService().buscarUsuarioLogado();
       _nomeCompletoController.text = usuario.nomeCompleto!;
+      _emailController.text = usuario.email!;
       _dataComemorativaController.text = usuario.dataComemorativa != null ? Util.dateEngToPtBr(usuario.dataComemorativa!) : "";
       _telefoneController.text = usuario.telefone != null ? Util.aplicarMascara(usuario.telefone!, "## # ####-####") : "";
       _documentoPrincipalController.text = usuario.documentoPrincipal != null
@@ -97,6 +100,7 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
       Ingresso ingresso = Ingresso(
         evento: widget.evento,
         nome: _nomeCompletoController.text,
+        email: _emailController.text,
         dataComemorativa: _dataComemorativaController.text.isNotEmpty
             ? DateTime.now().copyWith(
                 day: int.parse(_dataComemorativaController.text.split("/")[0]),
@@ -235,7 +239,7 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
                       Ionicons.mail_open,
                       size: 15,
                     ),
-                    controller: _nomeCompletoController,
+                    controller: _emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'E-mail não informado!';

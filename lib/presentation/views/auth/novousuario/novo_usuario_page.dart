@@ -25,8 +25,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
   final TextEditingController _nomeCompletoController = TextEditingController();
   final TextEditingController _nomeUsuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _senhaRepetidaController =
-      TextEditingController();
+  final TextEditingController _senhaRepetidaController = TextEditingController();
   bool _isSenhaVisivel = false;
   bool _isRepitaSenhaVisivel = false;
 
@@ -43,8 +42,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
         senha: _senhaController.text,
       );
 
-      UsuarioAutenticado usuarioAutenticado =
-          await UsuarioService().criarUsuario(usuario);
+      UsuarioAutenticado usuarioAutenticado = await UsuarioService().criarUsuario(usuario);
 
       // ignore: use_build_context_synchronously
       Util.goTo(
@@ -142,9 +140,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                     controller: _senhaController,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        !_isSenhaVisivel
-                            ? Ionicons.eye_outline
-                            : Ionicons.eye_off_outline,
+                        !_isSenhaVisivel ? Ionicons.eye_outline : Ionicons.eye_off_outline,
                         size: 15,
                       ),
                       onPressed: () {
@@ -177,9 +173,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                     controller: _senhaRepetidaController,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        !_isRepitaSenhaVisivel
-                            ? Ionicons.eye_outline
-                            : Ionicons.eye_off_outline,
+                        !_isRepitaSenhaVisivel ? Ionicons.eye_outline : Ionicons.eye_off_outline,
                         size: 15,
                       ),
                       onPressed: () {
@@ -208,7 +202,7 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
                         criarUsuario();
                       }
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Continuar"),

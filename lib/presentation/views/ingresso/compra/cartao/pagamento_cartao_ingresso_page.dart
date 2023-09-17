@@ -233,6 +233,7 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
                         Expanded(
                           child: EventHubTextFormField(
                             label: "CVV",
+                            textInputType: TextInputType.number,
                             prefixIcon: const Icon(
                               Ionicons.key_outline,
                               size: 15,

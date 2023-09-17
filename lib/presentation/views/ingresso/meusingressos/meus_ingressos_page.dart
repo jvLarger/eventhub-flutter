@@ -2,8 +2,6 @@ import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
-import 'package:eventhub/presentation/views/evento/cadastro/evento_cadastro_page.dart';
-import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_page.dart';
 import 'package:eventhub/presentation/views/ingresso/visualizacao/visualizacao_ingresso_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -128,7 +126,7 @@ class _MeusIngressosPageState extends State<MeusIngressosPage> with TickerProvid
   Widget getCardPendente() {
     return Container(
         padding: const EdgeInsets.all(10),
-        margin: EdgeInsets.only(bottom: defaultPadding),
+        margin: const EdgeInsets.only(bottom: defaultPadding),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(

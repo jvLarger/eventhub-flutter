@@ -60,7 +60,7 @@ class Ingresso {
         'nome': nome,
         'documentoPrincipal': documentoPrincipal,
         'telefone': telefone,
-        'dataComemorativa': dataComemorativa,
+        'dataComemorativa': Util.formatarDataApiEng(dataComemorativa),
         'valorTotalIngresso': valorTotalIngresso,
         'valorTaxa': valorTaxa,
         'valorFaturamento': valorFaturamento,
