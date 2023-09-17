@@ -10,6 +10,7 @@ import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualiza
 import 'package:eventhub/services/categoria/categoria_service.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/singleton.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -54,23 +55,27 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   int _page = 0;
 
   Future<void> getCoordenadasGeograficas() async {
-    LocationPermission permission;
+    if (EventhubSingleton().getPositionUsuario() == null) {
+      LocationPermission permission;
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+      permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return Future.error('Location permissions are denied');
+        }
       }
+
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+
+      EventhubSingleton().setPositionUsuario(position);
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-
-    _position = position;
+    _position = EventhubSingleton().getPositionUsuario();
   }
 
   Future<void> buscarCategoriasPopulares() async {
