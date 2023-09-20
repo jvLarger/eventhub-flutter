@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/categoria/categoria.dart';
 import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/evento/feed_evento.dart';
 import 'package:eventhub/model/evento/indicadores_evento.dart';
 import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/network/api.dart';
@@ -190,6 +191,22 @@ class EventoService {
     final response = await Api.registrarVisualizacaoEvento(idEvento);
 
     if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<FeedEvento> buscarFeedEventos(double latitude, double longitude) async {
+    final response = await Api.buscarFeedEventos(latitude, longitude);
+
+    if (response.statusCode == 200) {
+      FeedEvento feedEvento = FeedEvento.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+
+      return feedEvento;
     } else {
       throw EventHubException(Util.getMensagemErro(response));
     }

@@ -55,26 +55,6 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
   int _page = 0;
 
   Future<void> getCoordenadasGeograficas() async {
-    if (EventhubSingleton().getPositionUsuario() == null) {
-      LocationPermission permission;
-
-      permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return Future.error('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-      }
-
-      Position position = await Geolocator.getCurrentPosition();
-
-      EventhubSingleton().setPositionUsuario(position);
-    }
-
     _position = EventhubSingleton().getPositionUsuario();
   }
 
@@ -375,6 +355,7 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
           EventoVisualizacaoPage(
             idEvento: evento.id!,
             usuarioAutenticado: widget.usuarioAutenticado,
+            isOrigemFeed: false,
           ),
         );
       },

@@ -22,10 +22,12 @@ import 'package:ionicons/ionicons.dart';
 class EventoVisualizacaoPage extends StatefulWidget {
   final int idEvento;
   final UsuarioAutenticado usuarioAutenticado;
+  final bool isOrigemFeed;
   const EventoVisualizacaoPage({
     super.key,
     required this.idEvento,
     required this.usuarioAutenticado,
+    required this.isOrigemFeed,
   });
 
   @override
@@ -125,12 +127,14 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
         : WillPopScope(
             onWillPop: () async {
               Navigator.pop(context);
-              Util.goToAndOverride(
-                context,
-                EventosPesquisaPage(
-                  usuarioAutenticado: widget.usuarioAutenticado,
-                ),
-              );
+              if (!widget.isOrigemFeed) {
+                Util.goToAndOverride(
+                  context,
+                  EventosPesquisaPage(
+                    usuarioAutenticado: widget.usuarioAutenticado,
+                  ),
+                );
+              }
               return false;
             },
             child: EventHubBody(
