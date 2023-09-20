@@ -355,7 +355,7 @@ class _EventosPesquisaPageState extends State<EventosPesquisaPage> {
           EventoVisualizacaoPage(
             idEvento: evento.id!,
             usuarioAutenticado: widget.usuarioAutenticado,
-            isOrigemFeed: false,
+            isGoBackDefault: false,
           ),
         );
       },

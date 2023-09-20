@@ -323,45 +323,88 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
                   const SizedBox(
                     height: defaultPadding / 2,
                   ),
-                  getWidgetCategoriasPopulares(),
-                  const SizedBox(
-                    height: defaultPadding / 2,
+                  Visibility(
+                    visible: _feedEvento.eventosPopulares!.isNotEmpty,
+                    child: getWidgetCategoriasPopulares(),
                   ),
-                  Column(
-                    children: [
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: _listaEventosPopularesFiltrados.length,
-                        itemBuilder: (context, index) {
-                          return index % 2 == 0
-                              ? Row(
-                                  children: [
-                                    getCardEvento(
-                                      (MediaQuery.of(context).size.width - (2 * defaultPadding) - 15) / 2,
-                                      _listaEventosPopularesFiltrados[index],
-                                      index,
-                                      false,
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    (index + 1 <= _listaEventosPopularesFiltrados.length - 1
-                                        ? getCardEvento(
-                                            (MediaQuery.of(context).size.width - (2 * defaultPadding) - 15) / 2,
-                                            _listaEventosPopularesFiltrados[index + 1],
-                                            index + 1,
-                                            false,
-                                          )
-                                        : const SizedBox()),
-                                  ],
-                                )
-                              : const SizedBox();
-                        },
-                      ),
-                    ],
-                  )
+                  Visibility(
+                    visible: _feedEvento.eventosPopulares!.isNotEmpty,
+                    child: const SizedBox(
+                      height: defaultPadding / 2,
+                    ),
+                  ),
+                  Visibility(
+                    visible: _feedEvento.eventosPopulares!.isNotEmpty,
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: _listaEventosPopularesFiltrados.length,
+                          itemBuilder: (context, index) {
+                            return index % 2 == 0
+                                ? Row(
+                                    children: [
+                                      getCardEvento(
+                                        (MediaQuery.of(context).size.width - (2 * defaultPadding) - 15) / 2,
+                                        _listaEventosPopularesFiltrados[index],
+                                        index,
+                                        false,
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      (index + 1 <= _listaEventosPopularesFiltrados.length - 1
+                                          ? getCardEvento(
+                                              (MediaQuery.of(context).size.width - (2 * defaultPadding) - 15) / 2,
+                                              _listaEventosPopularesFiltrados[index + 1],
+                                              index + 1,
+                                              false,
+                                            )
+                                          : const SizedBox()),
+                                    ],
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: _feedEvento.eventosPopulares!.isEmpty,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: defaultPadding * 2,
+                        ),
+                        SvgPicture.asset(
+                          "assets/images/empty.svg",
+                          width: 150,
+                        ),
+                        const SizedBox(
+                          height: defaultPadding,
+                        ),
+                        const Text(
+                          "Nada Encontrado",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Desculpe, não foi possível localizar eventos próximos a você.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -376,7 +419,7 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
           EventoVisualizacaoPage(
             idEvento: evento.id!,
             usuarioAutenticado: widget.usuarioAutenticado,
-            isOrigemFeed: true,
+            isGoBackDefault: true,
           ),
         );
       },

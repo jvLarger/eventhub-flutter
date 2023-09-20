@@ -211,4 +211,13 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> compartilharEvento(int idEvento, int idUsuario) async {
+    final response = await Api.compartilharEvento(idEvento, idUsuario);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

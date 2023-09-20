@@ -491,4 +491,19 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarAmigos() async {
+    return await http.get(
+      getURI('$baseURL/amizades'),
+      headers: getHeader(),
+    );
+  }
+
+  static compartilharEvento(int idEvento, int idUsuario) async {
+    return await http.post(
+      getURI('$baseURL/eventos/$idEvento/compartilhar/$idUsuario'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
 }

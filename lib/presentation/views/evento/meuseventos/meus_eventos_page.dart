@@ -5,6 +5,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/evento_cadastro_page.dart';
+import 'package:eventhub/presentation/views/evento/compartilhamento/evento_compartilhamento_page.dart';
 import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
@@ -198,6 +199,14 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                           Expanded(
                             flex: 2,
                             child: GestureDetector(
+                              onTap: () {
+                                Util.goTo(
+                                  context,
+                                  EventoCompartilhamentoPage(
+                                    idEvento: evento.id!,
+                                  ),
+                                );
+                              },
                               child: const Icon(
                                 Icons.send_outlined,
                                 size: 18,

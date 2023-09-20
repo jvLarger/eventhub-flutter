@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/chat/salas/salas_bate_papo_page.dart';
+import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/services/mensagem/mensagem_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -192,10 +194,10 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
           );
   }
 
-  getContainerMensagemRecebida(String mensagem, String hora) {
+  getContainerMensagemRecebida(String mensagem, String hora, Mensagem mensagemObj) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: mensagemObj.evento == null ? 20 : 15, vertical: 12),
       decoration: const BoxDecoration(
         color: Color.fromRGBO(244, 246, 249, 1),
         borderRadius: BorderRadius.only(
@@ -208,28 +210,37 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
         children: [
           Expanded(
             flex: 8,
-            child: Text(
-              mensagem,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+            child: mensagemObj.evento != null
+                ? getCardEvento(mensagemObj.evento!)
+                : Text(
+                    mensagem,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+          ),
+          Visibility(
+            visible: mensagemObj.evento == null,
+            child: const SizedBox(
+              width: defaultPadding,
             ),
           ),
-          const SizedBox(
-            width: defaultPadding,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  hora,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                )
-              ],
+          Visibility(
+            visible: mensagemObj.evento == null,
+            child: Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    hora,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ],
@@ -237,10 +248,10 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
     );
   }
 
-  Widget getContainerMensagemEnviada(String mensagem, String hora) {
+  Widget getContainerMensagemEnviada(String mensagem, String hora, Mensagem mensagemObj) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: mensagemObj.evento == null ? 20 : 10, vertical: 10),
       decoration: BoxDecoration(
         color: colorBlue.withOpacity(0.8),
         borderRadius: const BorderRadius.only(
@@ -253,30 +264,38 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
         children: [
           Expanded(
             flex: 8,
-            child: Text(
-              mensagem,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
+            child: mensagemObj.evento != null
+                ? getCardEvento(mensagemObj.evento!)
+                : Text(
+                    mensagem,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+          ),
+          Visibility(
+            visible: mensagemObj.evento == null,
+            child: const SizedBox(
+              width: defaultPadding,
             ),
           ),
-          const SizedBox(
-            width: defaultPadding,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  hora,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                )
-              ],
+          Visibility(
+            visible: mensagemObj.evento == null,
+            child: Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    hora,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ],
@@ -284,11 +303,131 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
     );
   }
 
+  Widget getCardEvento(Evento evento) {
+    return GestureDetector(
+      onTap: () {
+        Util.goTo(
+          context,
+          EventoVisualizacaoPage(
+            idEvento: evento.id!,
+            usuarioAutenticado: widget.usuarioAutenticado,
+            isGoBackDefault: true,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 60.0,
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(
+                0,
+                4,
+              ),
+              spreadRadius: 4,
+            )
+          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 100,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: defaultPadding,
+                ),
+                Expanded(
+                  flex: 7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: Text(
+                              evento.nome!,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        evento.dataEHoraFormatada!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: colorBlue,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 7,
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Ionicons.map_outline,
+                                  color: colorBlue,
+                                  size: 14,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    "${evento.bairro!}, ${evento.cidade!} / ${evento.estado!}",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget getMensagem(Mensagem mensagem) {
     if (mensagem.usuarioOrigem!.id != widget.usuario.id) {
-      return getContainerMensagemEnviada(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem));
+      return getContainerMensagemEnviada(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem), mensagem);
     } else {
-      return getContainerMensagemRecebida(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem));
+      return getContainerMensagemRecebida(mensagem.descricao!, Util.formatarDataOnlyHora(mensagem.dataMensagem), mensagem);
     }
   }
 }

@@ -9,6 +9,7 @@ import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
+import 'package:eventhub/presentation/views/evento/compartilhamento/evento_compartilhamento_page.dart';
 import 'package:eventhub/presentation/views/evento/pesquisa/eventos_pesquisa_page.dart';
 import 'package:eventhub/presentation/views/ingresso/compra/titular/titular_ingresso_page.dart';
 import 'package:eventhub/presentation/views/perfil/publico/perfil_publico_page.dart';
@@ -22,12 +23,12 @@ import 'package:ionicons/ionicons.dart';
 class EventoVisualizacaoPage extends StatefulWidget {
   final int idEvento;
   final UsuarioAutenticado usuarioAutenticado;
-  final bool isOrigemFeed;
+  final bool isGoBackDefault;
   const EventoVisualizacaoPage({
     super.key,
     required this.idEvento,
     required this.usuarioAutenticado,
-    required this.isOrigemFeed,
+    required this.isGoBackDefault,
   });
 
   @override
@@ -127,7 +128,7 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
         : WillPopScope(
             onWillPop: () async {
               Navigator.pop(context);
-              if (!widget.isOrigemFeed) {
+              if (!widget.isGoBackDefault) {
                 Util.goToAndOverride(
                   context,
                   EventosPesquisaPage(
@@ -220,7 +221,14 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
                                         ),
                                       ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Util.goTo(
+                                      context,
+                                      EventoCompartilhamentoPage(
+                                        idEvento: _evento.id!,
+                                      ),
+                                    );
+                                  },
                                   icon: const Icon(
                                     Icons.send_rounded,
                                     color: colorBlue,
