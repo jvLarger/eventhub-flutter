@@ -14,7 +14,7 @@ import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  static const baseURL = "http://192.168.1.104:8080/api";
+  static const baseURL = "http://192.168.1.10:8080/api";
   static String apiKey = "";
 
   static getHeader() {
@@ -504,6 +504,20 @@ class Api {
       getURI('$baseURL/eventos/$idEvento/compartilhar/$idUsuario'),
       headers: getHeader(),
       body: jsonEncode({}),
+    );
+  }
+
+  static buscarMeusIngressosPendentes() async {
+    return await http.get(
+      getURI('$baseURL/ingressos/pendentes'),
+      headers: getHeader(),
+    );
+  }
+
+  static buscarMeusIngressosConcluidos() async {
+    return await http.get(
+      getURI('$baseURL/ingressos/concluidos'),
+      headers: getHeader(),
     );
   }
 }

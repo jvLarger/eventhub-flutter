@@ -21,4 +21,32 @@ class IngressoSevice {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<List<Ingresso>> buscarMeusIngressosPendentes() async {
+    final response = await Api.buscarMeusIngressosPendentes();
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Ingresso.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
+
+  Future<List<Ingresso>> buscarMeusIngressosConcluidos() async {
+    final response = await Api.buscarMeusIngressosConcluidos();
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Ingresso.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

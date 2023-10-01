@@ -310,6 +310,9 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
                             fontSize: 13,
                           ),
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                       ],
                     ),
                   ),
