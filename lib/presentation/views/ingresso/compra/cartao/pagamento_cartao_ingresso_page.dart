@@ -39,6 +39,7 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
 
   comprarIngresso() async {
     try {
+      Util.showLoading(context);
       String tokenCartaoCredito = await getTokenCartaoStripe();
 
       Ingresso ingresso = widget.ingresso;
@@ -48,7 +49,8 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
       );
 
       await IngressoSevice().comprarIngresso(ingresso);
-
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -59,15 +61,18 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
           (Route<dynamic> route) => false);
 
       // ignore: use_build_context_synchronously
-      Util.showSnackbarSuccess(
+      Util.showSnackbarInfo(
         context,
-        "Ingresso adquirido com sucesso!",
+        "Estamos processando seu pedido!",
       );
     } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     } on StripeException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, getStripeMessageByCode(err.error.stripeErrorCode!));
     } on StripeError catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, getStripeMessageByCode(err.code));
     }
   }
@@ -124,8 +129,8 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
                 ),
               ),
               onPressed: () {
-                comprarIngresso();
                 Navigator.of(context).pop();
+                comprarIngresso();
               },
             ),
             TextButton(

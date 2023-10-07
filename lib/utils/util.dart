@@ -6,6 +6,7 @@ import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/error/standard_error.dart';
 import 'package:eventhub/network/api.dart';
+import 'package:eventhub/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
@@ -87,6 +88,20 @@ class Util {
   static void showSnackbarSuccess(BuildContext context, String cause) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: const Color.fromRGBO(7, 189, 116, 1),
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        cause,
+        style: const TextStyle(
+          fontFamily: 'Urbanist',
+        ),
+      ),
+    ));
+  }
+
+  static void showSnackbarInfo(BuildContext context, String cause) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: colorBlue,
       duration: const Duration(seconds: 3),
       behavior: SnackBarBehavior.floating,
       content: Text(

@@ -142,9 +142,96 @@ class _NotificacaoPageState extends State<NotificacaoPage> {
       return getCardNotificacaoSolicitacaoAmizade(notificacao, index);
     } else if (notificacao.tipo == "SOLICITACAO_COMENTARIO_PUBLICO") {
       return getCardNotificacaoSolicitacaoComentarioPublico(notificacao, index);
+    } else if (notificacao.tipo == "COMPRA_INGRESSO_SUCESSO") {
+      return getCardNotificacaoCompraIngressoSucesso(notificacao, index);
+    } else if (notificacao.tipo == "COMPRA_INGRESSO_ERRO") {
+      return getCardNotificacaoCompraIngressoErro(notificacao, index);
     } else {
       return Text(notificacao.descricao!);
     }
+  }
+
+  Widget getCardNotificacaoCompraIngressoErro(Notificacao notificacao, int index) {
+    return Container(
+      margin: const EdgeInsets.only(
+        bottom: defaultPadding,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(247, 85, 85, 0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(
+                    Ionicons.ticket_outline,
+                    color: Color.fromRGBO(247, 85, 85, 1),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Erro ao processar o pagamento",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      notificacao.descricao!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      Util.formatarDataComHora(notificacao.dataNotificacao),
+                      style: const TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  marcarComoLida(notificacao, index);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Marcar como Lido"),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   Widget getCardNotificacaoSolicitacaoAmizade(Notificacao notificacao, int index) {
@@ -343,6 +430,89 @@ class _NotificacaoPageState extends State<NotificacaoPage> {
                   ),
                 ),
               )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget getCardNotificacaoCompraIngressoSucesso(Notificacao notificacao, int index) {
+    return Container(
+      margin: const EdgeInsets.only(
+        bottom: defaultPadding,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(84, 75, 195, 0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(
+                    Ionicons.ticket_outline,
+                    color: colorBlue,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Pagamento recebido com sucesso",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      notificacao.descricao!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      Util.formatarDataComHora(notificacao.dataNotificacao),
+                      style: const TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  marcarComoLida(notificacao, index);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Marcar como Lido"),
+                  ],
+                ),
+              ),
             ],
           )
         ],

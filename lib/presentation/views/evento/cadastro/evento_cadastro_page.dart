@@ -216,8 +216,8 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
                 ),
               ),
               onPressed: () {
-                excluirEvento();
                 Navigator.of(context).pop();
+                excluirEvento();
               },
             ),
             TextButton(
