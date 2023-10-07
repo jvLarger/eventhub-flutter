@@ -1,4 +1,5 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
+import 'package:eventhub/model/mensagem/mensagem.dart';
 import 'package:eventhub/model/sala/sala_bate_papo.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
@@ -131,7 +132,11 @@ class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
           ),
         ),
       ),
-      subtitle: salaBatePapo.mensagensNaoLidas! > 0 ? Text("${salaBatePapo.mensagensNaoLidas!} mensage${salaBatePapo.mensagensNaoLidas! == 1 ? 'm' : 'ns'} não lida${salaBatePapo.mensagensNaoLidas! == 1 ? '' : 's'}") : null,
+      subtitle: salaBatePapo.mensagensNaoLidas! > 0
+          ? Text("${salaBatePapo.mensagensNaoLidas!} mensage${salaBatePapo.mensagensNaoLidas! == 1 ? 'm' : 'ns'} não lida${salaBatePapo.mensagensNaoLidas! == 1 ? '' : 's'}")
+          : salaBatePapo.ultimaMensagem != null
+              ? getWidgetUltimaMensagem(salaBatePapo.ultimaMensagem!)
+              : null,
       contentPadding: const EdgeInsets.only(
         left: defaultPadding,
         right: defaultPadding,
@@ -155,6 +160,14 @@ class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+
+  Widget getWidgetUltimaMensagem(Mensagem ultimaMensagem) {
+    return Text(
+      ultimaMensagem.usuarioOrigem!.id == widget.usuarioAutenticado.id ? "Eu: ${ultimaMensagem.descricao!}" : "Ele: ${ultimaMensagem.descricao!}",
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
