@@ -86,7 +86,8 @@ flutter:
     - assets/images/login.svg
     - assets/images/credit.svg
     - assets/images/empty.svg
-
+    - assets/images/marker_evento.png
+    - assets/images/marker_minha_localizacao.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

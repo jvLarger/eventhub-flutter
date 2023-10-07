@@ -9,6 +9,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottombar.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/components/informacoes_usuario.dart';
+import 'package:eventhub/presentation/views/evento/mapacalor/mapa_calor_page.dart';
 import 'package:eventhub/presentation/views/evento/pesquisa/eventos_pesquisa_page.dart';
 import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
@@ -233,7 +234,14 @@ class _EventosDestaquePageState extends State<EventosDestaquePage> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Util.goTo(
+                            context,
+                            MapaCalorPage(
+                              usuarioAutenticado: widget.usuarioAutenticado,
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Mapa de Calor",
                           style: TextStyle(
