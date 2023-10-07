@@ -202,7 +202,12 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                     Ionicons.calendar_outline,
                     "Gerenciar meus Eventos",
                     () {
-                      Util.goTo(context, const MeusEventosPage());
+                      Util.goTo(
+                        context,
+                        MeusEventosPage(
+                          usuarioAutenticado: widget.usuarioAutenticado,
+                        ),
+                      );
                     },
                     false,
                     false,

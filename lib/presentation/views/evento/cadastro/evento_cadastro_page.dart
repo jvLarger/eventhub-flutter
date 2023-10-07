@@ -5,6 +5,7 @@ import 'package:eventhub/model/categoria/categoria.dart';
 import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/evento/evento_arquivo.dart';
 import 'package:eventhub/model/evento/evento_categoria.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/model/viacep/viacep.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
@@ -24,9 +25,11 @@ import 'package:ionicons/ionicons.dart';
 
 class EventoCadastroPage extends StatefulWidget {
   final Evento? evento;
+  final UsuarioAutenticado usuarioAutenticado;
   const EventoCadastroPage({
     super.key,
     this.evento,
+    required this.usuarioAutenticado,
   });
 
   @override
@@ -95,7 +98,9 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       // ignore: use_build_context_synchronously
       Util.goToAndOverride(
         context,
-        const MeusEventosPage(),
+        MeusEventosPage(
+          usuarioAutenticado: widget.usuarioAutenticado,
+        ),
       );
     } on EventHubException catch (err) {
       Util.hideLoading(context);
@@ -173,7 +178,9 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
       // ignore: use_build_context_synchronously
       Util.goToAndOverride(
         context,
-        const MeusEventosPage(),
+        MeusEventosPage(
+          usuarioAutenticado: widget.usuarioAutenticado,
+        ),
       );
     } on EventHubException catch (err) {
       Util.hideLoading(context);

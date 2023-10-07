@@ -1,5 +1,6 @@
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/evento/evento.dart';
+import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_badge.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
@@ -7,6 +8,7 @@ import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/cadastro/evento_cadastro_page.dart';
 import 'package:eventhub/presentation/views/evento/compartilhamento/evento_compartilhamento_page.dart';
 import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_page.dart';
+import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -15,7 +17,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
 
 class MeusEventosPage extends StatefulWidget {
-  const MeusEventosPage({super.key});
+  final UsuarioAutenticado usuarioAutenticado;
+  const MeusEventosPage({
+    super.key,
+    required this.usuarioAutenticado,
+  });
 
   @override
   State<MeusEventosPage> createState() => _MeusEventosPageState();
@@ -68,7 +74,9 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
               onTap: () {
                 Util.goTo(
                   context,
-                  const EventoCadastroPage(),
+                  EventoCadastroPage(
+                    usuarioAutenticado: widget.usuarioAutenticado,
+                  ),
                 );
               },
             ),
@@ -227,13 +235,25 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
               children: [
                 Expanded(
                   flex: 3,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
-                      fit: BoxFit.cover,
-                      width: 100,
-                      height: 100,
+                  child: GestureDetector(
+                    onTap: () {
+                      Util.goTo(
+                        context,
+                        EventoVisualizacaoPage(
+                          idEvento: evento.id!,
+                          isGoBackDefault: true,
+                          usuarioAutenticado: widget.usuarioAutenticado,
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
+                        fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
+                      ),
                     ),
                   ),
                 ),
@@ -366,6 +386,7 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
                         context,
                         EventoCadastroPage(
                           evento: evento,
+                          usuarioAutenticado: widget.usuarioAutenticado,
                         ),
                       );
                     },
@@ -403,13 +424,25 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
               children: [
                 Expanded(
                   flex: 3,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
-                      fit: BoxFit.cover,
-                      width: 100,
-                      height: 100,
+                  child: GestureDetector(
+                    onTap: () {
+                      Util.goTo(
+                        context,
+                        EventoVisualizacaoPage(
+                          idEvento: evento.id!,
+                          isGoBackDefault: true,
+                          usuarioAutenticado: widget.usuarioAutenticado,
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        Util.montarURlFotoByArquivo(evento.arquivos![0].arquivo),
+                        fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
+                      ),
                     ),
                   ),
                 ),

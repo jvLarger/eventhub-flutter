@@ -12,6 +12,7 @@ import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -20,7 +21,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  Stripe.publishableKey = 'pk_live_51NPsQ2APLSZyFJm2dV4ym62fHSyzdsR3jY78BDYcsjCZJGK9BCy312yLqwj9qcHOIWghEiHGWm0qk1AsbuRaPqjz00cfaRDS6X';
+  await Stripe.instance.applySettings();
   runApp(
     MultiProvider(
       providers: [

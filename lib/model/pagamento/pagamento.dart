@@ -7,6 +7,7 @@ class Pagamento {
   String? validade;
   String? cvv;
   String? tipoCartao;
+  String? token;
 
   Pagamento({
     this.numero,
@@ -15,6 +16,7 @@ class Pagamento {
     this.validade,
     this.cvv,
     this.tipoCartao,
+    this.token,
   });
 
   factory Pagamento.fromJson(Map<String, dynamic> jsons) {
@@ -26,6 +28,7 @@ class Pagamento {
       validade: jsons['validade'],
       cvv: jsons['cvv'],
       tipoCartao: jsons['tipoCartao'],
+      token: jsons['token'],
     );
   }
 
@@ -36,5 +39,6 @@ class Pagamento {
         'validade': validade,
         'cvv': cvv,
         'tipoCartao': tipoCartao,
+        'token': token,
       };
 }

@@ -11,9 +11,9 @@ import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingresso
 import 'package:eventhub/services/ingresso/ingresso_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -36,18 +36,15 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
   final TextEditingController _numeroCartaoController = TextEditingController();
   final TextEditingController _validadeController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
-  final MaskedTextController _documentoPrincipalController = MaskedTextController(mask: '000.000.000-00');
 
   comprarIngresso() async {
     try {
+      String tokenCartaoCredito = await getTokenCartaoStripe();
+
       Ingresso ingresso = widget.ingresso;
       ingresso.pagamento = Pagamento(
-        cvv: _cvvController.text,
-        documentoPrincipal: _documentoPrincipalController.text,
-        nomeTitular: _nomeCompletoController.text,
-        numero: _numeroCartaoController.text,
         tipoCartao: "CC",
-        validade: _validadeController.text,
+        token: tokenCartaoCredito,
       );
 
       await IngressoSevice().comprarIngresso(ingresso);
@@ -68,10 +65,38 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
       );
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
+    } on StripeException catch (err) {
+      Util.showSnackbarError(context, getStripeMessageByCode(err.error.stripeErrorCode!));
+    } on StripeError catch (err) {
+      Util.showSnackbarError(context, getStripeMessageByCode(err.code));
     }
   }
 
-  void showMessagePagamento() {
+  getTokenCartaoStripe() async {
+    final cardDetails = CardDetails(
+      number: _numeroCartaoController.text,
+      expirationMonth: int.parse(_validadeController.text.split("/")[0]),
+      expirationYear: int.parse(_validadeController.text.split("/")[1]),
+      cvc: _cvvController.text,
+    );
+
+    Stripe.instance.dangerouslyUpdateCardDetails(cardDetails);
+
+    BillingDetails billingDetails = BillingDetails(
+      email: widget.ingresso.email,
+      name: _nomeCompletoController.text,
+    );
+
+    final paymentMethod = await Stripe.instance.createPaymentMethod(
+      params: PaymentMethodParams.card(
+        paymentMethodData: PaymentMethodData(billingDetails: billingDetails),
+      ),
+    );
+
+    return paymentMethod.id;
+  }
+
+  void showMessagePagamento() async {
     showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -95,7 +120,7 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
               child: const Text(
                 'Confirmar',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: colorBlue,
                 ),
               ),
               onPressed: () {
@@ -124,7 +149,9 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
       bottomNavigationBar: EventHubBottomButton(
         label: "Pagar - R\$ ${Util.formatarReal(widget.ingresso.evento!.valor)}",
         onTap: () {
-          if (_formKey.currentState!.validate()) {
+          if (_validadeController.text.trim().length != 5) {
+            Util.showSnackbarError(context, "A validade deve ser composta por mês/ano");
+          } else if (_formKey.currentState!.validate()) {
             showMessagePagamento();
           }
         },
@@ -155,34 +182,6 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Nome Completo não informado!';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: defaultPadding,
-                    ),
-                    EventHubTextFormField(
-                      label: "CPF ou CNPJ",
-                      prefixIcon: const Icon(
-                        Ionicons.id_card_outline,
-                        size: 15,
-                      ),
-                      controller: _documentoPrincipalController,
-                      onchange: (value) {
-                        if (mounted) {
-                          setState(() {
-                            if (Util.getSomenteNumeros(value).length < 11) {
-                              _documentoPrincipalController.updateMask('000.000.000-00');
-                            } else {
-                              _documentoPrincipalController.updateMask('00.000.000/0000-00');
-                            }
-                          });
-                        }
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Documento não informada!';
                         }
                         return null;
                       },
@@ -255,5 +254,19 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
         ],
       ),
     );
+  }
+
+  String getStripeMessageByCode(String stripeErrorCode) {
+    if (stripeErrorCode == "incorrect_number") {
+      return "O número do cartão está incorreto. Verifique o número do cartão ou use um cartão diferente.";
+    } else if (stripeErrorCode == "invalid_expiry_month") {
+      return "O mês de validade do cartão está incorreto. Verifique a data de validade ou use um cartão diferente.";
+    } else if (stripeErrorCode == "invalid_expiry_year") {
+      return "O ano de validade do cartão está incorreto. Verifique a data de validade ou use um cartão diferente.";
+    } else if (stripeErrorCode == "invalid_cvc") {
+      return "O código de segurança do cartão é inválido. Verifique o código de segurança do cartão ou use um cartão diferente.";
+    } else {
+      return "Erro $stripeErrorCode não mapeado";
+    }
   }
 }
