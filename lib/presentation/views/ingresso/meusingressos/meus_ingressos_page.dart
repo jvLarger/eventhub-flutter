@@ -133,27 +133,91 @@ class _MeusIngressosPageState extends State<MeusIngressosPage> with TickerProvid
   }
 
   Widget montarListaConcluidos() {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: _listaIngressosConcluidos.length,
-      itemBuilder: (context, index) {
-        return getCardConcluido(_listaIngressosConcluidos[index]);
-      },
-    );
+    return _listaIngressosConcluidos.isEmpty
+        ? Column(
+            children: [
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              SvgPicture.asset(
+                "assets/images/empty.svg",
+                width: 250,
+              ),
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              const Text(
+                "Nada Encontrado",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Você ainda não possui registros a serem exibidos aqui.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          )
+        : ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: _listaIngressosConcluidos.length,
+            itemBuilder: (context, index) {
+              return getCardConcluido(_listaIngressosConcluidos[index]);
+            },
+          );
   }
 
   Widget montarListaPendentes() {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: _listaIngressosPendentes.length,
-      itemBuilder: (context, index) {
-        return getCardPendente(_listaIngressosPendentes[index]);
-      },
-    );
+    return _listaIngressosPendentes.isEmpty
+        ? Column(
+            children: [
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              SvgPicture.asset(
+                "assets/images/empty.svg",
+                width: 250,
+              ),
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              const Text(
+                "Nada Encontrado",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Você ainda não possui registros a serem exibidos aqui.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          )
+        : ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: _listaIngressosPendentes.length,
+            itemBuilder: (context, index) {
+              return getCardPendente(_listaIngressosPendentes[index]);
+            },
+          );
   }
 
   Widget getCardPendente(Ingresso ingresso) {

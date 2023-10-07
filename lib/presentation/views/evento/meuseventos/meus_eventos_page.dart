@@ -11,6 +11,7 @@ import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
 
 class MeusEventosPage extends StatefulWidget {
@@ -114,27 +115,91 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
   }
 
   Widget montarListaConcluidos() {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: _listaEventosConcluidos.length,
-      itemBuilder: (context, index) {
-        return getCardConcluido(_listaEventosConcluidos[index]);
-      },
-    );
+    return _listaEventosConcluidos.isEmpty
+        ? Column(
+            children: [
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              SvgPicture.asset(
+                "assets/images/empty.svg",
+                width: 250,
+              ),
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              const Text(
+                "Nada Encontrado",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Você ainda não possui registros a serem exibidos aqui.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          )
+        : ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: _listaEventosConcluidos.length,
+            itemBuilder: (context, index) {
+              return getCardConcluido(_listaEventosConcluidos[index]);
+            },
+          );
   }
 
   Widget montarListaPendentes() {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: _listaEventosPendentes.length,
-      itemBuilder: (context, index) {
-        return getCardPendente(_listaEventosPendentes[index]);
-      },
-    );
+    return _listaEventosPendentes.isEmpty
+        ? Column(
+            children: [
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              SvgPicture.asset(
+                "assets/images/empty.svg",
+                width: 250,
+              ),
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              const Text(
+                "Nada Encontrado",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                "Você ainda não possui registros a serem exibidos aqui.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          )
+        : ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: _listaEventosPendentes.length,
+            itemBuilder: (context, index) {
+              return getCardPendente(_listaEventosPendentes[index]);
+            },
+          );
   }
 
   getCardPendente(Evento evento) {
