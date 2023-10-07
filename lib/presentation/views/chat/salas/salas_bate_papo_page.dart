@@ -14,9 +14,11 @@ import 'package:ionicons/ionicons.dart';
 
 class SalasBatePapoPage extends StatefulWidget {
   final UsuarioAutenticado usuarioAutenticado;
+  final bool isGoBackDefault;
   const SalasBatePapoPage({
     super.key,
     required this.usuarioAutenticado,
+    required this.isGoBackDefault,
   });
 
   @override
@@ -68,13 +70,17 @@ class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
           )
         : WillPopScope(
             onWillPop: () async {
-              Util.goToAndOverride(
-                context,
-                MeuPerfilPage(
-                  usuarioAutenticado: widget.usuarioAutenticado,
-                ),
-              );
-              return false;
+              if (!widget.isGoBackDefault) {
+                Util.goToAndOverride(
+                  context,
+                  MeuPerfilPage(
+                    usuarioAutenticado: widget.usuarioAutenticado,
+                  ),
+                );
+                return false;
+              } else {
+                return true;
+              }
             },
             child: EventHubBody(
               topWidget: const EventHubTopAppbar(
@@ -139,6 +145,7 @@ class _SalasBatePapoPageState extends State<SalasBatePapoPage> {
           SalaPrivadaPage(
             usuario: salaBatePapo.usuario!,
             usuarioAutenticado: widget.usuarioAutenticado,
+            isGoBackDefault: false,
           ),
         );
       },

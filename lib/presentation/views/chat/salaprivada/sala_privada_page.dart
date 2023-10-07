@@ -18,10 +18,12 @@ import 'package:ionicons/ionicons.dart';
 class SalaPrivadaPage extends StatefulWidget {
   final Usuario usuario;
   final UsuarioAutenticado usuarioAutenticado;
+  final bool isGoBackDefault;
   const SalaPrivadaPage({
     super.key,
     required this.usuario,
     required this.usuarioAutenticado,
+    required this.isGoBackDefault,
   });
 
   @override
@@ -119,14 +121,19 @@ class _SalaPrivadaPageState extends State<SalaPrivadaPage> {
           )
         : WillPopScope(
             onWillPop: () async {
-              Navigator.pop(context);
-              Util.goToAndOverride(
-                context,
-                SalasBatePapoPage(
-                  usuarioAutenticado: widget.usuarioAutenticado,
-                ),
-              );
-              return false;
+              if (!widget.isGoBackDefault) {
+                Navigator.pop(context);
+                Util.goToAndOverride(
+                  context,
+                  SalasBatePapoPage(
+                    usuarioAutenticado: widget.usuarioAutenticado,
+                    isGoBackDefault: false,
+                  ),
+                );
+                return false;
+              } else {
+                return true;
+              }
             },
             child: EventHubBody(
               appBar: AppBar(

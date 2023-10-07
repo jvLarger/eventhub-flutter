@@ -101,6 +101,7 @@ class _InformacoesUsuarioState extends State<InformacoesUsuario> {
                         context,
                         SalasBatePapoPage(
                           usuarioAutenticado: widget.usuarioAutenticado,
+                          isGoBackDefault: true,
                         ),
                       );
                     },

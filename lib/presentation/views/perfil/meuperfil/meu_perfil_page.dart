@@ -218,6 +218,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                         context,
                         SalasBatePapoPage(
                           usuarioAutenticado: widget.usuarioAutenticado,
+                          isGoBackDefault: false,
                         ),
                       );
                     },

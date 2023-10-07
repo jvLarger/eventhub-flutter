@@ -278,6 +278,9 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                                           onPressed: () {
                                             removerAmizade();
                                           },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                          ),
                                           child: const Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -289,7 +292,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                                               SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("Remover "),
+                                              Text("Remover"),
                                             ],
                                           ),
                                         )
@@ -328,6 +331,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> with TickerProvid
                                       SalaPrivadaPage(
                                         usuario: _perfil.usuario!,
                                         usuarioAutenticado: widget.usuarioAutenticado,
+                                        isGoBackDefault: true,
                                       ),
                                     );
                                   } else {
