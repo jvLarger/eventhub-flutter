@@ -266,6 +266,24 @@ class _EventoCadastroPageState extends State<EventoCadastroPage> {
               key: _formKey,
               child: Column(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: colorBlue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      "O Event Hub cobra uma taxa de 4,5% sobre o valor do ingresso mais R\$ 0,39 fixos para cada venda.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: defaultPadding,
+                  ),
                   EventHubTextFormField(
                     label: "Nome do Evento",
                     controller: _nomeController,
