@@ -192,11 +192,13 @@ class _EventoVisualizacaoPageState extends State<EventoVisualizacaoPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              _evento.nome!,
-                              style: const TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                _evento.nome!,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             Row(
