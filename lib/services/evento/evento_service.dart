@@ -220,4 +220,18 @@ class EventoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<List<Evento>> buscarMapaCalor(double latitude, double longitude) async {
+    final response = await Api.buscarMapaCalor(latitude, longitude);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(
+        utf8.decode(response.bodyBytes),
+      ) as List)
+          .map((model) => Evento.fromJson(model))
+          .toList();
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

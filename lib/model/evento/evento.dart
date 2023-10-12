@@ -32,6 +32,7 @@ class Evento {
   int? numeroMaximoIngressos;
   int? numeroVisualizacoes;
   bool? visivel;
+  int? grupoRelevancia;
 
   Evento({
     this.id,
@@ -60,6 +61,7 @@ class Evento {
     this.numeroMaximoIngressos,
     this.numeroVisualizacoes,
     this.visivel,
+    this.grupoRelevancia,
   });
 
   factory Evento.fromJson(Map<String, dynamic> jsons) {
@@ -110,6 +112,7 @@ class Evento {
       numeroMaximoIngressos: jsons['numeroMaximoIngressos'],
       numeroVisualizacoes: jsons['numeroVisualizacoes'],
       visivel: jsons['visivel'],
+      grupoRelevancia: jsons['grupoRelevancia'],
     );
   }
 
@@ -140,5 +143,6 @@ class Evento {
         'numeroMaximoIngressos': numeroMaximoIngressos,
         'numeroVisualizacoes': numeroVisualizacoes,
         'visivel': visivel,
+        'grupoRelevancia': grupoRelevancia,
       };
 }

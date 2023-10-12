@@ -89,6 +89,9 @@ flutter:
     - assets/images/empty.svg
     - assets/images/marker_evento.png
     - assets/images/marker_minha_localizacao.png
+    - assets/images/pin_orange.png
+    - assets/images/pin_red.png
+    - assets/images/pin_yellow.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

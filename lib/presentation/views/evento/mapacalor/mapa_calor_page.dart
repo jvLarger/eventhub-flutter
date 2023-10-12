@@ -28,11 +28,14 @@ class MapaCalorPage extends StatefulWidget {
 class _MapaCalorPageState extends State<MapaCalorPage> {
   Position? _position;
   bool _isLoading = true;
-  FeedEvento _feedEvento = FeedEvento();
+  List<Evento> _listaEventos = [];
   CameraPosition? _kLake;
   final Completer<GoogleMapController> _controller = Completer();
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerBlue = BitmapDescriptor.defaultMarker;
   BitmapDescriptor markerIconMinhaLocalizacao = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerRed = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerOrange = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerYellow = BitmapDescriptor.defaultMarker;
 
   getLocalInicial() {
     return CameraPosition(
@@ -72,7 +75,7 @@ class _MapaCalorPageState extends State<MapaCalorPage> {
     await getCoordenadasGeograficas();
 
     try {
-      _feedEvento = await EventoService().buscarFeedEventos(_position!.latitude, _position!.longitude);
+      _listaEventos = await EventoService().buscarMapaCalor(_position!.latitude, _position!.longitude);
       setState(() {
         _isLoading = false;
         _kLake = CameraPosition(
@@ -110,13 +113,13 @@ class _MapaCalorPageState extends State<MapaCalorPage> {
 
     listaMarcadores.add(montarMarkerMeuLocal());
 
-    for (Evento evento in _feedEvento.eventosPopulares!) {
+    for (Evento evento in _listaEventos) {
       Marker marker = Marker(
         position: LatLng(
           evento.latitude!,
           evento.longitude!,
         ),
-        icon: markerIcon,
+        icon: getMarker(evento.grupoRelevancia!),
         infoWindow: InfoWindow(
             title: evento.nome!,
             onTap: () {
@@ -239,7 +242,40 @@ class _MapaCalorPageState extends State<MapaCalorPage> {
     ).then(
       (icon) {
         setState(() {
-          markerIcon = icon;
+          markerBlue = icon;
+        });
+      },
+    );
+
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(),
+      "assets/images/pin_orange.png",
+    ).then(
+      (icon) {
+        setState(() {
+          markerOrange = icon;
+        });
+      },
+    );
+
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(),
+      "assets/images/pin_red.png",
+    ).then(
+      (icon) {
+        setState(() {
+          markerRed = icon;
+        });
+      },
+    );
+
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(),
+      "assets/images/pin_yellow.png",
+    ).then(
+      (icon) {
+        setState(() {
+          markerYellow = icon;
         });
       },
     );
@@ -389,5 +425,17 @@ class _MapaCalorPageState extends State<MapaCalorPage> {
         ],
       ),
     );
+  }
+
+  BitmapDescriptor getMarker(int grupo) {
+    if (grupo == 1) {
+      return markerRed;
+    } else if (grupo == 2) {
+      return markerOrange;
+    } else if (grupo == 3) {
+      return markerYellow;
+    } else {
+      return markerBlue;
+    }
   }
 }

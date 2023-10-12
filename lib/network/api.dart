@@ -520,4 +520,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static buscarMapaCalor(double latitude, double longitude) async {
+    return await http.get(
+      getURI('$baseURL/eventos/mapa-calor?latitude=$latitude&longitude=$longitude'),
+      headers: getHeader(),
+    );
+  }
 }
