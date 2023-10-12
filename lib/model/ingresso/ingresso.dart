@@ -1,3 +1,4 @@
+import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/evento/evento.dart';
 import 'package:eventhub/model/pagamento/pagamento.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
@@ -17,6 +18,8 @@ class Ingresso {
   String? identificadorTransacaoPagamento;
   Usuario? usuario;
   Pagamento? pagamento;
+  Arquivo? qrcode;
+  DateTime? dataUtilizacao;
 
   Ingresso({
     this.id,
@@ -32,6 +35,8 @@ class Ingresso {
     this.identificadorTransacaoPagamento,
     this.usuario,
     this.pagamento,
+    this.qrcode,
+    this.dataUtilizacao,
   });
 
   factory Ingresso.fromJson(Map<String, dynamic> jsons) {
@@ -50,6 +55,8 @@ class Ingresso {
       identificadorTransacaoPagamento: jsons['identificadorTransacaoPagamento'],
       usuario: jsons['usuario'] != null ? Usuario.fromJson(jsons['usuario']) : null,
       pagamento: jsons['pagamento'] != null ? Pagamento.fromJson(jsons['pagamento']) : null,
+      qrcode: jsons['qrcode'] != null ? Arquivo.fromJson(jsons['qrcode']) : null,
+      dataUtilizacao: jsons['dataUtilizacao'],
     );
   }
 
@@ -67,5 +74,6 @@ class Ingresso {
         'identificadorTransacaoPagamento': identificadorTransacaoPagamento,
         'usuario': usuario,
         'pagamento': pagamento,
+        'dataUtilizacao': dataUtilizacao,
       };
 }

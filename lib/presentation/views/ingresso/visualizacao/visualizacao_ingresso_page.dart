@@ -2,6 +2,7 @@ import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
 
 class VisualizacaoIngressoPage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _VisualizacaoIngressoPageState extends State<VisualizacaoIngressoPage> {
         child: Column(
           children: [
             Image.network(
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png",
+              Util.montarURlFotoByArquivo(widget.ingresso.qrcode),
               height: 250,
             ),
             const SizedBox(

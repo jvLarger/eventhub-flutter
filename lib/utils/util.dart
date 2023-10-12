@@ -26,7 +26,10 @@ class Util {
   }
 
   static goToAndOverride(BuildContext context, Widget page) {
-    Navigator.pushReplacement(
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => page),
     );

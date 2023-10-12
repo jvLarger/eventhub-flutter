@@ -13,6 +13,7 @@ import 'package:eventhub/utils/util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -23,6 +24,7 @@ void main() async {
   );
   Stripe.publishableKey = 'pk_live_51NPsQ2APLSZyFJm2dV4ym62fHSyzdsR3jY78BDYcsjCZJGK9BCy312yLqwj9qcHOIWghEiHGWm0qk1AsbuRaPqjz00cfaRDS6X';
   await Stripe.instance.applySettings();
+
   runApp(
     MultiProvider(
       providers: [
@@ -33,10 +35,32 @@ void main() async {
           create: (context) => FirebaseMessagingService(context.read<NotificationService>()),
         ),
       ],
-      child: const EventHubApp(),
+      child: MaterialApp.router(
+        title: 'Event Hub',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        routerConfig: router,
+      ),
     ),
   );
 }
+
+final router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (_, __) => const EventHubApp(),
+      routes: [
+        GoRoute(
+          path: 'details',
+          builder: (_, __) => Scaffold(
+            appBar: AppBar(title: const Text('Details Screen')),
+          ),
+        ),
+      ],
+    ),
+  ],
+);
 
 class EventHubApp extends StatefulWidget {
   const EventHubApp({super.key});
@@ -85,31 +109,26 @@ class _EventHubAppState extends State<EventHubApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Event Hub',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: FutureBuilder(
-        future: validarUsuarioLogado(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+    return FutureBuilder(
+      future: validarUsuarioLogado(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          if (snapshot.data == null) {
+            return const LoginPage();
           } else {
-            if (snapshot.data == null) {
-              return const LoginPage();
-            } else {
-              return EventosDestaquePage(
-                usuarioAutenticado: snapshot.data!,
-              );
-            }
+            return EventosDestaquePage(
+              usuarioAutenticado: snapshot.data!,
+            );
           }
-        },
-      ),
+        }
+      },
     );
   }
 }
