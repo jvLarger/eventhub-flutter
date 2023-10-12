@@ -73,13 +73,12 @@ class _TitularIngressoPageState extends State<TitularIngressoPage> {
       await IngressoSevice().comprarIngresso(ingresso);
 
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => MeusIngressosPage(
-              usuarioAutenticado: widget.usuarioAutenticado,
-            ),
-          ),
-          (Route<dynamic> route) => false);
+      Util.goToAndPopAll(
+        context,
+        MeusIngressosPage(
+          usuarioAutenticado: widget.usuarioAutenticado,
+        ),
+      );
 
       // ignore: use_build_context_synchronously
       Util.showSnackbarSuccess(

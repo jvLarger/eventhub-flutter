@@ -20,6 +20,7 @@ class Ingresso {
   Pagamento? pagamento;
   Arquivo? qrcode;
   DateTime? dataUtilizacao;
+  String? identificadorIngresso;
 
   Ingresso({
     this.id,
@@ -37,6 +38,7 @@ class Ingresso {
     this.pagamento,
     this.qrcode,
     this.dataUtilizacao,
+    this.identificadorIngresso,
   });
 
   factory Ingresso.fromJson(Map<String, dynamic> jsons) {
@@ -57,6 +59,7 @@ class Ingresso {
       pagamento: jsons['pagamento'] != null ? Pagamento.fromJson(jsons['pagamento']) : null,
       qrcode: jsons['qrcode'] != null ? Arquivo.fromJson(jsons['qrcode']) : null,
       dataUtilizacao: jsons['dataUtilizacao'],
+      identificadorIngresso: jsons['identificadorIngresso'],
     );
   }
 
@@ -75,5 +78,6 @@ class Ingresso {
         'usuario': usuario,
         'pagamento': pagamento,
         'dataUtilizacao': dataUtilizacao,
+        'identificadorIngresso': identificadorIngresso,
       };
 }

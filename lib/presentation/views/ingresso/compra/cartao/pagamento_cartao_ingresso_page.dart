@@ -52,13 +52,14 @@ class _PagamentoCartaoIngressoPageState extends State<PagamentoCartaoIngressoPag
       // ignore: use_build_context_synchronously
       Util.hideLoading(context);
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => MeusIngressosPage(
-              usuarioAutenticado: widget.usuarioAutenticado,
-            ),
-          ),
-          (Route<dynamic> route) => false);
+
+      // ignore: use_build_context_synchronously
+      Util.goToAndPopAll(
+        context,
+        MeusIngressosPage(
+          usuarioAutenticado: widget.usuarioAutenticado,
+        ),
+      );
 
       // ignore: use_build_context_synchronously
       Util.showSnackbarInfo(

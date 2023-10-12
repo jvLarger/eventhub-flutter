@@ -49,4 +49,19 @@ class IngressoSevice {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<Ingresso> validarIngresso(String identificadorIngresso) async {
+    final response = await Api.validarIngresso(identificadorIngresso);
+
+    if (response.statusCode == 200) {
+      Ingresso ingresso = Ingresso.fromJson(
+        jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
+      return ingresso;
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

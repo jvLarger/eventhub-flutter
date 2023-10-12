@@ -6,6 +6,7 @@ import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/error/standard_error.dart';
 import 'package:eventhub/network/api.dart';
+import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingressos_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -265,5 +266,13 @@ class Util {
     } else {
       return null;
     }
+  }
+
+  static void goToAndPopAll(BuildContext context, Widget page) {
+    while (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+
+    goTo(context, page);
   }
 }

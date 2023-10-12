@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/evento/evento.dart';
-import 'package:eventhub/model/evento/feed_evento.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';

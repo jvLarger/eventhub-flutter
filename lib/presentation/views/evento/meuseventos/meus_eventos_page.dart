@@ -9,6 +9,7 @@ import 'package:eventhub/presentation/views/evento/cadastro/evento_cadastro_page
 import 'package:eventhub/presentation/views/evento/compartilhamento/evento_compartilhamento_page.dart';
 import 'package:eventhub/presentation/views/evento/indicadores/evento_indicadores_page.dart';
 import 'package:eventhub/presentation/views/evento/visualizacao/evento_visualizacao_page.dart';
+import 'package:eventhub/presentation/views/qrcode/qrcode_scanner_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -66,8 +67,19 @@ class _MeusEventosPageState extends State<MeusEventosPage> with TickerProviderSt
             child: CircularProgressIndicator(),
           )
         : EventHubBody(
-            topWidget: const EventHubTopAppbar(
+            topWidget: EventHubTopAppbar(
               title: "Meus Eventos",
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Util.goTo(
+                      context,
+                      const QrCodeLeituraPage(),
+                    );
+                  },
+                  icon: const Icon(Icons.qr_code),
+                ),
+              ],
             ),
             bottomNavigationBar: EventHubBottomButton(
               label: "Novo Evento",

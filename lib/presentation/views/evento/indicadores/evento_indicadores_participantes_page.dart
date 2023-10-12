@@ -3,6 +3,8 @@ import 'package:eventhub/model/ingresso/ingresso.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/ingresso/validacao/validacao_ingresso_page.dart';
+import 'package:eventhub/presentation/views/qrcode/qrcode_scanner_page.dart';
 import 'package:eventhub/services/evento/evento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -66,8 +68,19 @@ class _EventoIndicadoresParticipantesPageState extends State<EventoIndicadoresPa
             child: CircularProgressIndicator(),
           )
         : EventHubBody(
-            topWidget: const EventHubTopAppbar(
+            topWidget: EventHubTopAppbar(
               title: "Lista de Participantes",
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Util.goTo(
+                      context,
+                      const QrCodeLeituraPage(),
+                    );
+                  },
+                  icon: const Icon(Icons.qr_code),
+                ),
+              ],
             ),
             child: Padding(
               padding: const EdgeInsets.all(defaultPadding),
@@ -118,20 +131,51 @@ class _EventoIndicadoresParticipantesPageState extends State<EventoIndicadoresPa
           fontWeight: FontWeight.bold,
         ),
       ),
-      subtitle: Text(ingresso.documentoPrincipal != null
-          ? ingresso.documentoPrincipal!.length == 11
-              ? Util.aplicarMascara(ingresso.documentoPrincipal!, "###.###.###-##")
-              : Util.aplicarMascara(ingresso.documentoPrincipal!, "##.###.###/####-##")
-          : ""),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(ingresso.documentoPrincipal != null
+              ? ingresso.documentoPrincipal!.length == 11
+                  ? Util.aplicarMascara(ingresso.documentoPrincipal!, "###.###.###-##")
+                  : Util.aplicarMascara(ingresso.documentoPrincipal!, "##.###.###/####-##")
+              : ""),
+          ingresso.dataUtilizacao != null
+              ? const Text(
+                  "Ingresso já utilizado",
+                  style: TextStyle(
+                    color: Color.fromRGBO(7, 189, 116, 1),
+                  ),
+                )
+              : const Text(
+                  "Ainda não utilizado",
+                  style: TextStyle(
+                    color: Color.fromRGBO(247, 85, 85, 1),
+                  ),
+                )
+        ],
+      ),
       trailing: SizedBox(
-        child: Text(
-          "R\$ ${Util.formatarReal(ingresso.valorFaturamento)}",
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: colorBlue,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: ingresso.dataUtilizacao != null
+            ? Text(
+                "R\$ ${Util.formatarReal(ingresso.valorFaturamento)}",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: colorBlue,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : ElevatedButton(
+                onPressed: () {
+                  Util.goTo(
+                    context,
+                    ValidacaoIngressoPage(identificadorIngresso: ingresso.identificadorIngresso!),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                ),
+                child: const Text("Validar"),
+              ),
       ),
     );
   }

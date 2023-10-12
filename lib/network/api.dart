@@ -527,4 +527,11 @@ class Api {
       headers: getHeader(),
     );
   }
+
+  static validarIngresso(String identificadorIngresso) async {
+    return await http.get(
+      getURI('$baseURL/ingressos/validacao?identificadorIngresso=$identificadorIngresso'),
+      headers: getHeader(),
+    );
+  }
 }
