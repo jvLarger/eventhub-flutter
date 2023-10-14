@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class AmizadeService {
   Future<void> enviarSolicitacaoAmizade(int idUsuario) async {
-    final response = await Api.enviarSolicitacaoAmizade(idUsuario);
+    final response = await Api().enviarSolicitacaoAmizade(idUsuario);
 
     if (response.statusCode == 204) {
     } else {
@@ -18,7 +18,7 @@ class AmizadeService {
   }
 
   Future<void> aceitarSolicitacaoAmizade(int idNotificacao) async {
-    final response = await Api.aceitarSolicitacaoAmizade(idNotificacao);
+    final response = await Api().aceitarSolicitacaoAmizade(idNotificacao);
 
     if (response.statusCode == 204) {
     } else {
@@ -29,7 +29,7 @@ class AmizadeService {
   }
 
   Future<void> removerAmizade(int idUsuario) async {
-    final response = await Api.removerAmizade(idUsuario);
+    final response = await Api().removerAmizade(idUsuario);
 
     if (response.statusCode == 204) {
     } else {
@@ -40,7 +40,7 @@ class AmizadeService {
   }
 
   Future<List<Usuario>> buscarAmigos() async {
-    final response = await Api.buscarAmigos();
+    final response = await Api().buscarAmigos();
 
     if (response.statusCode == 200) {
       return (jsonDecode(

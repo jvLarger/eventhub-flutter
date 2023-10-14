@@ -5,7 +5,7 @@ import 'package:eventhub/utils/util.dart';
 
 class UsuarioComentarioService {
   Future<void> enviarSolicitacaoComentario(int idUsuario, UsuarioComentario usuarioComentario) async {
-    final response = await Api.enviarSolicitacaoComentario(idUsuario, usuarioComentario);
+    final response = await Api().enviarSolicitacaoComentario(idUsuario, usuarioComentario);
 
     if (response.statusCode == 204) {
     } else {
@@ -16,7 +16,7 @@ class UsuarioComentarioService {
   }
 
   Future<void> aceitarSolicitacaoComentario(int idNotificacao) async {
-    final response = await Api.aceitarSolicitacaoComentario(idNotificacao);
+    final response = await Api().aceitarSolicitacaoComentario(idNotificacao);
 
     if (response.statusCode == 204) {
     } else {
@@ -27,7 +27,7 @@ class UsuarioComentarioService {
   }
 
   Future<void> removerComentario(int idUsuarioComentario) async {
-    final response = await Api.removerComentario(idUsuarioComentario);
+    final response = await Api().removerComentario(idUsuarioComentario);
 
     if (response.statusCode == 204) {
     } else {

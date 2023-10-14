@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class CategoriaService {
   Future<List<Categoria>> buscarTodasCategorias() async {
-    final response = await Api.buscarTodasCategorias();
+    final response = await Api().buscarTodasCategorias();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -21,7 +21,7 @@ class CategoriaService {
   }
 
   Future<List<Categoria>> buscarCategoriasPopulares() async {
-    final response = await Api.buscarCategoriasPopulares();
+    final response = await Api().buscarCategoriasPopulares();
 
     if (response.statusCode == 200) {
       return (jsonDecode(

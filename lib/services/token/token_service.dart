@@ -5,7 +5,7 @@ import 'package:eventhub/utils/util.dart';
 
 class TokenService {
   Future<void> enviarTokenRecuperacao(Token token) async {
-    final response = await Api.enviarTokenRecuperacao(token);
+    final response = await Api().enviarTokenRecuperacao(token);
     if (response.statusCode == 200) {
     } else {
       throw EventHubException(
@@ -15,7 +15,7 @@ class TokenService {
   }
 
   Future<void> validarTokenInformado(int codigo, String email) async {
-    final response = await Api.validarTokenInformado(codigo, email);
+    final response = await Api().validarTokenInformado(codigo, email);
     if (response.statusCode == 200) {
     } else {
       throw EventHubException(
@@ -25,7 +25,7 @@ class TokenService {
   }
 
   Future<void> alterarSenhaUsuario(Token token) async {
-    final response = await Api.alterarSenhaUsuario(token);
+    final response = await Api().alterarSenhaUsuario(token);
     if (response.statusCode == 204) {
     } else {
       throw EventHubException(

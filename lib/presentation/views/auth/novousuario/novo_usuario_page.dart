@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
+import 'package:eventhub/presentation/views/ipconfig/ipconfig_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +54,9 @@ class _NovoUsuarioPageState extends State<NovoUsuarioPage> {
           usuarioAutenticado: usuarioAutenticado,
         ),
       );
+    } on SocketException {
+      Util.showSnackbarError(context, "Não foi possível se conectar com esse host");
+      Util.goToAndOverride(context, const IpConfigPage());
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
     }

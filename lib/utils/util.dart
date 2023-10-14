@@ -8,6 +8,7 @@ import 'package:eventhub/model/error/standard_error.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingressos_page.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/singleton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
@@ -189,7 +190,7 @@ class Util {
   }
 
   static montarURlFoto(String nomeAbsoluto) {
-    return "${Api.baseURL}/publico/imagens/$nomeAbsoluto";
+    return "${EventhubSingleton().getHost()}/publico/imagens/$nomeAbsoluto";
   }
 
   static String formatarDataComHora(DateTime? data) {

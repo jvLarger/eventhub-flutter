@@ -10,7 +10,7 @@ import 'package:eventhub/utils/util.dart';
 
 class PublicacaoService {
   Future<Publicacao> criarPublicacao(Publicacao publicacao) async {
-    final response = await Api.criarPublicacao(publicacao);
+    final response = await Api().criarPublicacao(publicacao);
 
     if (response.statusCode == 201) {
       Publicacao publicacao = Publicacao.fromJson(
@@ -26,7 +26,7 @@ class PublicacaoService {
   }
 
   Future<Publicacao> buscarPublicacao(int idPublicacao) async {
-    final response = await Api.buscarPublicacao(idPublicacao);
+    final response = await Api().buscarPublicacao(idPublicacao);
 
     if (response.statusCode == 200) {
       Publicacao publicacao = Publicacao.fromJson(
@@ -42,7 +42,7 @@ class PublicacaoService {
   }
 
   Future<void> excluirPublicacao(int idPublicacao) async {
-    final response = await Api.excluirPublicacao(idPublicacao);
+    final response = await Api().excluirPublicacao(idPublicacao);
 
     if (response.statusCode == 204) {
     } else {
@@ -51,7 +51,7 @@ class PublicacaoService {
   }
 
   Future<PublicacaoComentario> comentarPublicacao(int idPublicacao, PublicacaoComentario publicacaoComentario) async {
-    final response = await Api.comentarPublicacao(idPublicacao, publicacaoComentario);
+    final response = await Api().comentarPublicacao(idPublicacao, publicacaoComentario);
 
     if (response.statusCode == 201) {
       PublicacaoComentario publicacaoComentario = PublicacaoComentario.fromJson(
@@ -67,7 +67,7 @@ class PublicacaoService {
   }
 
   Future<void> excluirComentario(int idPublicacaoComentario) async {
-    final response = await Api.excluirComentario(idPublicacaoComentario);
+    final response = await Api().excluirComentario(idPublicacaoComentario);
 
     if (response.statusCode == 204) {
     } else {
@@ -76,7 +76,7 @@ class PublicacaoService {
   }
 
   Future<void> curtirPublicacao(int idPublicacao) async {
-    final response = await Api.curtirPublicacao(idPublicacao);
+    final response = await Api().curtirPublicacao(idPublicacao);
 
     if (response.statusCode == 204) {
     } else {
@@ -85,7 +85,7 @@ class PublicacaoService {
   }
 
   Future<void> descurtirPublicacao(int idPublicacao) async {
-    final response = await Api.descurtirPublicacao(idPublicacao);
+    final response = await Api().descurtirPublicacao(idPublicacao);
 
     if (response.statusCode == 204) {
     } else {
@@ -94,7 +94,7 @@ class PublicacaoService {
   }
 
   Future<List<Usuario>> buscarUsuariosQueCurtiram(int idPublicacao) async {
-    final response = await Api.buscarUsuariosQueCurtiram(idPublicacao);
+    final response = await Api().buscarUsuariosQueCurtiram(idPublicacao);
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -108,7 +108,7 @@ class PublicacaoService {
   }
 
   Future<PagePublicacao> buscarFeedPublicacao(int page) async {
-    final response = await Api.buscarFeedPublicacao(page);
+    final response = await Api().buscarFeedPublicacao(page);
 
     if (response.statusCode == 200) {
       PagePublicacao pagePublicacao = PagePublicacao.fromJson(

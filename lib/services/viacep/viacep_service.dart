@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class ViaCepService {
   Future<ViaCep> consultarCep(String cep) async {
-    final response = await Api.consultarCep(cep);
+    final response = await Api().consultarCep(cep);
 
     if (response.statusCode == 200) {
       ViaCep viaCep = ViaCep.fromJson(

@@ -15,6 +15,7 @@ import 'package:eventhub/presentation/views/perfil/meuperfil/meu_perfil_page.dar
 import 'package:eventhub/services/arquivo/arquivo_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
+import 'package:eventhub/utils/singleton.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class _MinhasInformacoesPageState extends State<MinhasInformacoesPage> {
                     children: [
                       CircleAvatar(
                         radius: 60,
-                        backgroundImage: widget.usuarioAutenticado.foto != null ? NetworkImage("${Api.baseURL}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}") : const NetworkImage(""),
+                        backgroundImage: widget.usuarioAutenticado.foto != null ? NetworkImage("${EventhubSingleton().getHost()}/publico/imagens/${widget.usuarioAutenticado.foto!.nomeAbsoluto!}") : const NetworkImage(""),
                         child: IconButton(
                           onPressed: _showOpcoesBottomSheet,
                           icon: Icon(

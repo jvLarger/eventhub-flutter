@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class PerfilService {
   Future<Perfil> buscarMeuPerfil() async {
-    final response = await Api.buscarMeuPerfil();
+    final response = await Api().buscarMeuPerfil();
 
     if (response.statusCode == 200) {
       Perfil perfil = Perfil.fromJson(
@@ -23,7 +23,7 @@ class PerfilService {
   }
 
   Future<Perfil> buscarPerfil(int idUsuario) async {
-    final response = await Api.buscarPerfil(idUsuario);
+    final response = await Api().buscarPerfil(idUsuario);
 
     if (response.statusCode == 200) {
       Perfil perfil = Perfil.fromJson(

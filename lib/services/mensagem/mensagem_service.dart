@@ -8,7 +8,7 @@ import 'package:eventhub/utils/util.dart';
 
 class MensagemService {
   Future<List<SalaBatePapo>> buscarSalasBatePapo() async {
-    final response = await Api.buscarSalasBatePapo();
+    final response = await Api().buscarSalasBatePapo();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -22,7 +22,7 @@ class MensagemService {
   }
 
   Future<Mensagem> enviarMensagem(int id, Mensagem mensagem) async {
-    final response = await Api.enviarMensagem(id, mensagem);
+    final response = await Api().enviarMensagem(id, mensagem);
 
     if (response.statusCode == 201) {
       Mensagem mensagem = Mensagem.fromJson(
@@ -38,7 +38,7 @@ class MensagemService {
   }
 
   Future<List<Mensagem>> buscarMensagens(int id) async {
-    final response = await Api.buscarMensagens(id);
+    final response = await Api().buscarMensagens(id);
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -52,7 +52,7 @@ class MensagemService {
   }
 
   Future<List<Mensagem>> buscarMensagensRecebidasENaoLidas(int id) async {
-    final response = await Api.buscarMensagensRecebidasENaoLidas(id);
+    final response = await Api().buscarMensagensRecebidasENaoLidas(id);
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -66,7 +66,7 @@ class MensagemService {
   }
 
   Future<int> buscarNumeroMensagensNaoLidas() async {
-    final response = await Api.buscarNumeroMensagensNaoLidas();
+    final response = await Api().buscarNumeroMensagensNaoLidas();
 
     if (response.statusCode == 200) {
       int numeroMensagensNaoLidas = jsonDecode(

@@ -12,7 +12,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UsuarioService {
   Future<UsuarioAutenticado> criarUsuario(Usuario usuario) async {
-    final response = await Api.criarUsuario(usuario);
+    final response = await Api().criarUsuario(usuario);
 
     if (response.statusCode == 201) {
       UsuarioAutenticado usuarioAutenticado = UsuarioAutenticado.fromJson(
@@ -32,7 +32,7 @@ class UsuarioService {
   }
 
   Future<bool> isTokenValido(String token) async {
-    final response = await Api.tokenValido(token);
+    final response = await Api().tokenValido(token);
 
     if (response.statusCode == 200) {
       // ignore: sdk_version_since
@@ -70,7 +70,7 @@ class UsuarioService {
   }
 
   Future<Usuario> buscarUsuarioLogado() async {
-    final response = await Api.buscarUsuarioLogado();
+    final response = await Api().buscarUsuarioLogado();
 
     if (response.statusCode == 200) {
       Usuario usuario = Usuario.fromJson(
@@ -86,7 +86,7 @@ class UsuarioService {
   }
 
   Future<Usuario> alterarInformacoesUsuario(Usuario usuario) async {
-    final response = await Api.alterarInformacoesUsuario(usuario);
+    final response = await Api().alterarInformacoesUsuario(usuario);
 
     if (response.statusCode == 200) {
       Usuario usuarioAutenticado = Usuario.fromJson(
@@ -103,7 +103,7 @@ class UsuarioService {
   }
 
   Future<void> alterarImagemPerfilUsuario(int? idArquivo) async {
-    final response = await Api.alterarImagemPerfilUsuario(
+    final response = await Api().alterarImagemPerfilUsuario(
       Arquivo(
         id: idArquivo,
       ),
@@ -116,7 +116,7 @@ class UsuarioService {
   }
 
   Future<PageUsuario> encontrarPessoas(String nomeCompleto, int page) async {
-    final response = await Api.encontrarPessoas(nomeCompleto, page);
+    final response = await Api().encontrarPessoas(nomeCompleto, page);
 
     if (response.statusCode == 200) {
       PageUsuario pageUsuario = PageUsuario.fromJson(
@@ -137,7 +137,7 @@ class UsuarioService {
     if (usuarioAutenticado.identificadorNotificacao != fcmToken) {
       usuarioAutenticado.identificadorNotificacao = fcmToken;
 
-      final response = await Api.alterarIdentificadorNotificacao(usuarioAutenticado);
+      final response = await Api().alterarIdentificadorNotificacao(usuarioAutenticado);
 
       if (response.statusCode == 200) {
         await UsuarioDB().alterarIdentificadorNotificacao(fcmToken);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
@@ -6,6 +8,7 @@ import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/views/auth/novousuario/novo_usuario_page.dart';
 import 'package:eventhub/presentation/views/auth/recuperar-senha/recuperar_senha_email_page.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
+import 'package:eventhub/presentation/views/ipconfig/ipconfig_page.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -41,10 +44,12 @@ class _LoginPageState extends State<LoginPage> {
         senha: _senhaController.text,
       );
 
+      Util.showLoading(context);
       UsuarioAutenticado usuarioAutenticado = await UsuarioService().login(usuario, _isManterConectado);
 
       await UsuarioService().tratarIdentificadorNotificacao(usuarioAutenticado);
-
+// ignore: use_build_context_synchronously
+      Util.hideLoading(context);
       // ignore: use_build_context_synchronously
       Util.goTo(
         context,
@@ -52,7 +57,12 @@ class _LoginPageState extends State<LoginPage> {
           usuarioAutenticado: usuarioAutenticado,
         ),
       );
+    } on SocketException {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, "Não foi possível se conectar com esse host");
+      Util.goToAndOverride(context, const IpConfigPage());
     } on EventHubException catch (err) {
+      Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
   }

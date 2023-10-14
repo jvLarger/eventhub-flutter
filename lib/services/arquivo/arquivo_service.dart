@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class ArquivoService {
   Future<Arquivo> uploadArquivoBase64(String base64) async {
-    final response = await Api.uploadFile(base64);
+    final response = await Api().uploadFile(base64);
     if (response.statusCode == 201) {
       Arquivo arquivo = Arquivo.fromJson(
         jsonDecode(

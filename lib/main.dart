@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/config/themes/app_theme.dart';
 import 'package:eventhub/db/usuario_db.dart';
@@ -10,6 +12,7 @@ import 'package:eventhub/presentation/views/ipconfig/ipconfig_page.dart';
 import 'package:eventhub/services/firebase/firebase_messaging_service.dart';
 import 'package:eventhub/services/firebase/notification_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
+import 'package:eventhub/utils/singleton.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +79,7 @@ class EventHubApp extends StatefulWidget {
 
 class _EventHubAppState extends State<EventHubApp> {
   Future<UsuarioAutenticado?> validarUsuarioLogado() async {
+    print("Host utilizado: " + EventhubSingleton().getHost());
     try {
       UsuarioAutenticado? usuarioAutenticado = await UsuarioDB().buscarUsuario();
       if (usuarioAutenticado != null) {
@@ -91,6 +95,9 @@ class _EventHubAppState extends State<EventHubApp> {
       }
 
       return usuarioAutenticado;
+    } on SocketException {
+      Util.showSnackbarError(context, "Não foi possível se conectar com esse host");
+      Util.goToAndOverride(context, const IpConfigPage());
     } on EventHubException catch (err) {
       Util.showSnackbarError(context, err.cause);
     }

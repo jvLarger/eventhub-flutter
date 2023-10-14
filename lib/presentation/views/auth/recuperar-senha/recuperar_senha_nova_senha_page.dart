@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
@@ -5,6 +7,7 @@ import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
+import 'package:eventhub/presentation/views/ipconfig/ipconfig_page.dart';
 import 'package:eventhub/services/token/token_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -57,6 +60,9 @@ class _RecuperarSenhaNovaSenhaPageState extends State<RecuperarSenhaNovaSenhaPag
         context,
         const LoginPage(),
       );
+    } on SocketException {
+      Util.showSnackbarError(context, "Não foi possível se conectar com esse host");
+      Util.goToAndOverride(context, const IpConfigPage());
     } on EventHubException catch (err) {
       Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);

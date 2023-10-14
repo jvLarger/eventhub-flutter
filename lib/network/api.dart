@@ -28,11 +28,10 @@ class Api {
 
   static Uri getURI(String nmUrl) {
     Util.printInfo("URL:'$nmUrl'");
-    // Util.printInfo("token: $apiKey");
     return Uri.parse(nmUrl);
   }
 
-  static Future<http.Response> criarUsuario(Usuario usuario) async {
+  Future<http.Response> criarUsuario(Usuario usuario) async {
     return await http.post(
       getURI('${EventhubSingleton().getHost()}/publico/nova-conta'),
       headers: getHeader(),
@@ -42,7 +41,7 @@ class Api {
     );
   }
 
-  static tokenValido(String token) async {
+  tokenValido(String token) async {
     return await http.post(
       getURI('${EventhubSingleton().getHost()}/publico/token-valido'),
       headers: getHeader(),
@@ -64,16 +63,16 @@ class Api {
     );
   }
 
-  static buscarUsuarioLogado() async {
+  buscarUsuarioLogado() async {
     return await http.get(
-      getURI('$baseURL/usuarios'),
+      getURI('${EventhubSingleton().getHost()}/usuarios'),
       headers: getHeader(),
     );
   }
 
-  static enviarTokenRecuperacao(Token token) async {
+  enviarTokenRecuperacao(Token token) async {
     return await http.post(
-      getURI('$baseURL/publico/recuperar-senha'),
+      getURI('${EventhubSingleton().getHost()}/publico/recuperar-senha'),
       headers: getHeader(),
       body: jsonEncode(
         token.toJson(),
@@ -81,16 +80,16 @@ class Api {
     );
   }
 
-  static validarTokenInformado(int codigo, String email) async {
+  validarTokenInformado(int codigo, String email) async {
     return await http.get(
-      getURI('$baseURL/publico/validar-token/$codigo/$email'),
+      getURI('${EventhubSingleton().getHost()}/publico/validar-token/$codigo/$email'),
       headers: getHeader(),
     );
   }
 
-  static alterarSenhaUsuario(Token token) async {
+  alterarSenhaUsuario(Token token) async {
     return await http.put(
-      getURI('$baseURL/publico/nova-senha'),
+      getURI('${EventhubSingleton().getHost()}/publico/nova-senha'),
       headers: getHeader(),
       body: jsonEncode(
         token.toJson(),
@@ -98,9 +97,9 @@ class Api {
     );
   }
 
-  static alterarInformacoesUsuario(Usuario usuario) async {
+  alterarInformacoesUsuario(Usuario usuario) async {
     return await http.put(
-      getURI('$baseURL/usuarios'),
+      getURI('${EventhubSingleton().getHost()}/usuarios'),
       headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
@@ -108,9 +107,9 @@ class Api {
     );
   }
 
-  static uploadFile(String base64) async {
+  uploadFile(String base64) async {
     return await http.post(
-      getURI('$baseURL/arquivos'),
+      getURI('${EventhubSingleton().getHost()}/arquivos'),
       headers: getHeader(),
       body: jsonEncode(
         {
@@ -120,9 +119,9 @@ class Api {
     );
   }
 
-  static alterarImagemPerfilUsuario(Arquivo arquivo) async {
+  alterarImagemPerfilUsuario(Arquivo arquivo) async {
     return await http.put(
-      getURI('$baseURL/usuarios/foto'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/foto'),
       headers: getHeader(),
       body: jsonEncode(
         arquivo.toJson(),
@@ -130,54 +129,54 @@ class Api {
     );
   }
 
-  static buscarMeuPerfil() async {
+  buscarMeuPerfil() async {
     return await http.get(
-      getURI('$baseURL/perfis'),
+      getURI('${EventhubSingleton().getHost()}/perfis'),
       headers: getHeader(),
     );
   }
 
-  static buscarPerfil(int idUsuario) async {
+  buscarPerfil(int idUsuario) async {
     return await http.get(
-      getURI('$baseURL/perfis/$idUsuario'),
+      getURI('${EventhubSingleton().getHost()}/perfis/$idUsuario'),
       headers: getHeader(),
     );
   }
 
-  static encontrarPessoas(String nomeCompleto, int page) async {
+  encontrarPessoas(String nomeCompleto, int page) async {
     return await http.get(
-      getURI('$baseURL/usuarios/encontrados?nomeCompleto=$nomeCompleto&page=$page&size=5000'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/encontrados?nomeCompleto=$nomeCompleto&page=$page&size=5000'),
       headers: getHeader(),
     );
   }
 
-  static enviarSolicitacaoAmizade(int idUsuario) async {
+  enviarSolicitacaoAmizade(int idUsuario) async {
     return await http.post(
-      getURI('$baseURL/amizades/$idUsuario'),
+      getURI('${EventhubSingleton().getHost()}/amizades/$idUsuario'),
       headers: getHeader(),
       body: jsonEncode({}),
     );
   }
 
-  static aceitarSolicitacaoAmizade(idNotificacao) async {
+  aceitarSolicitacaoAmizade(idNotificacao) async {
     return await http.post(
-      getURI('$baseURL/amizades/$idNotificacao/aceitar'),
+      getURI('${EventhubSingleton().getHost()}/amizades/$idNotificacao/aceitar'),
       headers: getHeader(),
       body: jsonEncode({}),
     );
   }
 
-  static removerAmizade(int idUsuario) async {
+  removerAmizade(int idUsuario) async {
     return await http.delete(
-      getURI('$baseURL/amizades/$idUsuario'),
+      getURI('${EventhubSingleton().getHost()}/amizades/$idUsuario'),
       headers: getHeader(),
       body: jsonEncode({}),
     );
   }
 
-  static enviarSolicitacaoComentario(int idUsuario, UsuarioComentario usuarioComentario) async {
+  enviarSolicitacaoComentario(int idUsuario, UsuarioComentario usuarioComentario) async {
     return await http.post(
-      getURI('$baseURL/usuarios/comentarios/$idUsuario'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/comentarios/$idUsuario'),
       headers: getHeader(),
       body: jsonEncode(
         usuarioComentario.toJson(),
@@ -185,9 +184,9 @@ class Api {
     );
   }
 
-  static aceitarSolicitacaoComentario(int idNotificacao) async {
+  aceitarSolicitacaoComentario(int idNotificacao) async {
     return await http.post(
-      getURI('$baseURL/usuarios/comentarios/$idNotificacao/aceitar'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/comentarios/$idNotificacao/aceitar'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -195,24 +194,24 @@ class Api {
     );
   }
 
-  static removerComentario(int idUsuarioComentario) async {
+  removerComentario(int idUsuarioComentario) async {
     return await http.delete(
-      getURI('$baseURL/usuarios/comentarios/$idUsuarioComentario'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/comentarios/$idUsuarioComentario'),
       headers: getHeader(),
       body: jsonEncode({}),
     );
   }
 
-  static buscarNotificacoesPendentes() async {
+  buscarNotificacoesPendentes() async {
     return await http.get(
-      getURI('$baseURL/notificacoes/pendentes'),
+      getURI('${EventhubSingleton().getHost()}/notificacoes/pendentes'),
       headers: getHeader(),
     );
   }
 
-  static marcarComoLida(int idNotificacao) async {
+  marcarComoLida(int idNotificacao) async {
     return await http.put(
-      getURI('$baseURL/notificacoes/$idNotificacao/ler'),
+      getURI('${EventhubSingleton().getHost()}/notificacoes/$idNotificacao/ler'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -220,9 +219,9 @@ class Api {
     );
   }
 
-  static alterarIdentificadorNotificacao(UsuarioAutenticado usuarioAutenticado) async {
+  alterarIdentificadorNotificacao(UsuarioAutenticado usuarioAutenticado) async {
     return await http.put(
-      getURI('$baseURL/usuarios/identificador'),
+      getURI('${EventhubSingleton().getHost()}/usuarios/identificador'),
       headers: getHeader(),
       body: jsonEncode(
         usuarioAutenticado.toJson(),
@@ -230,9 +229,9 @@ class Api {
     );
   }
 
-  static criarPublicacao(Publicacao publicacao) async {
+  criarPublicacao(Publicacao publicacao) async {
     return await http.post(
-      getURI('$baseURL/publicacoes'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes'),
       headers: getHeader(),
       body: jsonEncode(
         publicacao.toJson(),
@@ -240,16 +239,16 @@ class Api {
     );
   }
 
-  static buscarPublicacao(int idPublicacao) async {
+  buscarPublicacao(int idPublicacao) async {
     return await http.get(
-      getURI('$baseURL/publicacoes/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/$idPublicacao'),
       headers: getHeader(),
     );
   }
 
-  static excluirPublicacao(int idPublicacao) async {
+  excluirPublicacao(int idPublicacao) async {
     return await http.delete(
-      getURI('$baseURL/publicacoes/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/$idPublicacao'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -257,9 +256,9 @@ class Api {
     );
   }
 
-  static comentarPublicacao(int idPublicacao, PublicacaoComentario publicacaoComentario) async {
+  comentarPublicacao(int idPublicacao, PublicacaoComentario publicacaoComentario) async {
     return await http.post(
-      getURI('$baseURL/publicacoes/comentarios/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/comentarios/$idPublicacao'),
       headers: getHeader(),
       body: jsonEncode(
         publicacaoComentario.toJson(),
@@ -267,9 +266,9 @@ class Api {
     );
   }
 
-  static excluirComentario(int idPublicacaoComentario) async {
+  excluirComentario(int idPublicacaoComentario) async {
     return await http.delete(
-      getURI('$baseURL/publicacoes/comentarios/$idPublicacaoComentario'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/comentarios/$idPublicacaoComentario'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -277,9 +276,9 @@ class Api {
     );
   }
 
-  static curtirPublicacao(int idPublicacao) async {
+  curtirPublicacao(int idPublicacao) async {
     return await http.post(
-      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/curtidas/$idPublicacao'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -287,9 +286,9 @@ class Api {
     );
   }
 
-  static descurtirPublicacao(int idPublicacao) async {
+  descurtirPublicacao(int idPublicacao) async {
     return await http.delete(
-      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/curtidas/$idPublicacao'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -297,30 +296,30 @@ class Api {
     );
   }
 
-  static buscarUsuariosQueCurtiram(int idPublicacao) async {
+  buscarUsuariosQueCurtiram(int idPublicacao) async {
     return await http.get(
-      getURI('$baseURL/publicacoes/curtidas/$idPublicacao'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes/curtidas/$idPublicacao'),
       headers: getHeader(),
     );
   }
 
-  static buscarFeedPublicacao(int page) async {
+  buscarFeedPublicacao(int page) async {
     return await http.get(
-      getURI('$baseURL/publicacoes?page=$page'),
+      getURI('${EventhubSingleton().getHost()}/publicacoes?page=$page'),
       headers: getHeader(),
     );
   }
 
-  static buscarSalasBatePapo() async {
+  buscarSalasBatePapo() async {
     return await http.get(
-      getURI('$baseURL/mensagens/salas'),
+      getURI('${EventhubSingleton().getHost()}/mensagens/salas'),
       headers: getHeader(),
     );
   }
 
-  static enviarMensagem(int id, Mensagem mensagem) async {
+  enviarMensagem(int id, Mensagem mensagem) async {
     return await http.post(
-      getURI('$baseURL/mensagens/$id'),
+      getURI('${EventhubSingleton().getHost()}/mensagens/$id'),
       headers: getHeader(),
       body: jsonEncode(
         mensagem.toJson(),
@@ -328,37 +327,37 @@ class Api {
     );
   }
 
-  static buscarMensagens(int id) async {
+  buscarMensagens(int id) async {
     return await http.get(
-      getURI('$baseURL/mensagens/$id'),
+      getURI('${EventhubSingleton().getHost()}/mensagens/$id'),
       headers: getHeader(),
     );
   }
 
-  static buscarMensagensRecebidasENaoLidas(int id) async {
+  buscarMensagensRecebidasENaoLidas(int id) async {
     return await http.get(
-      getURI('$baseURL/mensagens/$id/novas'),
+      getURI('${EventhubSingleton().getHost()}/mensagens/$id/novas'),
       headers: getHeader(),
     );
   }
 
-  static consultarCep(String cep) async {
+  consultarCep(String cep) async {
     return await http.get(
       getURI('https://viacep.com.br/ws/$cep/json/'),
       headers: getHeader(),
     );
   }
 
-  static buscarTodasCategorias() async {
+  buscarTodasCategorias() async {
     return await http.get(
-      getURI('$baseURL/categorias'),
+      getURI('${EventhubSingleton().getHost()}/categorias'),
       headers: getHeader(),
     );
   }
 
-  static criarEvento(Evento evento) async {
+  criarEvento(Evento evento) async {
     return await http.post(
-      getURI('$baseURL/eventos'),
+      getURI('${EventhubSingleton().getHost()}/eventos'),
       headers: getHeader(),
       body: jsonEncode(
         evento.toJson(),
@@ -366,9 +365,9 @@ class Api {
     );
   }
 
-  static alterarEvento(int idEvento, Evento evento) async {
+  alterarEvento(int idEvento, Evento evento) async {
     return await http.put(
-      getURI('$baseURL/eventos/$idEvento'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento'),
       headers: getHeader(),
       body: jsonEncode(
         evento.toJson(),
@@ -376,9 +375,9 @@ class Api {
     );
   }
 
-  static excluirEvento(int idEvento) async {
+  excluirEvento(int idEvento) async {
     return await http.delete(
-      getURI('$baseURL/eventos/$idEvento'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -386,49 +385,49 @@ class Api {
     );
   }
 
-  static buscarMeusEventosConcluidos() async {
+  buscarMeusEventosConcluidos() async {
     return await http.get(
-      getURI('$baseURL/eventos/concluidos'),
+      getURI('${EventhubSingleton().getHost()}/eventos/concluidos'),
       headers: getHeader(),
     );
   }
 
-  static buscarMeusEventosPendentes() async {
+  buscarMeusEventosPendentes() async {
     return await http.get(
-      getURI('$baseURL/eventos/pendentes'),
+      getURI('${EventhubSingleton().getHost()}/eventos/pendentes'),
       headers: getHeader(),
     );
   }
 
-  static buscarIndicadoresEvento(int idEvento) async {
+  buscarIndicadoresEvento(int idEvento) async {
     return await http.get(
-      getURI('$baseURL/eventos/$idEvento/indicadores'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento/indicadores'),
       headers: getHeader(),
     );
   }
 
-  static buscarIngressosVendidosEvento(int idEvento) async {
+  buscarIngressosVendidosEvento(int idEvento) async {
     return await http.get(
-      getURI('$baseURL/eventos/$idEvento/indicadores/participantes'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento/indicadores/participantes'),
       headers: getHeader(),
     );
   }
 
-  static buscarNumeroMensagensNaoLidas() async {
+  buscarNumeroMensagensNaoLidas() async {
     return await http.get(
-      getURI('$baseURL/mensagens/nao-lidas'),
+      getURI('${EventhubSingleton().getHost()}/mensagens/nao-lidas'),
       headers: getHeader(),
     );
   }
 
-  static buscarCategoriasPopulares() async {
+  buscarCategoriasPopulares() async {
     return await http.get(
-      getURI('$baseURL/categorias/populares'),
+      getURI('${EventhubSingleton().getHost()}/categorias/populares'),
       headers: getHeader(),
     );
   }
 
-  static buscarEventos(
+  buscarEventos(
     double latitude,
     double longitude,
     String idsCategorias,
@@ -440,35 +439,35 @@ class Api {
     int page,
   ) async {
     return await http.get(
-      getURI('$baseURL/eventos?latitude=$latitude&longitude=$longitude&categorias=$idsCategorias&nome=$nome&raio=$raio&data=$data&valorInicial=$valorInicial&valorFinal=$valorFinal&page=$page'),
+      getURI('${EventhubSingleton().getHost()}/eventos?latitude=$latitude&longitude=$longitude&categorias=$idsCategorias&nome=$nome&raio=$raio&data=$data&valorInicial=$valorInicial&valorFinal=$valorFinal&page=$page'),
       headers: getHeader(),
     );
   }
 
-  static buscarEvento(int idEvento) async {
+  buscarEvento(int idEvento) async {
     return await http.get(
-      getURI('$baseURL/eventos/$idEvento'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento'),
       headers: getHeader(),
     );
   }
 
-  static demonstrarInteresse(int idEvento) async {
+  demonstrarInteresse(int idEvento) async {
     return await http.post(
-      getURI('$baseURL/eventos/interesses/$idEvento'),
+      getURI('${EventhubSingleton().getHost()}/eventos/interesses/$idEvento'),
       headers: getHeader(),
     );
   }
 
-  static removerInteresse(int idEvento) async {
+  removerInteresse(int idEvento) async {
     return await http.delete(
-      getURI('$baseURL/eventos/interesses/$idEvento'),
+      getURI('${EventhubSingleton().getHost()}/eventos/interesses/$idEvento'),
       headers: getHeader(),
     );
   }
 
-  static registrarVisualizacaoEvento(int idEvento) async {
+  registrarVisualizacaoEvento(int idEvento) async {
     return await http.post(
-      getURI('$baseURL/eventos/$idEvento/visualizacoes'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento/visualizacoes'),
       headers: getHeader(),
       body: jsonEncode(
         {},
@@ -476,9 +475,9 @@ class Api {
     );
   }
 
-  static comprarIngresso(Ingresso ingresso) async {
+  comprarIngresso(Ingresso ingresso) async {
     return await http.post(
-      getURI('$baseURL/ingressos'),
+      getURI('${EventhubSingleton().getHost()}/ingressos'),
       headers: getHeader(),
       body: jsonEncode(
         ingresso.toJson(),
@@ -486,59 +485,59 @@ class Api {
     );
   }
 
-  static buscarFeedEventos(double latitude, double longitude) async {
+  buscarFeedEventos(double latitude, double longitude) async {
     return await http.get(
-      getURI('$baseURL/eventos/feed?latitude=$latitude&longitude=$longitude'),
+      getURI('${EventhubSingleton().getHost()}/eventos/feed?latitude=$latitude&longitude=$longitude'),
       headers: getHeader(),
     );
   }
 
-  static buscarAmigos() async {
+  buscarAmigos() async {
     return await http.get(
-      getURI('$baseURL/amizades'),
+      getURI('${EventhubSingleton().getHost()}/amizades'),
       headers: getHeader(),
     );
   }
 
-  static compartilharEvento(int idEvento, int idUsuario) async {
+  compartilharEvento(int idEvento, int idUsuario) async {
     return await http.post(
-      getURI('$baseURL/eventos/$idEvento/compartilhar/$idUsuario'),
+      getURI('${EventhubSingleton().getHost()}/eventos/$idEvento/compartilhar/$idUsuario'),
       headers: getHeader(),
       body: jsonEncode({}),
     );
   }
 
-  static buscarMeusIngressosPendentes() async {
+  buscarMeusIngressosPendentes() async {
     return await http.get(
-      getURI('$baseURL/ingressos/pendentes'),
+      getURI('${EventhubSingleton().getHost()}/ingressos/pendentes'),
       headers: getHeader(),
     );
   }
 
-  static buscarMeusIngressosConcluidos() async {
+  buscarMeusIngressosConcluidos() async {
     return await http.get(
-      getURI('$baseURL/ingressos/concluidos'),
+      getURI('${EventhubSingleton().getHost()}/ingressos/concluidos'),
       headers: getHeader(),
     );
   }
 
-  static buscarMapaCalor(double latitude, double longitude) async {
+  buscarMapaCalor(double latitude, double longitude) async {
     return await http.get(
-      getURI('$baseURL/eventos/mapa-calor?latitude=$latitude&longitude=$longitude'),
+      getURI('${EventhubSingleton().getHost()}/eventos/mapa-calor?latitude=$latitude&longitude=$longitude'),
       headers: getHeader(),
     );
   }
 
-  static validarIngresso(String identificadorIngresso) async {
+  validarIngresso(String identificadorIngresso) async {
     return await http.get(
-      getURI('$baseURL/ingressos/validacao?identificadorIngresso=$identificadorIngresso'),
+      getURI('${EventhubSingleton().getHost()}/ingressos/validacao?identificadorIngresso=$identificadorIngresso'),
       headers: getHeader(),
     );
   }
 
-  static utilizarIngresso(int idIngresso) async {
+  utilizarIngresso(int idIngresso) async {
     return await http.put(
-      getURI('$baseURL/ingressos/utilizacao/$idIngresso'),
+      getURI('${EventhubSingleton().getHost()}/ingressos/utilizacao/$idIngresso'),
       headers: getHeader(),
       body: jsonEncode({}),
     );

@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class IngressoSevice {
   Future<Ingresso> comprarIngresso(Ingresso ingresso) async {
-    final response = await Api.comprarIngresso(ingresso);
+    final response = await Api().comprarIngresso(ingresso);
 
     if (response.statusCode == 201) {
       Ingresso evento = Ingresso.fromJson(
@@ -23,7 +23,7 @@ class IngressoSevice {
   }
 
   Future<List<Ingresso>> buscarMeusIngressosPendentes() async {
-    final response = await Api.buscarMeusIngressosPendentes();
+    final response = await Api().buscarMeusIngressosPendentes();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -37,7 +37,7 @@ class IngressoSevice {
   }
 
   Future<List<Ingresso>> buscarMeusIngressosConcluidos() async {
-    final response = await Api.buscarMeusIngressosConcluidos();
+    final response = await Api().buscarMeusIngressosConcluidos();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -51,7 +51,7 @@ class IngressoSevice {
   }
 
   Future<Ingresso> validarIngresso(String identificadorIngresso) async {
-    final response = await Api.validarIngresso(identificadorIngresso);
+    final response = await Api().validarIngresso(identificadorIngresso);
 
     if (response.statusCode == 200) {
       Ingresso ingresso = Ingresso.fromJson(
@@ -66,7 +66,7 @@ class IngressoSevice {
   }
 
   Future<void> utilizarIngresso(int id) async {
-    final response = await Api.utilizarIngresso(id);
+    final response = await Api().utilizarIngresso(id);
 
     if (response.statusCode == 204) {
     } else {

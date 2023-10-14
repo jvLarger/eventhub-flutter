@@ -20,7 +20,6 @@ class _IpConfigPageState extends State<IpConfigPage> {
 
   atualizarAmbiente() {
     EventhubSingleton().setHost(_hostController.text.trim());
-    print("Host: " + EventhubSingleton().getHost());
     Util.showSnackbarInfo(context, "Informações alteradas com sucesso");
     Util.goToAndOverride(
       context,

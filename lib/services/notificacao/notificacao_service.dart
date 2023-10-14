@@ -7,7 +7,7 @@ import 'package:eventhub/utils/util.dart';
 
 class NotificacaoService {
   Future<List<Notificacao>> buscarNotificacoesPendentes() async {
-    final response = await Api.buscarNotificacoesPendentes();
+    final response = await Api().buscarNotificacoesPendentes();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -21,7 +21,7 @@ class NotificacaoService {
   }
 
   Future<void> marcarComoLida(int idNotificacao) async {
-    final response = await Api.marcarComoLida(idNotificacao);
+    final response = await Api().marcarComoLida(idNotificacao);
 
     if (response.statusCode == 204) {
     } else {

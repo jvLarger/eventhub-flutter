@@ -12,7 +12,7 @@ import 'package:geolocator/geolocator.dart';
 
 class EventoService {
   Future<Evento> criarEvento(Evento evento) async {
-    final response = await Api.criarEvento(evento);
+    final response = await Api().criarEvento(evento);
 
     if (response.statusCode == 201) {
       Evento evento = Evento.fromJson(
@@ -28,7 +28,7 @@ class EventoService {
   }
 
   Future<Evento> alterarEvento(int idEvento, Evento evento) async {
-    final response = await Api.alterarEvento(idEvento, evento);
+    final response = await Api().alterarEvento(idEvento, evento);
 
     if (response.statusCode == 200) {
       Evento evento = Evento.fromJson(
@@ -44,7 +44,7 @@ class EventoService {
   }
 
   Future<void> excluirEvento(int idEvento) async {
-    final response = await Api.excluirEvento(idEvento);
+    final response = await Api().excluirEvento(idEvento);
 
     if (response.statusCode == 204) {
     } else {
@@ -53,7 +53,7 @@ class EventoService {
   }
 
   Future<List<Evento>> buscarMeusEventosPendentes() async {
-    final response = await Api.buscarMeusEventosPendentes();
+    final response = await Api().buscarMeusEventosPendentes();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -67,7 +67,7 @@ class EventoService {
   }
 
   Future<List<Evento>> buscarMeusEventosConcluidos() async {
-    final response = await Api.buscarMeusEventosConcluidos();
+    final response = await Api().buscarMeusEventosConcluidos();
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -81,7 +81,7 @@ class EventoService {
   }
 
   Future<IndicadoresEvento> buscarIndicadoresEvento(int idEvento) async {
-    final response = await Api.buscarIndicadoresEvento(idEvento);
+    final response = await Api().buscarIndicadoresEvento(idEvento);
 
     if (response.statusCode == 200) {
       IndicadoresEvento indicadoresEvento = IndicadoresEvento.fromJson(
@@ -97,7 +97,7 @@ class EventoService {
   }
 
   Future<List<Ingresso>> buscarIngressosVendidosEvento(int idEvento) async {
-    final response = await Api.buscarIngressosVendidosEvento(idEvento);
+    final response = await Api().buscarIngressosVendidosEvento(idEvento);
 
     if (response.statusCode == 200) {
       return (jsonDecode(
@@ -130,7 +130,7 @@ class EventoService {
       i++;
     }
 
-    final response = await Api.buscarEventos(
+    final response = await Api().buscarEventos(
       position.latitude,
       position.longitude,
       idsCategorias,
@@ -154,7 +154,7 @@ class EventoService {
   }
 
   Future<Evento> buscarEvento(int idEvento) async {
-    final response = await Api.buscarEvento(idEvento);
+    final response = await Api().buscarEvento(idEvento);
 
     if (response.statusCode == 200) {
       Evento evento = Evento.fromJson(
@@ -170,7 +170,7 @@ class EventoService {
   }
 
   Future<void> demonstrarInteresse(int idEvento) async {
-    final response = await Api.demonstrarInteresse(idEvento);
+    final response = await Api().demonstrarInteresse(idEvento);
 
     if (response.statusCode == 204) {
     } else {
@@ -179,7 +179,7 @@ class EventoService {
   }
 
   Future<void> removerInteresse(int idEvento) async {
-    final response = await Api.removerInteresse(idEvento);
+    final response = await Api().removerInteresse(idEvento);
 
     if (response.statusCode == 204) {
     } else {
@@ -188,7 +188,7 @@ class EventoService {
   }
 
   Future<void> registrarVisualizacaoEvento(int idEvento) async {
-    final response = await Api.registrarVisualizacaoEvento(idEvento);
+    final response = await Api().registrarVisualizacaoEvento(idEvento);
 
     if (response.statusCode == 204) {
     } else {
@@ -197,7 +197,7 @@ class EventoService {
   }
 
   Future<FeedEvento> buscarFeedEventos(double latitude, double longitude) async {
-    final response = await Api.buscarFeedEventos(latitude, longitude);
+    final response = await Api().buscarFeedEventos(latitude, longitude);
 
     if (response.statusCode == 200) {
       FeedEvento feedEvento = FeedEvento.fromJson(
@@ -213,7 +213,7 @@ class EventoService {
   }
 
   Future<void> compartilharEvento(int idEvento, int idUsuario) async {
-    final response = await Api.compartilharEvento(idEvento, idUsuario);
+    final response = await Api().compartilharEvento(idEvento, idUsuario);
 
     if (response.statusCode == 204) {
     } else {
@@ -222,7 +222,7 @@ class EventoService {
   }
 
   Future<List<Evento>> buscarMapaCalor(double latitude, double longitude) async {
-    final response = await Api.buscarMapaCalor(latitude, longitude);
+    final response = await Api().buscarMapaCalor(latitude, longitude);
 
     if (response.statusCode == 200) {
       return (jsonDecode(
