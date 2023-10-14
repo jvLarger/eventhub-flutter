@@ -43,7 +43,7 @@ class UsuarioService {
   }
 
   login(Usuario usuario, bool isManterConectado) async {
-    final response = await Api.login(usuario);
+    final response = await Api().login(usuario);
 
     if (response.statusCode == 200) {
       UsuarioAutenticado usuarioAutenticado = UsuarioAutenticado.fromJson(

@@ -58,7 +58,7 @@ class Ingresso {
       usuario: jsons['usuario'] != null ? Usuario.fromJson(jsons['usuario']) : null,
       pagamento: jsons['pagamento'] != null ? Pagamento.fromJson(jsons['pagamento']) : null,
       qrcode: jsons['qrcode'] != null ? Arquivo.fromJson(jsons['qrcode']) : null,
-      dataUtilizacao: jsons['dataUtilizacao'],
+      dataUtilizacao: jsons['dataUtilizacao'] != null ? DateTime.parse(jsons['dataUtilizacao']) : null,
       identificadorIngresso: jsons['identificadorIngresso'],
     );
   }

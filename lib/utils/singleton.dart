@@ -10,6 +10,7 @@ class EventhubSingleton {
   EventhubSingleton._internal();
 
   Position? positionUsuario;
+  String? host;
 
   setPositionUsuario(Position position) {
     positionUsuario = position;
@@ -17,5 +18,13 @@ class EventhubSingleton {
 
   getPositionUsuario() {
     return positionUsuario;
+  }
+
+  setHost(String hostApi) {
+    host = hostApi;
+  }
+
+  String getHost() {
+    return host ?? "http://192.168.1.10:8080/api";
   }
 }

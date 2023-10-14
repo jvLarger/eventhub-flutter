@@ -6,6 +6,7 @@ import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/views/auth/login/login_page.dart';
 import 'package:eventhub/presentation/views/evento/eventosdestaque/eventos_destaque_page.dart';
+import 'package:eventhub/presentation/views/ipconfig/ipconfig_page.dart';
 import 'package:eventhub/services/firebase/firebase_messaging_service.dart';
 import 'package:eventhub/services/firebase/notification_service.dart';
 import 'package:eventhub/services/usuario/usuario_service.dart';
@@ -56,6 +57,10 @@ final router = GoRouter(
           builder: (_, __) => Scaffold(
             appBar: AppBar(title: const Text('Details Screen')),
           ),
+        ),
+        GoRoute(
+          path: 'ipconfig',
+          builder: (_, __) => IpConfigPage(),
         ),
       ],
     ),

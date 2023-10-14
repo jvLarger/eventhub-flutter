@@ -168,7 +168,10 @@ class _EventoIndicadoresParticipantesPageState extends State<EventoIndicadoresPa
                 onPressed: () {
                   Util.goTo(
                     context,
-                    ValidacaoIngressoPage(identificadorIngresso: ingresso.identificadorIngresso!),
+                    ValidacaoIngressoPage(
+                      identificadorIngresso: ingresso.identificadorIngresso!,
+                      isGoBackDefault: true,
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

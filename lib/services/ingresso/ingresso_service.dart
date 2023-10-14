@@ -64,4 +64,13 @@ class IngressoSevice {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> utilizarIngresso(int id) async {
+    final response = await Api.utilizarIngresso(id);
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

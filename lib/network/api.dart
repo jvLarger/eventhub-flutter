@@ -10,11 +10,12 @@ import 'package:eventhub/model/token/token.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
 import 'package:eventhub/model/usuario/usuario_comentario.dart';
+import 'package:eventhub/utils/singleton.dart';
 import 'package:eventhub/utils/util.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  static const baseURL = "http://192.168.1.10:8080/api";
+  static const baseURL = "/api";
   static String apiKey = "";
 
   static getHeader() {
@@ -33,7 +34,7 @@ class Api {
 
   static Future<http.Response> criarUsuario(Usuario usuario) async {
     return await http.post(
-      getURI('$baseURL/publico/nova-conta'),
+      getURI('${EventhubSingleton().getHost()}/publico/nova-conta'),
       headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
@@ -43,7 +44,7 @@ class Api {
 
   static tokenValido(String token) async {
     return await http.post(
-      getURI('$baseURL/publico/token-valido'),
+      getURI('${EventhubSingleton().getHost()}/publico/token-valido'),
       headers: getHeader(),
       body: jsonEncode(
         {
@@ -53,9 +54,9 @@ class Api {
     );
   }
 
-  static login(Usuario usuario) async {
+  login(Usuario usuario) async {
     return await http.post(
-      getURI('$baseURL/publico/login'),
+      getURI('${EventhubSingleton().getHost()}/publico/login'),
       headers: getHeader(),
       body: jsonEncode(
         usuario.toJson(),
@@ -532,6 +533,14 @@ class Api {
     return await http.get(
       getURI('$baseURL/ingressos/validacao?identificadorIngresso=$identificadorIngresso'),
       headers: getHeader(),
+    );
+  }
+
+  static utilizarIngresso(int idIngresso) async {
+    return await http.put(
+      getURI('$baseURL/ingressos/utilizacao/$idIngresso'),
+      headers: getHeader(),
+      body: jsonEncode({}),
     );
   }
 }

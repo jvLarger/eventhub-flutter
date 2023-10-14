@@ -160,9 +160,13 @@ class _QrCodeLeituraPageState extends State<QrCodeLeituraPage> {
       (Barcode scanData) {
         String? identificadorIngresso = scanData.code;
         if (identificadorIngresso != null) {
+          controller.pauseCamera();
           Util.goTo(
             context,
-            ValidacaoIngressoPage(identificadorIngresso: identificadorIngresso),
+            ValidacaoIngressoPage(
+              identificadorIngresso: identificadorIngresso,
+              isGoBackDefault: false,
+            ),
           );
         }
       },
