@@ -542,4 +542,19 @@ class Api {
       body: jsonEncode({}),
     );
   }
+
+  buscarFauramentos() async {
+    return await http.get(
+      getURI('${EventhubSingleton().getHost()}/faturamentos'),
+      headers: getHeader(),
+    );
+  }
+
+  desvincularContaStripe() async {
+    return await http.delete(
+      getURI('${EventhubSingleton().getHost()}/faturamentos'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
 }

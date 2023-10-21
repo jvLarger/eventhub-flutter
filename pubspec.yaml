@@ -59,6 +59,7 @@ dependencies:
   flutter_stripe: ^9.4.0
   go_router: ^11.1.3
   qr_code_scanner: ^1.0.1
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +97,7 @@ flutter:
     - assets/images/pin_yellow.png
     - assets/images/error.svg
     - assets/images/success.svg
+    - assets/images/stripe_logo.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
