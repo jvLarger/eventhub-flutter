@@ -277,7 +277,7 @@ class _MeuPerfilPageState extends State<MeuPerfilPage> {
                   ),
                   getItemMenu(
                     Ionicons.bar_chart_outline,
-                    "Sacar Saldo",
+                    "Meu Resultado",
                     () {
                       Util.goTo(context, const SacarSaldoPage());
                     },

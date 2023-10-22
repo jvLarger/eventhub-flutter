@@ -6,7 +6,6 @@ import 'package:eventhub/db/usuario_db.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/usuario/usuario.dart';
 import 'package:eventhub/model/usuario/usuario_autenticado.dart';
-import 'package:eventhub/network/api.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_bottom_button.dart';
 import 'package:eventhub/presentation/components/eventhub_text_form_field.dart';

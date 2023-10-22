@@ -557,4 +557,12 @@ class Api {
       body: jsonEncode({}),
     );
   }
+
+  pagarFaturameto() async {
+    return await http.put(
+      getURI('${EventhubSingleton().getHost()}/faturamentos'),
+      headers: getHeader(),
+      body: jsonEncode({}),
+    );
+  }
 }

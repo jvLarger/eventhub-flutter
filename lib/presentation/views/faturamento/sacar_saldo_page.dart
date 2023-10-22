@@ -2,6 +2,7 @@ import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/faturamento/faturamento_pagamento.dart';
 import 'package:eventhub/presentation/components/eventhub_body.dart';
 import 'package:eventhub/presentation/components/eventhub_top_appbar.dart';
+import 'package:eventhub/presentation/views/faturamento/listagem_faturamentos_page.dart';
 import 'package:eventhub/services/faturamento/faturamento_service.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/util.dart';
@@ -28,10 +29,69 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
       await buscarFaturamentos(false);
       // ignore: use_build_context_synchronously
       Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Conta Stripe desvinculada do Event Hub com sucesso!");
     } on EventHubException catch (err) {
       Util.hideLoading(context);
       Util.showSnackbarError(context, err.cause);
     }
+  }
+
+  pagarFaturameto() async {
+    try {
+      Util.showLoading(context);
+
+      await FaturamentoService().pagarFaturameto();
+      await buscarFaturamentos(false);
+      // ignore: use_build_context_synchronously
+      Util.hideLoading(context);
+      // ignore: use_build_context_synchronously
+      Util.showSnackbarSuccess(context, "Valores transferidos para a sua conta Stripe com sucesso!");
+    } on EventHubException catch (err) {
+      Util.hideLoading(context);
+      Util.showSnackbarError(context, err.cause);
+    }
+  }
+
+  tratarTransferir() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Transferir Valores',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja realmente transferir esses valores para a sua conta Stripe?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Confirmar',
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                pagarFaturameto();
+              },
+            ),
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   tratarDesvincularContaStripe() {
@@ -41,7 +101,7 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
-            'Excluir Evento',
+            'Remover Vinculo',
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -119,7 +179,7 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
           )
         : EventHubBody(
             topWidget: const EventHubTopAppbar(
-              title: "Sacar Saldo",
+              title: "Meu Resultado",
             ),
             child: Padding(
               padding: const EdgeInsets.all(defaultPadding),
@@ -193,7 +253,15 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
                           height: defaultPadding,
                         ),
                         ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Util.goTo(
+                              context,
+                              ListagemFaturamentosPage(
+                                faturamentos: _faturamentoPagamento.faturamentosLiberados!,
+                                tituloPage: "Pagamentos Liberados",
+                              ),
+                            );
+                          },
                           contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                           iconColor: const Color.fromRGBO(97, 97, 97, 1),
                           leading: const Icon(Ionicons.checkmark_circle_outline),
@@ -209,7 +277,15 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
                           ),
                         ),
                         ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Util.goTo(
+                              context,
+                              ListagemFaturamentosPage(
+                                faturamentos: _faturamentoPagamento.proximosFaturamentos!,
+                                tituloPage: "Próximos Pagamentos",
+                              ),
+                            );
+                          },
                           contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                           iconColor: const Color.fromRGBO(97, 97, 97, 1),
                           leading: const Icon(Ionicons.alarm_outline),
@@ -226,7 +302,15 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
                           ),
                         ),
                         ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Util.goTo(
+                              context,
+                              ListagemFaturamentosPage(
+                                faturamentos: _faturamentoPagamento.faturamentosPagos!,
+                                tituloPage: "Pagamentos Concluídos",
+                              ),
+                            );
+                          },
                           contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                           iconColor: const Color.fromRGBO(97, 97, 97, 1),
                           leading: const Icon(Ionicons.receipt_outline),
@@ -270,10 +354,14 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
                         Visibility(
                           visible: _faturamentoPagamento.payoutsEnabled != null && _faturamentoPagamento.payoutsEnabled! && _faturamentoPagamento.valorTotalFaturado! > 0.0,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              tratarTransferir();
+                            },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text("Transferir")],
+                              children: [
+                                Text("Transferir"),
+                              ],
                             ),
                           ),
                         ),

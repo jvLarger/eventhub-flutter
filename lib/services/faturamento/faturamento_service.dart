@@ -29,4 +29,13 @@ class FaturamentoService {
       throw EventHubException(Util.getMensagemErro(response));
     }
   }
+
+  Future<void> pagarFaturameto() async {
+    final response = await Api().pagarFaturameto();
+
+    if (response.statusCode == 204) {
+    } else {
+      throw EventHubException(Util.getMensagemErro(response));
+    }
+  }
 }

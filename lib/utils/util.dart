@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'package:eventhub/config/exceptions/eventhub_exception.dart';
 import 'package:eventhub/model/arquivo/arquivo.dart';
 import 'package:eventhub/model/error/standard_error.dart';
-import 'package:eventhub/network/api.dart';
-import 'package:eventhub/presentation/views/ingresso/meusingressos/meus_ingressos_page.dart';
 import 'package:eventhub/utils/constants.dart';
 import 'package:eventhub/utils/singleton.dart';
 import 'package:flutter/foundation.dart';
