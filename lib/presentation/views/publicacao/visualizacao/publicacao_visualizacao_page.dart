@@ -333,14 +333,20 @@ class _PublicacaoVisualizacaoPageState extends State<PublicacaoVisualizacaoPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    publicacaoComentario.usuario!.nomeCompleto!,
-                    style: const TextStyle(
-                      color: colorBlue,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.4,
+                  Expanded(
+                    child: Text(
+                      publicacaoComentario.usuario!.nomeCompleto!,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: colorBlue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.4,
+                      ),
                     ),
+                  ),
+                  const SizedBox(
+                    width: 20,
                   ),
                   Text(
                     Util.formatarDataComHora(
