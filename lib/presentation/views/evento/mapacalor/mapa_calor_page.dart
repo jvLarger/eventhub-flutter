@@ -431,10 +431,8 @@ class _MapaCalorPageState extends State<MapaCalorPage> {
       return markerRed;
     } else if (grupo == 2) {
       return markerOrange;
-    } else if (grupo == 3) {
-      return markerYellow;
     } else {
-      return markerBlue;
+      return markerYellow;
     }
   }
 }
