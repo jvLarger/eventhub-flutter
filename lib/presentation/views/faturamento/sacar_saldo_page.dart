@@ -352,10 +352,13 @@ class _SacarSaldoPageState extends State<SacarSaldoPage> {
                           height: defaultPadding,
                         ),
                         Visibility(
-                          visible: _faturamentoPagamento.payoutsEnabled != null && _faturamentoPagamento.payoutsEnabled! && _faturamentoPagamento.valorTotalFaturado! > 0.0,
                           child: ElevatedButton(
                             onPressed: () {
-                              tratarTransferir();
+                              if (_faturamentoPagamento.valorTotalFaturado! <= 0) {
+                                Util.showSnackbarError(context, "Não existe valor a ser repassado neste momento.");
+                              } else {
+                                tratarTransferir();
+                              }
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
